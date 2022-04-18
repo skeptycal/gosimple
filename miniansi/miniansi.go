@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/skeptycal/constraints"
+	"github.com/skeptycal/gosimple/constraints"
 )
 
 var DEBUG bool = true // debug or DEV mode

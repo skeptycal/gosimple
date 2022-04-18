@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/skeptycal/errorlogger"
+	"github.com/skeptycal/gosimple/errorlogger"
 )
 
 var log = errorlogger.Log

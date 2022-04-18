@@ -8,7 +8,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/skeptycal/gorepos/sieve/constraints"
+	"github.com/skeptycal/gosimple/constraints"
 )
 
 func init() {

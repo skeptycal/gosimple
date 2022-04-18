@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/skeptycal/gorepos/osargs"
+	osargs "github.com/skeptycal/gosimple/osargsutils"
 )
 
 var OsArgs = osargs.OsArgs

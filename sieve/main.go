@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/skeptycal/gorepos/constraints"
-	"github.com/skeptycal/gorepos/miniansi"
-	"github.com/skeptycal/gorepos/primes10k"
+	"github.com/skeptycal/gosimple/constraints"
+	"github.com/skeptycal/gosimple/miniansi"
+	"github.com/skeptycal/gosimple/primes10k"
 )
 
 var dbecho = miniansi.DbEcho
