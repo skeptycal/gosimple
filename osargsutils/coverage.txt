@@ -1,0 +1,28 @@
+
+mode: atomic
+github.com/skeptycal/gorepos/osargs/example.go:11.16,17.2 4 0
+github.com/skeptycal/gorepos/osargs/osargs.go:43.31,49.2 5 1
+github.com/skeptycal/gorepos/osargs/osargs.go:54.30,55.17 1 11
+github.com/skeptycal/gorepos/osargs/osargs.go:62.2,62.14 1 11
+github.com/skeptycal/gorepos/osargs/osargs.go:55.17,57.17 2 11
+github.com/skeptycal/gorepos/osargs/osargs.go:60.3,60.12 1 11
+github.com/skeptycal/gorepos/osargs/osargs.go:57.17,59.4 1 0
+github.com/skeptycal/gorepos/osargs/osargs.go:67.33,68.22 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:71.2,71.15 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:68.22,70.3 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:76.36,78.2 1 1
+github.com/skeptycal/gorepos/osargs/osargs.go:80.31,81.18 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:84.2,84.15 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:81.18,83.3 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:87.30,88.17 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:91.2,91.14 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:88.17,90.3 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:96.32,96.70 1 1
+github.com/skeptycal/gorepos/osargs/osargs.go:105.29,107.16 2 11
+github.com/skeptycal/gorepos/osargs/osargs.go:110.2,110.34 1 11
+github.com/skeptycal/gorepos/osargs/osargs.go:107.16,109.3 1 0
+github.com/skeptycal/gorepos/osargs/osargs.go:113.22,114.22 1 4
+github.com/skeptycal/gorepos/osargs/osargs.go:115.9,117.20 2 0
+github.com/skeptycal/gorepos/osargs/osargs.go:118.9,119.22 1 0
+github.com/skeptycal/gorepos/osargs/osargs.go:120.10,121.21 1 4
+mode: atomic
