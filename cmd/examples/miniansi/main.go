@@ -6,7 +6,7 @@ import (
 	. "github.com/skeptycal/gosimple/miniansi"
 )
 
-func Example() {
+func ExampleAnsi() {
 
 	fmt.Println(InfoColor, "Info")
 	fmt.Println(NewAnsi(1, 34), "Info")
@@ -30,4 +30,5 @@ func Example() {
 
 func main() {
 	Example()
+	ExampleAnsi()
 }
