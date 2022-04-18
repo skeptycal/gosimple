@@ -203,24 +203,24 @@ func PrimeCountSieve(n int) int {
 // the number of primes in the interval
 // [0 .. max], prints the list, and prints
 // the control list from the sieve of
-// Eratosthenes.
-func basic(max int) {
-	list := make([]int, max)
-	for i := 1; i <= max; i++ {
-		if IsPrime(i) {
-			list = append(list, i)
-		}
-	}
-	fmt.Print(listStringer("", list, Option.Both))
-	fmt.Println("")
-	for i := 1; i <= max; i++ {
-		if IsPrimeSqrt(i) {
-			fmt.Printf("%v ", i)
-		}
-	}
-	fmt.Println("")
-	SieveOfEratosthenes(max)
-}
+// // Eratosthenes.
+// func basic(max int) {
+// 	list := make([]int, max)
+// 	for i := 1; i <= max; i++ {
+// 		if IsPrime(i) {
+// 			list = append(list, i)
+// 		}
+// 	}
+// 	fmt.Print(listStringer("", list))
+// 	fmt.Println("")
+// 	for i := 1; i <= max; i++ {
+// 		if IsPrimeSqrt(i) {
+// 			fmt.Printf("%v ", i)
+// 		}
+// 	}
+// 	fmt.Println("")
+// 	SieveOfEratosthenes(max)
+// }
 
 func listStringer[T constraints.Ordered](list []T) string {
 	sb := strings.Builder{}
