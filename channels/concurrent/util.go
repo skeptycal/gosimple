@@ -15,6 +15,12 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+type GlobalVar[T any] struct{ v T }
+
+func (v *GlobalVar[T]) String() string { return fmt.Sprintf("%v(%T)", v.v, v.v) }
+func (v *GlobalVar[T]) Set(t T)        { v.v = t }
+func (v *GlobalVar[T]) Get() T         { return v.v }
+
 // func Delay(delay int, wait chan bool) chan bool {
 // 	time.Sleep(time.Duration(rand.Intn(delay)) * time.Millisecond)
 // 	wait <- true

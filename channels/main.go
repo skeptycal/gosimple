@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/skeptycal/channels/concurrent"
+	"github.com/skeptycal/gosimple/channels/concurrent"
 )
 
-func RandomlyTimedString(msg string) <-chan string {
+func Boring(msg string) <-chan string {
 	c := make(chan string)
 	go func() {
 		for i := 0; ; i++ {
