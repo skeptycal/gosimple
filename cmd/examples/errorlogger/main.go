@@ -1,33 +1,37 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
+
 	"github.com/skeptycal/gosimple/errorlogger"
+	"github.com/skeptycal/gosimple/osargs"
 )
 
-var log = errorlogger.Log
+var (
+	log     = errorlogger.Log
+	verbose bool
+)
 
 func main() {
+	flag.BoolVar(&verbose, "args", false, "show details about command line args...")
+	flag.Parse()
 	log.Info("sample log info")
+	if verbose {
+		args()
+	}
 }
 
-// func main() {
-// 	fmt.Printf("%25.25s %s\n", "raw os.Args[0]:", os.Args[0])
+func args() {
+	fmt.Printf("%25.25s %s\n", "raw os.Args[0]:", os.Args[0])
 
-// 	arg0, err := osargsutils.Arg0()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	osargs.Example()
+	args := osargs.OsArgs
 
-// 	arg0 = filepath.Base(arg0)
-// 	fmt.Printf("%25.25s %s\n", "using Arg0():", arg0)
-
-// 	here, me, err := osargsutils.HereMe()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	here = filepath.Base(here)
-
-// 	fmt.Printf("%25.25s - Here: %s Me: %s\n", "using HereMe():", here, me)
-
-// }
+	fmt.Printf("%25.25s %s\n", "args.App():", args.App())
+	fmt.Printf("%25.25s %s\n", "args.ArgString():", args.ArgString())
+	fmt.Printf("%25.25s %s\n", "args.Base():", args.Base())
+	fmt.Printf("%25.25s %s\n", "args.Dir():", args.Dir())
+	fmt.Printf("%25.25s %s\n", "args.Args():", args.Args())
+}
