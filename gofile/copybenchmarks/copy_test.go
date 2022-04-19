@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/skeptycal/goutil/repo/errorlogger"
+	"github.com/skeptycal/gosimple/errorlogger"
 )
 
 const fakesize = 2 << 16

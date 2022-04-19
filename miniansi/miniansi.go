@@ -2,44 +2,89 @@ package miniansi
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
-
-	"github.com/skeptycal/gosimple/constraints"
 )
 
 var DEBUG bool = true // debug or DEV mode
 
-const (
-	InfoColor    = ansiPrefix + "1;34m"
-	NoticeColor  = ansiPrefix + "1;36m"
-	WarningColor = ansiPrefix + "1;33m"
-	ErrorColor   = ansiPrefix + "1;31m"
-	DebugColor   = ansiPrefix + "0;36m"
-	dbcolor      = ansiPrefix + "1;31m" // ANSI dbecho code
-	ResetColor   = ansiPrefix + "0m"    // ANSI reset code
-
-	// semicolon delimited ANSI codes for %v
-	// string to print for %s
-	ansiFmt = "\033[%vm%s\033[0m"
-
-	ansiSEP    = ";"
-	ansiPrefix = "\033["
-	ansiSuffix = "m"
-)
-
-type ansiConstraint interface {
-	~string | []byte | constraints.Integer
+func (c *control[T]) SetDebug(debug bool) {
+	c.debug = debug
 }
 
-type ansi[T ansiConstraint] struct {
-	out T
+func (c *control[T]) SetEnabled(enabled bool) {
+	c.enabled = enabled
+}
+
+type Ansier interface {
+	String() string
+	printer.Fprinter
+	Fprintf1(w io.Writer, format string, args ...interface{}) (n int, err error)
+	Fprintf2(w io.Writer, format string, args ...interface{}) (n int, err error)
+	Fprintf3(w io.Writer, format string, args ...interface{}) (n int, err error)
+}
+
+type ansi[T AnsiConstraint] struct {
+	value T
+	out   string
+	bOut  []byte
+}
+
+func (c *ansi[T]) String() string {
+	return fmt.Sprint(c.out)
+}
+
+const fprintFormat = "%v%v%v"
+
+func (c *ansi[T]) Fprint(w io.Writer, format string, args ...interface{}) (int, error) {
+	return c.Fprintf3(w, format, args...)
+}
+func (c *ansi[T]) Fprintln(w io.Writer, format string, args ...interface{}) (int, error) {
+	return c.Fprintf3(w, format, args...)
+}
+
+func (c *ansi[T]) Fprintf(w io.Writer, format string, args ...interface{}) (int, error) {
+	return c.Fprintf3(w, format, args...)
+}
+
+func (c *ansi[T]) Fprintf1(w io.Writer, format string, args ...interface{}) (n int, err error) {
+	if w == nil {
+		w = os.Stdout
+	}
+
+	s := fmt.Sprintf(format, args...)
+	return fmt.Fprintf(w, fprintFormat, c.out, s, ResetColor)
+}
+
+func (c *ansi[T]) Fprintf2(w io.Writer, format string, args ...interface{}) (n int, err error) {
+	format = "%v" + format
+	a := make([]interface{}, 1, len(args)+1)
+	a[0] = c.out
+	a = append(a, args...)
+	return fmt.Fprintf(w, format, a...)
+}
+
+func (c *ansi[T]) Fprintf3(w io.Writer, format string, args ...interface{}) (n int, err error) {
+	w.Write(c.bOut)
+	n, err = fmt.Fprintf(w, format, args...)
+	w.Write(bReset)
+	return
+}
+
+func NewAnsi[T AnsiConstraint](in T) *ansi[T] {
+	s := fmt.Sprint(in)
+	return &ansi[T]{
+		value: in,
+		out:   s,
+		bOut:  []byte(s),
+	}
 }
 
 // NewAnsi creates a new ansi color code string
 // from components. Each argument is parsed and
 // encoded and wrapped in an ANSI
-func NewAnsi(in ...any) string {
+func NewAnsiString(in ...any) string {
 	// func NewAnsi[T ansiConstraint](in ...any) string {
 	// TODO: handle inappropriate types
 	s := fmt.Sprint(in...)
@@ -59,7 +104,7 @@ func ansiEncode(code any, s ...string) string {
 func DbEcho(args ...any) (n int, err error) {
 	if DEBUG {
 		s := fmt.Sprint(args...)
-		return fmt.Fprintf(os.Stdout, "%s%s%s\n", dbcolor, s, ResetColor)
+		return fmt.Fprintf(os.Stdout, "%s%s%s\n", DbColor, s, ResetColor)
 	}
 	return
 }

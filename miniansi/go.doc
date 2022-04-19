@@ -1,7 +1,0 @@
-package miniansi // import "github.com/skeptycal/gosimple/miniansi"
-
-const InfoColor = ansiPrefix + "1;34m" ...
-var DEBUG bool = true
-func DbEcho(args ...any) (n int, err error)
-func Example()
-func NewAnsi(in ...any) string

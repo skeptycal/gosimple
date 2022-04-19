@@ -5,8 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/prometheus/common/log"
-	"github.com/skeptycal/goutil/os/basicfile"
+	"github.com/skeptycal/gosimple/os/basicfile"
 )
 
 type (
