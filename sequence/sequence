@@ -1,0 +1,34 @@
+package sequence
+
+import (
+	_ "github.com/skeptycal/gosimple/constraints"
+)
+
+type a interface {
+	constraints.Ordered
+}
+
+func New() Sequence {
+	return []T{}
+}
+
+type Sequence interface {
+	Slice
+}
+
+type Slice[E any] interface {
+	~[]E
+}
+
+// type constraints can be defined *inline*
+func FirstElem2[S interface{ ~[]E }, E any](s S) E {
+	return s[0]
+}
+
+func First[T any](s []T) T {
+	return s[0]
+}
+
+func Last[T any](s []T) T {
+	return s[len(s)-1]
+}
