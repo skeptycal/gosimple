@@ -22,47 +22,47 @@ const (
 	ansiHideCursor string = "\x1b[?25l"
 )
 
-// Up moves the cursor n cells up.
-func (t *Terminal) Up(n int) {
-	t.Printf(fmtAnsiUp, n)
-}
+// // Up moves the cursor n cells up.
+// func (t *Terminal) Up(n int) {
+// 	t.Printf(fmtAnsiUp, n)
+// }
 
-// Down moves the cursor n cells down.
-func (t *Terminal) Down(n int) {
-	t.Printf(fmtAnsiDown, n)
-}
+// // Down moves the cursor n cells down.
+// func (t *Terminal) Down(n int) {
+// 	t.Printf(fmtAnsiDown, n)
+// }
 
-// Right moves the cursor n cells right.
-func (t *Terminal) Right(n int) {
-	t.Printf(fmtAnsiRight, n)
-}
+// // Right moves the cursor n cells right.
+// func (t *Terminal) Right(n int) {
+// 	t.Printf(fmtAnsiRight, n)
+// }
 
-// Left moves the cursor n cells left.
-func (t *Terminal) Left(n int) {
-	t.Printf(fmtAnsiLeft, n)
-}
+// // Left moves the cursor n cells left.
+// func (t *Terminal) Left(n int) {
+// 	t.Printf(fmtAnsiLeft, n)
+// }
 
-// NextLine moves the cursor to beginning of the line n lines down.
-func (t *Terminal) NextLine(n int) {
-	t.Printf(fmtAnsiNext, n)
-}
+// // NextLine moves the cursor to beginning of the line n lines down.
+// func (t *Terminal) NextLine(n int) {
+// 	t.Printf(fmtAnsiNext, n)
+// }
 
-// PreviousLine moves the cursor to beginning of the line n lines up.
-func (t *Terminal) PreviousLine(n int) {
-	t.Printf(fmtAnsiPrev, n)
-}
+// // PreviousLine moves the cursor to beginning of the line n lines up.
+// func (t *Terminal) PreviousLine(n int) {
+// 	t.Printf(fmtAnsiPrev, n)
+// }
 
-// CursorX moves the cursor horizontally to x.
-func (t *Terminal) CursorX(x int) {
-	t.Printf(fmtAnsiX, x)
-}
+// // CursorX moves the cursor horizontally to x.
+// func (t *Terminal) CursorX(x int) {
+// 	t.Printf(fmtAnsiX, x)
+// }
 
-// Show the cursor.
-func (t *Terminal) Show() {
-	t.Print(ansiShowCursor)
-}
+// // Show the cursor.
+// func (t *Terminal) Show() {
+// 	t.Print(ansiShowCursor)
+// }
 
-// Hide the cursor.
-func (t *Terminal) Hide() {
-	t.Print(ansiHideCursor)
-}
+// // Hide the cursor.
+// func (t *Terminal) Hide() {
+// 	t.Print(ansiHideCursor)
+// }

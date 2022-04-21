@@ -21,7 +21,6 @@ package cli
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -208,7 +207,7 @@ func CurrentHeight() int {
 }
 
 func newCLIError(format string, args ...interface{}) error {
-	return errors.New(fmt.Sprintf(format, args...))
+	return fmt.Errorf(format, args...)
 }
 
 // Flush buffer and ensure that it will not overflow screen

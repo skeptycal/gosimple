@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/skeptycal/gosimple/printer"
 )
 
 var DEBUG bool = true // debug or DEV mode
@@ -20,6 +22,8 @@ func (c *control[T]) SetEnabled(enabled bool) {
 type Ansier interface {
 	String() string
 	printer.Fprinter
+
+	// test methods ...
 	Fprintf1(w io.Writer, format string, args ...interface{}) (n int, err error)
 	Fprintf2(w io.Writer, format string, args ...interface{}) (n int, err error)
 	Fprintf3(w io.Writer, format string, args ...interface{}) (n int, err error)

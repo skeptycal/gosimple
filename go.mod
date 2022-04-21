@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/buger/goterm v1.0.4 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect

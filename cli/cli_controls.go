@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"strings"
 )
 
 type CLIControls interface {
@@ -22,37 +21,37 @@ const (
 	defaultScreenWidth int    = 80         // default screen width if not specified
 )
 
-// CLS clears the screen.
-func (t *Terminal) CLS() {
-	t.Print(ansiCLS)
-}
+// // CLS clears the screen.
+// func (t *Terminal) CLS() {
+// 	t.Print(ansiCLS)
+// }
 
-// ClearLine clears moves the cursor to the start of the
-// the current line and clears the line.
-func (t *Terminal) ClearLine() {
-	t.Print(ansiClearLine)
-}
+// // ClearLine clears moves the cursor to the start of the
+// // the current line and clears the line.
+// func (t *Terminal) ClearLine() {
+// 	t.Print(ansiClearLine)
+// }
 
-// LineBreak creates a CLI line break (dotted line, underline, etc.)
-// by repeating the string c enough times to span the screen width.
-//
-// This is useful in delimiting lines of text in terminal output.
-func (t *Terminal) LineBreak(c string) {
-	if c == "" {
-		c = defaultHrChar
-	}
-	width := t.screenWidth()
+// // LineBreak creates a CLI line break (dotted line, underline, etc.)
+// // by repeating the string c enough times to span the screen width.
+// //
+// // This is useful in delimiting lines of text in terminal output.
+// func (t *Terminal) LineBreak(c string) {
+// 	if c == "" {
+// 		c = defaultHrChar
+// 	}
+// 	width := t.screenWidth()
 
-	repeatCount := width/len(c) + 1
+// 	repeatCount := width/len(c) + 1
 
-	s := strings.Repeat(c, repeatCount)[:width]
-	t.Println(s)
-}
+// 	s := strings.Repeat(c, repeatCount)[:width]
+// 	t.Println(s)
+// }
 
-// Hr creates a hard return using the default character.
-func (t *Terminal) Hr() {
-	t.LineBreak(defaultHrChar)
-}
+// // Hr creates a hard return using the default character.
+// func (t *Terminal) Hr() {
+// 	t.LineBreak(defaultHrChar)
+// }
 
 // Br creates a line break.
 func (t *Terminal) Br() {

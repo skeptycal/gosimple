@@ -77,7 +77,7 @@ func (t *Terminal) color() string {
 
 // SetColor sets the ANSI foreground, background, and effect codes
 // for upcoming output.
-func (t *Terminal) SetColor(color Ansi) {
+func (t *Terminal) SetColor(color AnsiColor) {
 	if t.useColor {
 		t.colorBytes = []byte(color.String())
 	}
@@ -103,7 +103,7 @@ func (t *Terminal) devinfo() string {
 	sb := &strings.Builder{}
 	defer sb.Reset()
 	if t.devMode {
-		t.Hr()
+		// t.Hr()
 		fmt.Fprintf(sb, "CLI variable (DefaultForeground): %v\n", t.defaultForeground)
 		fmt.Fprintf(sb, "CLI variable (DefaultBackground): %v\n", t.defaultBackground)
 		fmt.Fprintf(sb, "CLI variable (DefaultEffect): %v\n", t.defaultEffect)

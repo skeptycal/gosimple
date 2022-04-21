@@ -13,8 +13,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-
-	"github.com/skeptycal/ansi"
 )
 
 const (
@@ -59,37 +57,37 @@ type CLI interface {
 	fmt.Stringer
 	Printer
 	CLIControls
-	SetColor(color ansi.Ansi)
+	SetColor(color AnsiColor)
 	Reset() (n int, err error)
 }
 
-// New returns a new ANSI compatible terminal interface based on
-// os.Stdout with ANSI support enabled by default.
-func New() CLI { return NewFromWriter(defaultWriter) }
+// // New returns a new ANSI compatible terminal interface based on
+// // os.Stdout with ANSI support enabled by default.
+// func New() CLI { return NewFromWriter(defaultWriter) }
 
-// New returns a new ANSI compatible terminal interface based on
-// os.Stderr with ANSI support enabled by default.
-func NewStderr() CLI { return NewFromWriter(defaultErrorWriter) }
+// // New returns a new ANSI compatible terminal interface based on
+// // os.Stderr with ANSI support enabled by default.
+// func NewStderr() CLI { return NewFromWriter(defaultErrorWriter) }
 
-// New returns a new ANSI compatible terminal interface based on
-// the given io.Writer with ANSI support enabled by default.
-func NewFromWriter(w io.Writer) CLI {
-	devMode := defaultDevMode
-	if w == nil {
-		w = defaultWriter
-	}
+// // New returns a new ANSI compatible terminal interface based on
+// // the given io.Writer with ANSI support enabled by default.
+// func NewFromWriter(w io.Writer) CLI {
+// 	devMode := defaultDevMode
+// 	if w == nil {
+// 		w = defaultWriter
+// 	}
 
-	t := &Terminal{
-		w:        w,
-		useColor: checkColor(),
-		devMode:  devMode,
-	}
+// 	t := &Terminal{
+// 		w:        w,
+// 		useColor: checkColor(),
+// 		devMode:  devMode,
+// 	}
 
-	if t.useColor {
-		t.on = t.colorWrite
-	} else {
-		t.on = t.noOp
-	}
+// 	if t.useColor {
+// 		t.on = t.colorWrite
+// 	} else {
+// 		t.on = t.noOp
+// 	}
 
-	return t
-}
+// 	return t
+// }

@@ -1,1 +1,3 @@
 package cli
+
+var globalReturn = ""

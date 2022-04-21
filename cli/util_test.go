@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"os"
 	"testing"
 )
 
@@ -9,59 +8,18 @@ import (
 // true if they are the same or false if they are different.
 //
 // 'name' is a descriptive name that will display in error messages.
-// 'got' and 'want' should be of the same type.
+// 'got' and 'want' should be of the same (comparable) type.
 // wantErr states whether an error is expected or not.
 //
 // Use 'nil' for *testing.T to skip reporting (not recommended)
-func check(name string, got, want Any, wantErr bool, t *testing.T) bool {
+func check[T comparable](name string, got, want T, wantErr bool, t *testing.T) bool {
 	if want != got {
 		if !wantErr {
-			t.Errorf("%s = %v, want %v", name, got, want)
-			return true
+			t.Errorf("%s = %v(%T), want %v(%T)", name, got, got, want, want)
+			return false
 		}
 	}
-	return false
-}
-
-func TestBasicEncode(t *testing.T) {
-
-	tests := []struct {
-		name    string
-		input   interface{}
-		want    string
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{"byte", byte(8), "\033[8m", false},
-		{"int", int(8), "\033[8m", false},
-		{"big int", int(0xFFFF), "\033[255m", false},
-		{"uint", uint(8), "\033[8m", false},
-		{"big uint", uint(0xFFFF), "\033[255m", false},
-		{"float64", float64(8.0042), "\033[8m", false},
-		{"pi", 3.14159, "\033[3m", false},
-		{"string", "8", "\033[8m", false},
-		{"invalid string", "a", "", true},  // no output
-		{"nil", nil, "", true},             // no output
-		{"os.Stdout", os.Stdout, "", true}, // no output
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-
-			c, err := ByteEncode(tt.input)
-			if err != nil {
-				if !tt.wantErr {
-					t.Fatal(err)
-				}
-			} else {
-
-				_ = check("NewAnsiColor()", NewAnsiColor(c).String(), tt.want, tt.wantErr, t)
-
-				check("BasicEncode()", BasicEncode(tt.input), tt.want, false, t)
-
-			}
-		})
-	}
+	return true
 }
 
 // func TestColumns(t *testing.T) {

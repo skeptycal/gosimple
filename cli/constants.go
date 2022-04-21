@@ -4,21 +4,47 @@
 package cli
 
 import (
-	"github.com/skeptycal/ansi"
-)
+	"fmt"
 
-type (
-	Any  = interface{}
-	Ansi = ansi.Ansi
+	"github.com/skeptycal/gosimple/ansi"
 )
 
 const (
-	//
-	Reset          string = ansi.Reset      // Reset all custom styles ( "\033[0m" )
-	ResetColor     string = "\033[32m"      // Reset to default color
-	ResetLineConst string = "\r\033[K"      // Return cursor to start of line and clean it
-	SetInverse     string = ansi.SetInverse // Set text to inverse
-	fmtANSI        string = ansi.FmtANSI    // format string for simple ANSI encoding ( "\x1b[%dm" )
+	Reset          string = "\033[0m"  // ANSI reset code
+	ResetColor     string = "\033[32m" // Reset to default color
+	ResetLineConst string = "\r\033[K" // Return cursor to start of line and clean it
+	SetInverse     string = "\033[4m"  // ANSI inverse
+	NewLine        string = "\n"       // Newline character
+	Tab            string = "\t"       // Tab character
+
+	fmtANSI         string = ansi.FmtANSI // format string for simple ANSI encoding ( "\x1b[%dm" )
+	fa                     = "\x1b[%dm"
+	ansiPrefix      string = "\033["
+	esc             byte   = '\x1b'
+	ansiPrefixByte1 byte   = esc
+	ansiPrefixByte2 byte   = '['
+	ansiSuffix      string = "m"
+	ansiSep         string = ";"
+	ansiSepByte     byte   = ';'
+	ansiSuffixByte  byte   = 'm'
+)
+
+var (
+	DbColor     string = "\033[1;31m" // ANSI dbecho code
+	bAnsiPrefix []byte = []byte(ansiPrefix)
+	SetBold     string = blankEncode(fmt.Sprint(ansi.Bold)) // ANSI bold
+)
+
+// List of possible colors
+const (
+	BLACK = iota
+	RED
+	GREEN
+	YELLOW
+	BLUE
+	MAGENTA
+	CYAN
+	WHITE
 )
 
 // Ansi Control Codes provide ASCII representation of nonprintable characters.
@@ -57,19 +83,7 @@ const (
 	US              //	31 = Unit Separator
 )
 
-// List of possible colors
-const (
-	BLACK = iota
-	RED
-	GREEN
-	YELLOW
-	BLUE
-	MAGENTA
-	CYAN
-	WHITE
-)
-
 var (
-	ResetBytes   []byte = ansi.ResetBytes
-	InverseBytes []byte = []byte(BasicEncode(ansi.Inverse))
+	ResetBytes   []byte = []byte(Reset)
+	InverseBytes []byte = []byte(BasicEncode(fmt.Sprint(ansi.Inverse)))
 )
