@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/buger/goterm"
-	"github.com/skeptycal/cli/terminal"
+	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
 var GetWinSize = terminal.GetWinsize

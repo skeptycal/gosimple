@@ -17,22 +17,12 @@ const (
 	NewLine        string = "\n"       // Newline character
 	Tab            string = "\t"       // Tab character
 
-	fmtANSI         string = ansi.FmtANSI // format string for simple ANSI encoding ( "\x1b[%dm" )
-	fa                     = "\x1b[%dm"
-	ansiPrefix      string = "\033["
-	esc             byte   = '\x1b'
-	ansiPrefixByte1 byte   = esc
-	ansiPrefixByte2 byte   = '['
-	ansiSuffix      string = "m"
-	ansiSep         string = ";"
-	ansiSepByte     byte   = ';'
-	ansiSuffixByte  byte   = 'm'
 )
 
 var (
 	DbColor     string = "\033[1;31m" // ANSI dbecho code
 	bAnsiPrefix []byte = []byte(ansiPrefix)
-	SetBold     string = blankEncode(fmt.Sprint(ansi.Bold)) // ANSI bold
+	SetBold     string = BasicEncode(fmt.Sprint(ansi.Bold)) // ANSI bold
 )
 
 // List of possible colors

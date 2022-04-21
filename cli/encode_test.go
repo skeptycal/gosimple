@@ -3,12 +3,9 @@ package cli
 import (
 	"fmt"
 	"testing"
-
-	"github.com/skeptycal/gosimple/rand"
 )
 
 func TestBasicEncode(t *testing.T) {
-
 	tests := []struct {
 		name    string
 		input   string
@@ -21,61 +18,18 @@ func TestBasicEncode(t *testing.T) {
 		{"byte", "47", "\033[47m", false},
 		{"byte", "123", "\033[123m", false},
 		{"byte", "0", "\033[0m", false},
+		{"byte", "1111", "", false},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Run(tt.name, func(t *testing.T) {
 				got := BasicEncode(tt.input)
 				if got != tt.want {
-					t.Errorf("unexpected ANSI encoding: got %v, want %v", got, tt.want)
+					t.Errorf("unexpected ANSI encoding: got %q, want %q", got, tt.want)
 				}
 			})
 		})
 	}
-}
-
-func BenchmarkEncodeMulti(b *testing.B) {
-
-	args, err := rand.CreateTextSets[string](4, 5)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	benchmarks := []struct {
-		name string
-		fn   func(b ...string) string
-	}{
-		{"encode", encode},
-		{"simpleEncode", goEncodeMulti},
-	}
-
-	for _, arg := range args {
-		for _, bb := range benchmarks {
-			name := fmt.Sprintf("%v(%d)", bb.name, len(arg))
-			// s := UnsafeBytesToString(arg)
-			s := arg
-
-			b.Run(name, func(b *testing.B) {
-				for i := 0; i < b.N; i++ {
-					globalReturn = bb.fn(s)
-				}
-			})
-		}
-	}
-
-	// for j := 1; j < maxsize; j++ {
-	// 	for _, bb := range benchmarks {
-	// 		name := fmt.Sprintf("%v(%d)", bb.name, j)
-	// 		for i := 0; i < b.N; i++ {
-	// 			b.Run(name, func(b *testing.B) {
-	// 				for _, c := range args {
-	// 					globalReturn = bb.fn(UnsafeBytesToString(c))
-	// 				}
-	// 			})
-	// 		}
-	// 	}
-	// }
 }
 
 func BenchmarkEncode(b *testing.B) {
