@@ -41,11 +41,11 @@ func (c *ansi[T]) String() string {
 
 const fprintFormat = "%v%v%v"
 
-func (c *ansi[T]) Fprint(w io.Writer, format string, args ...interface{}) (int, error) {
-	return c.Fprintf3(w, format, args...)
+func (c *ansi[T]) Fprint(w io.Writer, args ...interface{}) (int, error) {
+	return c.Fprintf3(w, "", args...)
 }
-func (c *ansi[T]) Fprintln(w io.Writer, format string, args ...interface{}) (int, error) {
-	return c.Fprintf3(w, format, args...)
+func (c *ansi[T]) Fprintln(w io.Writer, args ...interface{}) (int, error) {
+	return c.Fprintf3(w, "%v\n", args...)
 }
 
 func (c *ansi[T]) Fprintf(w io.Writer, format string, args ...interface{}) (int, error) {

@@ -18,3 +18,7 @@ const (
 	ansiPrefix = "\033["
 	ansiSuffix = "m"
 )
+
+var (
+	bReset = []byte(ResetColor)
+)
