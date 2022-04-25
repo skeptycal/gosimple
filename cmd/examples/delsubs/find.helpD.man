@@ -1,0 +1,10 @@
+Valid arguments for -D:
+exec       Show diagnostic information relating to -exec, -execdir, -ok and -okdir
+opt        Show diagnostic information relating to optimisation
+rates      Indicate how often each predicate succeeded
+search     Navigate the directory tree verbosely
+stat       Trace calls to stat(2) and lstat(2)
+time       Show diagnostic information relating to time-of-day and timestamp comparisons
+tree       Display the expression tree
+all        Set all of the debug flags (but help)
+help       Explain the various -D options
