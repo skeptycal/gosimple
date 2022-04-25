@@ -4,8 +4,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
-	"github.com/skeptycal/errorlogger"
-	// . "github.com/fatih/color"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
 
 var (
