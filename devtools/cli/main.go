@@ -9,7 +9,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/skeptycal/goutil/repo/util2/gofile"
+	"github.com/skeptycal/gosimple/os/gofile"
 )
 
 func main() {

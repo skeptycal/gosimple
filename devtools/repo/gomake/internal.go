@@ -6,9 +6,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/skeptycal/anybool"
-	"github.com/skeptycal/goutil/repo/defaults"
-	"github.com/skeptycal/goutil/repo/util2/gofile"
+	"github.com/skeptycal/gosimple/anybool"
+	"github.com/skeptycal/gosimple/gofile"
+	"github.com/skeptycal/gosimple/repo/defaults"
 )
 
 const (

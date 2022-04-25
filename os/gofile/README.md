@@ -60,7 +60,7 @@ Use the [Issues][issues] and [PR][pr] templates on the GitHub repo page to contr
 ```go
 package main
 
-import "github.com/skeptycal/gofile"
+import "github.com/skeptycal/gosimple/gofile"
 
 func main() {
     gofile.Example()
