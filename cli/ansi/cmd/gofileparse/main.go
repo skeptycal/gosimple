@@ -6,8 +6,10 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
+
+var log = errorlogger.New()
 
 func main() {
 	fileName := "temp.go"
