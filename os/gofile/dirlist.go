@@ -14,7 +14,7 @@ type (
 	DIR interface {
 		Len() int
 		Path() string
-		List() ([]BasicFile, error)
+		List() ([]os.DirEntry, error)
 		SetOpts(opts dirOptions)
 
 		// Chdir changes the current working directory to the file, which must be a directory. If there is an error, it will be of type *PathError.
@@ -25,11 +25,11 @@ type (
 // type datafile =
 
 type dirList struct {
-	providedName string      // original name provided
-	name         string      // JIT absolute file name
-	count        int         // JIT cached file count
-	opts         dirOptions  // options for directory listing
-	list         []BasicFile // or []DataFile // fs.FileInfo
+	providedName string     // original name provided
+	name         string     // JIT absolute file name
+	count        int        // JIT cached file count
+	opts         dirOptions // options for directory listing
+	list         []os.DirEntry
 }
 
 func (l *dirList) Len() int {
@@ -41,8 +41,8 @@ func (l *dirList) Len() int {
 
 // Dirs returns a list of all objects
 // in the dirList that are directories.
-func (l *dirList) Dirs() []fs.FileInfo {
-	list := make([]fs.FileInfo, 0, l.Len())
+func (l *dirList) Dirs() []fs.DirEntry {
+	list := make([]fs.DirEntry, 0, l.Len())
 
 	for _, f := range l.list {
 		if f.IsDir() {
@@ -82,7 +82,7 @@ func (l *dirList) Base() string { return filepath.Base(l.Abs()) }
 //
 // If an error is encountered, that file will be
 // skipped and processing will continue.
-func (l *dirList) List() (fi []BasicFile, err error) {
+func (l *dirList) List() (fi []os.DirEntry, err error) {
 	if l.Len() == 0 {
 
 		// path := l.Dir()
@@ -92,14 +92,15 @@ func (l *dirList) List() (fi []BasicFile, err error) {
 		if err != nil {
 			return nil, err
 		}
-		for _, dir := range list {
-			dir.Name()
-			bf, err := basicfile.NewBasicFile(dir.Name())
-			if err != nil {
-				continue
-			}
-			list = append(list, bf)
-		}
+		// for _, dir := range list {
+		// 	dir.Name()
+		// 	bf, err := basicfile.NewBasicFile(dir.Name())
+		// 	if err != nil {
+		// 		continue
+		// 	}
+		// 	list = append(list, bf)
+		// }
+		l.list = append(l.list, list...)
 	}
 	return l.list, nil
 }

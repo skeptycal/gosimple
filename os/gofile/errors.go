@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/skeptycal/goutil/os/basicfile"
+	"github.com/skeptycal/gosimple/os/basicfile"
 )
 
 type GoFileError = basicfile.GoFileError

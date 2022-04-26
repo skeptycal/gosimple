@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/skeptycal/gosimple/channels/concurrent"
+	"github.com/skeptycal/gosimple/types/channels/concurrent"
 )
 
 func Boring(msg string) <-chan string {

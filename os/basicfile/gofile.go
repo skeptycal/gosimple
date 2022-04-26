@@ -8,6 +8,59 @@ import (
 	"path/filepath"
 )
 
+type (
+	GoFile interface {
+		fsFile
+		osFile
+		fs.DirEntry
+		fs.FileInfo
+		fs.FileMode
+
+		// OsFile returns the file descriptor, *os.File.
+		OsFile() *os.File
+
+		// Handle returns a buffered io.ReadWriteCloser
+		// (with io.WriteString, io.WriterTo, and io.ReaderFrom)
+		Handle() Handle
+
+		// A DirEntry is an entry read from a directory
+		// (using the ReadDir function or a ReadDirFile's
+		// ReadDir method).
+		DirEntry() DirEntry
+
+		// FileOps provides access to common file
+		// operations of *os.File.
+		FileOps() FileOps
+
+		// FileUnix provides access to Unix file operations.
+		FileUnix() FileUnix
+	}
+
+	// A File provides access to a single file.
+	// The File interface is the minimum
+	// implementation required of the file.
+	// A file may implement additional interfaces,
+	// such as ReadDirFile, ReaderAt, or Seeker,
+	// to provide additional or optimized
+	// functionality.
+	//
+	//  type File interface {
+	//  	Stat() (fs.FileInfo, error)
+	//  	Read([]byte) (int, error)
+	//  	Close() error
+	//  }
+	//
+	// Reference: standard library fs.go
+	fsFile = fs.File
+
+	// minimal os.File interface
+	osFile interface {
+		Seek(offset int64, whence int) (int64, error)
+		Open() error
+		Create() error
+	}
+)
+
 // Handle returns the underlying io.ReadWriteCloser.
 // For convenience, the following are implemented:
 // 	io.ReadWriteCloser
@@ -64,56 +117,3 @@ func (f *basicFile) ModeString() string {
 func (f *basicFile) Name() string {
 	return filepath.Base(f.Abs())
 }
-
-type (
-	GoFile interface {
-		fsFile
-		osFile
-		fs.DirEntry
-		fs.FileInfo
-		fs.FileMode
-
-		// OsFile returns the file descriptor, *os.File.
-		OsFile() *os.File
-
-		// Handle returns a buffered io.ReadWriteCloser
-		// (with io.WriteString, io.WriterTo, and io.ReaderFrom)
-		Handle() Handle
-
-		// A DirEntry is an entry read from a directory
-		// (using the ReadDir function or a ReadDirFile's
-		// ReadDir method).
-		DirEntry() DirEntry
-
-		// FileOps provides access to common file
-		// operations of *os.File.
-		FileOps() FileOps
-
-		// FileUnix provides access to Unix file operations.
-		FileUnix() FileUnix
-	}
-
-	// A File provides access to a single file.
-	// The File interface is the minimum
-	// implementation required of the file.
-	// A file may implement additional interfaces,
-	// such as ReadDirFile, ReaderAt, or Seeker,
-	// to provide additional or optimized
-	// functionality.
-	//
-	//  type File interface {
-	//  	Stat() (fs.FileInfo, error)
-	//  	Read([]byte) (int, error)
-	//  	Close() error
-	//  }
-	//
-	// Reference: standard library fs.go
-	fsFile = fs.File
-
-	// minimal os.File interface
-	osFile interface {
-		Seek(offset int64, whence int) (int64, error)
-		Open() error
-		Create() error
-	}
-)

@@ -3,6 +3,8 @@ package gofile
 
 import (
 	"os"
+
+	"github.com/skeptycal/gosimple/os/basicfile"
 )
 
 var NewFileWithErr = basicfile.NewFileWithErr
