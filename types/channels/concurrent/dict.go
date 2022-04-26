@@ -3,7 +3,7 @@ package concurrent
 import (
 	"fmt"
 
-	"github.com/skeptycal/gosimple/constraints"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
 type GetSetter[K constraints.Ordered, V any] interface {

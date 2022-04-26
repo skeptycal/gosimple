@@ -68,11 +68,10 @@ func (p *homedir) Abs() string {
 		}
 	}
 
-	defer p.unlock()
-	p.lock()
+	// defer p.unlock()
+	// p.lock()
 
-	p.homedirCache = result
-	return result
+	return p.homedirCache
 }
 
 func (p *homedir) Base() string {

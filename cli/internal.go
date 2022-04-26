@@ -1,6 +1,6 @@
 package cli
 
-import "github.com/skeptycal/gosimple/ansi"
+import "github.com/skeptycal/gosimple/cli/ansi"
 
 var globalReturn = ""
 

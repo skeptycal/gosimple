@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/skeptycal/gosimple/errorlogger"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
 
 var log = errorlogger.New()

@@ -49,7 +49,7 @@ type AppInfo struct {
 var appInfo = AppInfo{
 	Name:    "GitCommits",
 	Usage:   "Reports git history",
-	Author:  "
+	Author:  "",
 	Version: "1.0.0",
 }
 

@@ -2,7 +2,6 @@ package miniansi
 
 import (
 	"io"
-	"testing"
 )
 
 /* Benchmarks for Fprint implementations
@@ -22,12 +21,12 @@ import (
 /basic_33(Fprintf3)-8         	22243744	        54.97 ns/op	       0 B/op	       0 allocs/op
 */
 
-type testStruct[T AnsiConstraint] struct {
+type testStruct struct {
 	name   string
 	w      io.Writer
 	format string
 	args   []interface{}
-	a      Ansier
+	a      Stringer
 }
 
 type FprintFunc = func(w io.Writer, format string, args ...interface{}) (n int, err error)
@@ -37,29 +36,30 @@ type FprintFunc = func(w io.Writer, format string, args ...interface{}) (n int, 
 // 	fn FprintFunc
 // }
 
-func genTests[T AnsiConstraint](in T) []testStruct[T] {
-	tests := []testStruct[T]{
+func genTests() []testStruct {
+	tests := []testStruct{
 		{"basic 32", io.Discard, "%v", []any{"This basic stuff"}, NewAnsi(32)},
 		{"basic 33", io.Discard, "%v", []any{"This other stuff"}, NewAnsi(33)},
 	}
 	return tests
 }
-func BenchmarkFprint(b *testing.B) {
-	for _, bb := range genTests(32) {
-		var testFuncs = []struct {
-			name string
-			fn   FprintFunc
-		}{
-			{"Fprintf1", bb.a.Fprintf1},
-			{"Fprintf2", bb.a.Fprintf2},
-			{"Fprintf3", bb.a.Fprintf3},
-		}
-		for _, ff := range testFuncs {
-			b.Run(bb.name+"("+ff.name+")", func(b *testing.B) {
-				for i := 0; i < b.N; i++ {
-					ff.fn(bb.w, bb.format, bb.args...)
-				}
-			})
-		}
-	}
-}
+
+// func BenchmarkFprint(b *testing.B) {
+// 	for _, bb := range genTests(32) {
+// 		var testFuncs = []struct {
+// 			name string
+// 			fn   FprintFunc
+// 		}{
+// 			{"Fprintf1", bb.a.Fprintf1},
+// 			{"Fprintf2", bb.a.Fprintf2},
+// 			{"Fprintf3", bb.a.Fprintf3},
+// 		}
+// 		for _, ff := range testFuncs {
+// 			b.Run(bb.name+"("+ff.name+")", func(b *testing.B) {
+// 				for i := 0; i < b.N; i++ {
+// 					ff.fn(bb.w, bb.format, bb.args...)
+// 				}
+// 			})
+// 		}
+// 	}
+// }

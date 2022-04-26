@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/fatih/structs"
-	"github.com/skeptycal/types"
+	"github.com/skeptycal/gosimple/types"
 	"golang.org/x/sys/cpu"
 )
 

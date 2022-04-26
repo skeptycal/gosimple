@@ -13,7 +13,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/skeptycal/gosimple/constraints"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
 type (

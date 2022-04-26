@@ -1,10 +1,10 @@
 package sort
 
-import generic "github.com/skeptycal/goutil/generic/generictypes"
+import "github.com/skeptycal/gosimple/types/constraints"
 
 // An implementation of the standard library sort.Interface
 // that can be sorted by the routines in this package.
-type Sorter[K generic.Ordered, V any] interface {
+type Sorter[K constraints.Ordered, V any] interface {
 	// Len is the number of elements in the collection.
 	Len() int
 

@@ -9,7 +9,7 @@ import (
 	"database/sql"
 	"reflect"
 
-	"github.com/skeptycal/types"
+	"github.com/skeptycal/gosimple/types"
 )
 
 type (

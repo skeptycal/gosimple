@@ -7,7 +7,7 @@ import (
 	"unsafe"
 
 	"github.com/fatih/structs"
-	. "github.com/skeptycal/types"
+	. "github.com/skeptycal/gosimple/types"
 )
 
 var testSample int = 42

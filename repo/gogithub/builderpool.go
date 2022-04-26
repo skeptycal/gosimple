@@ -16,7 +16,7 @@ import (
 var global *BuilderPool
 
 func init() {
-	global = New()
+	global = NewPool()
 }
 
 // Get returns a strings.Builder from the global pool.
@@ -35,7 +35,7 @@ type BuilderPool struct {
 }
 
 // New returns a new BuilderPool instance.
-func New() *BuilderPool {
+func NewPool() *BuilderPool {
 	bp := BuilderPool{}
 	bp.pool.New = allocBuilder
 	return &bp

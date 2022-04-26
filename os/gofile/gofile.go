@@ -7,7 +7,7 @@ import (
 	"github.com/skeptycal/gosimple/os/basicfile"
 )
 
-var NewFileWithErr = basicfile.NewFileWithErr
+var NewFileWithErr = basicfile.NewBasicFile
 
 // PWD returns a rooted path name corresponding to the
 // current directory. If the current directory can be

@@ -20,7 +20,7 @@ func (p ShPath) Load() error {
 	if err != nil {
 		return err
 	}
-	
+
 	for _, v := range strings.Split(s, ListSep) {
 		if IsDir(v) {
 			p = append(p, v)

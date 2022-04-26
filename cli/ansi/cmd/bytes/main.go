@@ -1,6 +1,6 @@
 package main
 
-import "github.com/skeptycal/ansi"
+import "github.com/skeptycal/gosimple/cli/ansi"
 
 func main() {
 

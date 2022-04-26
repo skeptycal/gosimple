@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/skeptycal/util/stringutils/ansi"
+	"github.com/skeptycal/gosimple/cli/ansi"
+	"github.com/skeptycal/gosimple/cli/miniansi"
 )
 
 var (
@@ -12,7 +13,7 @@ var (
 	me         = os.Args[0]
 	usage      = `usage: ` + me + ` <package name>`
 	red        = ansi.RedText
-	reset      = ansi.Reset
+	reset      = miniansi.ResetColor
 )
 
 func dbecho(format string, args ...any) (n int, err error) {

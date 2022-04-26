@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/skeptycal/ansi/sample_benchmarks/fib/fib"
+	"github.com/skeptycal/gosimple/cli/ansi/sample_benchmarks/fib/fib"
 )
 
 func main() {

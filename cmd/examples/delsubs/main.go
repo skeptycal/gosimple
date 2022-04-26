@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -17,6 +18,7 @@ var (
 
 func FindDirs(dir, pattern string) ([]fs.DirEntry, error) {
 
+	return nil, errors.New("not implemented")
 }
 
 func init() {

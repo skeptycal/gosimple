@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	. "github.com/skeptycal/gosimple/miniansi"
+	. "github.com/skeptycal/gosimple/cli/miniansi"
 )
 
 func ExampleAnsi() {

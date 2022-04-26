@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/skeptycal/goutil/repo/util2/datatools/format"
+	"github.com/skeptycal/gosimple/datatools/format"
 )
 
 func main() {

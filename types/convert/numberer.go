@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/skeptycal/gosimple/constraints"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
 type RealSet[T Real] interface {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/skeptycal/gosimple/errorlogger"
-	"github.com/skeptycal/gosimple/osargs"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
+	"github.com/skeptycal/gosimple/cli/osargs"
 )
 
 var (

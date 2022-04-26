@@ -1,6 +1,6 @@
 package sequence
 
-import "golang.org/x/exp/constraints"
+import "github.com/skeptycal/gosimple/types/constraints"
 
 // "golang.org/x/exp/constraints"
 

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/skeptycal/gosimple/convert"
+	"github.com/skeptycal/gosimple/types/convert"
 )
 
 func main() {

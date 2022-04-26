@@ -6,7 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/skeptycal/goutil/types"
+	"github.com/skeptycal/gosimple/os/gofile"
+	"github.com/skeptycal/gosimple/types"
 )
 
 const defaultTemplatePath = "template_files"

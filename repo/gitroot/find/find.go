@@ -1,8 +1,8 @@
 package find
 
 import (
-	"filepath"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -49,7 +49,7 @@ func AppArgs(s string) (app string, args string) {
 
 func Shell(command string) (string, error) {
 	app, args := AppArgs(command)
-	path, err := filepath.Abs(app)
+	_, err := filepath.Abs(app)
 	if err != nil {
 		return "", err
 	}

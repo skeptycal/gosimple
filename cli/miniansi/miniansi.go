@@ -6,7 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/skeptycal/gosimple/printer"
+	"github.com/skeptycal/gosimple/cli/printer"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
 var DEBUG bool = true // debug or DEV mode
@@ -27,6 +28,16 @@ type Ansier interface {
 	Fprintf1(w io.Writer, format string, args ...interface{}) (n int, err error)
 	Fprintf2(w io.Writer, format string, args ...interface{}) (n int, err error)
 	Fprintf3(w io.Writer, format string, args ...interface{}) (n int, err error)
+}
+
+type Stringer interface {
+	String() string
+}
+
+type ansiString string
+
+func (s ansiString) String() string {
+	return string(s)
 }
 
 type ansi[T AnsiConstraint] struct {
@@ -76,13 +87,13 @@ func (c *ansi[T]) Fprintf3(w io.Writer, format string, args ...interface{}) (n i
 	return
 }
 
-func NewAnsi[T AnsiConstraint](in T) *ansi[T] {
-	s := fmt.Sprint(in)
-	return &ansi[T]{
-		value: in,
-		out:   s,
-		bOut:  []byte(s),
-	}
+func NewAnsi[T constraints.Integer](in T) Stringer {
+	return ansiString(fmt.Sprint(in))
+	// return &ansi[T]{
+	// 	value: in,
+	// 	out:   s,
+	// 	bOut:  []byte(s),
+	// }
 }
 
 // NewAnsi creates a new ansi color code string

@@ -1,8 +1,6 @@
 package miniansi
 
-import (
-	"github.com/skeptycal/gosimple/constraints"
-)
+import "github.com/skeptycal/gosimple/types/constraints"
 
 type AnsiConstraint interface {
 	~string | constraints.Integer // | []byte

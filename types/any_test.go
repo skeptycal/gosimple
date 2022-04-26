@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-var (
-	// LimitResult  = types.LimitResult
-	// TRun         = types.TRun
-	// BRun         = types.BRun
-	// TName        = types.TName
-	globalReturn bool
-)
+// var (
+// // LimitResult  = types.LimitResult
+// // TRun         = types.TRun
+// // BRun         = types.BRun
+// // TName        = types.TName
+// // globalReturn bool
+// )
 
 /* IsComparable benchmarks
 

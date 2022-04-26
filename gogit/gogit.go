@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/skeptycal/gosimple/gofile"
+	"github.com/skeptycal/gosimple/os/gofile"
 	"github.com/skeptycal/zsh"
 )
 

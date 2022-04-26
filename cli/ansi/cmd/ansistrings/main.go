@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/skeptycal/ansi"
+	"github.com/skeptycal/gosimple/cli/ansi"
 )
 
 func main() {

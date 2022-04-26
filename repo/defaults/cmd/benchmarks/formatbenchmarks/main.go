@@ -6,7 +6,7 @@ import (
 	"os"
 	"unicode"
 
-	"github.com/skeptycal/goutil/repo/defaults"
+	"github.com/skeptycal/gosimple/repo/defaults"
 )
 
 const (

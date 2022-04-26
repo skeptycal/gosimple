@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/skeptycal/goutil/repo/errorlogger"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
+	"github.com/skeptycal/gosimple/cmd/goutil_playground/manage/ghshell"
 )
 
 var (

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/skeptycal/goutil/repo/errorlogger"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
 
 var log = errorlogger.New()

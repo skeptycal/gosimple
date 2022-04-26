@@ -92,7 +92,7 @@ func PrintGzip(r io.Reader) (n int64, err error) {
 }
 
 func ReadGzip(dst io.Writer, src io.Reader) (n int64, err error) {
-	defer w.Close()
+	// defer w.Close()
 	return io.Copy(gzip.NewWriter(dst), src)
 
 }

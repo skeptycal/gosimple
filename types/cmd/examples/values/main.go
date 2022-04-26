@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	. "github.com/skeptycal/types"
+	"github.com/skeptycal/gosimple/types"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	var intExample = 42
 	tests := []struct {
 		name string
-		a    Any
+		a    types.Any
 	}{
 		// {"invalid", nil, nil}, // panic
 		// {"Interface", nil},	  // panic
@@ -38,12 +38,12 @@ func main() {
 		{"Complex128", complex128(42)},
 		{"Array", [4]int{42, 42, 42, 42}},
 		{"Chan", make(chan int, 1)},
-		{"Func", IsComparable},
+		{"Func", types.IsComparable},
 		{"Map", make(map[string]interface{})},
 		{"Ptr", &intExample},
 		{"Slice", []int{42}},
 		{"String", "42"},
-		{"Struct", ValueOf(42)},
+		{"Struct", types.ValueOf(42)},
 		{"UnsafePointer", unsafe.Pointer(nil)},
 	}
 

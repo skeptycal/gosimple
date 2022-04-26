@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/skeptycal/gosimple/errorlogger"
-	"github.com/skeptycal/gosimple/gofile"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
+	"github.com/skeptycal/gosimple/os/gofile"
 )
 
 const (

@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/skeptycal/gosimple/primes10k"
-	"github.com/skeptycal/gosimple/sieve"
+	"github.com/skeptycal/gosimple/datatools/primes10k"
+	"github.com/skeptycal/gosimple/datatools/sieve"
 )
 
 var (

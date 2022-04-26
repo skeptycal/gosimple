@@ -16,10 +16,10 @@ func newGenericFuncAny[a any](myAge a) {
 	fmt.Println(myAge)
 }
 
-func newGenericFuncAdd[N Number](n N) {
-	val := ToInt(n) + 1
-	fmt.Println(val)
-}
+// func newGenericFuncAdd[N Number](n N) {
+// 	val := ToInt(n) + 1
+// 	fmt.Println(val)
+// }
 
 func main() {
 	fmt.Println("Go Generics Tutorial")
@@ -35,8 +35,8 @@ func main() {
 	newGenericFuncAny(testAge2)
 	newGenericFuncAny(testString)
 
-	newGenericFuncAdd(testAge)
-	newGenericFuncAdd(testAge2)
+	// newGenericFuncAdd(testAge)
+	// newGenericFuncAdd(testAge2)
 
 }
 

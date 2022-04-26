@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/skeptycal/types"
+	"github.com/skeptycal/gosimple/types"
 )
 
 func GetSampleText() string {

@@ -6,7 +6,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/skeptycal/gosimple/ansi"
+	"github.com/skeptycal/gosimple/cli/ansi"
 )
 
 const (

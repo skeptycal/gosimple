@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/skeptycal/goutil/os/shpath"
+	"github.com/skeptycal/gosimple/os/shpath"
 )
 
 func main() {

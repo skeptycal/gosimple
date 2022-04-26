@@ -1,8 +1,6 @@
 package cli
 
-import (
-	"github.com/skeptycal/gosimple/convert"
-)
+import "github.com/skeptycal/gosimple/types/convert"
 
 var (
 	blank       []byte  = []byte{ansiPrefixByte1, ansiPrefixByte2, 0, ansiSuffixByte}

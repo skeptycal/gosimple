@@ -2,7 +2,6 @@ package dict
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 )
 

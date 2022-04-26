@@ -18,7 +18,6 @@ package so71677581
 import (
 	"fmt"
 	"testing"
-	"unicode"
 )
 
 ///////////////////////////// So Many Comments! /////////////////////////////
@@ -130,30 +129,30 @@ type (
 	TestMap[K comparable, V Ordered] AnyMap[K, Test[V]]
 )
 
-type {
-	func(n int)int
-}
+// type {
+// 	func(n int)int
+// }
 
-type tester[IN Ordered, W any] struct {
-	name    string
-	fn      interface{}
-	in      []IN
-	want    []W
-	wantErr bool
-}
+// type tester[IN Ordered, W any] struct {
+// 	name    string
+// 	fn      interface{}
+// 	in      []IN
+// 	want    []W
+// 	wantErr bool
+// }
 
-func DynamicFunction() {
-	var t IExampleMapTests
+// func DynamicFunction() {
+// 	var t IExampleMapTests
 
-	t = Test{
-		name:    "dynamic",
-		fn:      unicode.IsSpace,
-		in:      []any{" "},
-		want:    []any{true},
-		wantErr: false,
-	}
-
-}
+// 	t = Test{
+// 		name:    "dynamic",
+// 		fn:      unicode.IsSpace,
+// 		in:      []int{42},
+// 		want:    []any{true},
+// 		wantErr: false,
+// 	}
+// 	_ = t
+// }
 
 // CreateSampleInterfaceMap returns an example
 // interface map with several sample values.

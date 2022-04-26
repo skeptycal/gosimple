@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	generic "github.com/skeptycal/goutil/generic/generictypes/dict"
+	"github.com/skeptycal/gosimple/cmd/goutil_playground/dict"
 )
 
 func main() {
-	d := generic.Dict[string, int]{}
+	d := dict.Dict[string, int]{}
 
 	fmt.Println("Is Empty? ", d.IsEmpty())
 	fmt.Println(" /puts stuff in the map ......")

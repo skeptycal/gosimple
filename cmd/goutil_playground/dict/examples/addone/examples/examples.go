@@ -3,10 +3,10 @@ package examples
 import (
 	"fmt"
 
-	"github.com/skeptycal/goutil_playground/constraint"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
-func ExampleAddOne[T constraint.Number](n T) {
+func ExampleAddOne[T constraints.Number](n T) {
 	i := n + 1
 	fmt.Println(i)
 }

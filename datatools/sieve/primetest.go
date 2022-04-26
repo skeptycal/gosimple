@@ -4,7 +4,7 @@ import (
 	"math"
 	"unsafe"
 
-	"github.com/skeptycal/gosimple/constraints"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
 type Floater64 interface {

@@ -1,6 +1,6 @@
 package convert
 
-import "github.com/skeptycal/gosimple/constraints"
+import "github.com/skeptycal/gosimple/types/constraints"
 
 type (
 

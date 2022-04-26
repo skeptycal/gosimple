@@ -3,10 +3,10 @@ package main
 import (
 	"os"
 
-	"github.com/skeptycal/goutil/os/redlogger"
+	"github.com/skeptycal/gosimple/os/gofile/gofile3/redlogger"
 )
 
-var r = redlogger.New(os.Stderr, nil, false)
+var r = redlogger.New(os.Stderr, nil)
 
 func main() {
 	defer r.Flush()

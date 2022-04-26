@@ -5,8 +5,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/skeptycal/gosimple/constraints"
-	"github.com/skeptycal/gosimple/miniansi"
+	"github.com/skeptycal/gosimple/cli/miniansi"
+	"github.com/skeptycal/gosimple/types/constraints"
 )
 
 var DbEcho = miniansi.DbEcho

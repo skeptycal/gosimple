@@ -3,8 +3,10 @@ package gomake
 import (
 	"os"
 
-	"github.com/skeptycal/gosimple/gofile"
+	"github.com/skeptycal/gosimple/os/gofile"
 )
+
+const dirMode = 0755
 
 // MkDir creates the directory dir if it does not exist
 // and changes the current working directory to dir.

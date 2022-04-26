@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/skeptycal/goutil/repo/util2/datatools/math/polynomial"
+	"github.com/skeptycal/gosimple/datatools/math/polynomial"
 )
 
 func main() {

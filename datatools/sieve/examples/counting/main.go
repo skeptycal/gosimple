@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/skeptycal/gosimple/sieve"
+	"github.com/skeptycal/gosimple/datatools/sieve"
 )
 
 func main() {

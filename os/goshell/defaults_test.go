@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/skeptycal/goutil/os/goshell/internal/fixture"
+	"github.com/skeptycal/gosimple/os/goshell/internal/fixture"
 )
 
 type (

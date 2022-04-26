@@ -7,7 +7,7 @@ import (
 	"sync"
 	"unicode"
 
-	. "github.com/skeptycal/goutil/repo/repo_management/config" // _ "config"
+	. "github.com/skeptycal/gosimple/repo/repo_management/config" // _ "config"
 )
 
 // IsFile reports whether m describes a regular file.

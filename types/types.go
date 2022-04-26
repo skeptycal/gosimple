@@ -3,7 +3,7 @@ package types
 import (
 	"reflect"
 
-	"github.com/skeptycal/errorlogger"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
 
 var (
