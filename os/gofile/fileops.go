@@ -92,7 +92,6 @@ func StatCheck(filename string) (os.FileInfo, error) {
 	if m&(1<<2) == 0 {
 		// err = Wrap(err, "")
 		return nil, Err(NewGoFileError("gofile.StatCheck()#insufficient_permissions", filename, ErrPermission))
-		fmt.Errorf("insufficient permissions: %v", filename)
 	}
 
 	if fi.IsDir() {
