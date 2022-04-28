@@ -21,13 +21,15 @@ func GetEnv(envVarName string, defaultValue string) (retval string) {
 	return
 }
 
-func RunCMD(name string, args ...string) (err error, stdout, stderr []string) {
-	c := cmd.NewCmd(name, args...)
-	s := <-c.Start()
-	stdout = s.Stdout
-	stderr = s.Stderr
-	return
-}
+// func getCmd()
+
+// func RunCMD(name string, args ...string) (err error, stdout, stderr []string) {
+// 	c := cmd.NewCmd(name, args...)
+// 	s := <-c.Start()
+// 	stdout = s.Stdout
+// 	stderr = s.Stderr
+// 	return
+// }
 
 func Shellout(command string) (string, string, error) {
 	var stdout bytes.Buffer
