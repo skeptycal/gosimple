@@ -1,8 +1,9 @@
 package goshell
 
 import (
-	"strings"
 	"testing"
+
+	_ "github.com/skeptycal/gosimple/tests"
 )
 
 func sout(s string) (stout string) {
@@ -24,50 +25,78 @@ func errString(s string) (e string) {
 	return cerr(s).Error()
 }
 
-func assertStringPrefix(s string, prefix string) (retval string) {
-	if strings.HasPrefix(s, prefix) {
-		return s
-	} else {
-		return "**fail**"
+func TestAssertions(t *testing.T) {
+	tests := []struct {
+		name      string
+		assertion func(...string) bool
+		in        []string
+		want      bool
+	}{
+		{"is TES", tests.AssertTheEmptyString, []string{""}, true},
+		{"not TES", tests.AssertTheEmptyString, []string{"false"}, false},
+		{"has prefix", tests.AssertStringHasPrefix, []string{"pre", "prefix"}, true},
+		{"not has prefix", tests.AssertStringHasPrefix, []string{"pre", "false"}, false},
+		{"has suffix", tests.AssertStringHasSuffix, []string{"fix", "suffix"}, true},
+		{"not has suffix", tests.AssertStringHasSuffix, []string{"fixx", "false"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.assertion(tt.in...)
+			if got != tt.want {
+				t.Errorf("%v(%v) assertion test = %v, want %v", tt.name, tt.in, got, tt.want)
+			}
+		})
 	}
 }
 
 func TestShellout(t *testing.T) {
 	tests := []struct {
-		command    string
-		wantStdout string
-		wantStderr string
-		wantErr    bool
+		command      string
+		assertStdout func(...string) bool
+		outArg       string
+		assertStderr func(...string) bool
+		errArg       string
+		wantErr      bool
 	}{
 		// TODO - this is a bunch of strange tests ...
 		{
 			`echo "hello, world"`,
-			func(s string) string { return s }("hello, world\n"),
+			assertStringHasPrefix,
+			"hello, world\n",
+			assertTheEmptyString,
 			"",
 			false,
 		},
 		{
 			`git --version`,
-			assertStringPrefix(sout("git --version"), "git version"),
+			assertStringHasPrefix,
+			"git version",
+			assertTheEmptyString,
 			"",
 			false,
 		},
 		{
 			`go version`,
-			assertStringPrefix(sout("go version"), "go version"),
-			func() string { return "" }(),
+			assertStringHasPrefix,
+			"go version",
+			assertTheEmptyString,
+			"",
 			false,
 		},
 		{
 			`gh version`,
-			assertStringPrefix(sout("gh version"), "gh version"),
+			assertStringHasPrefix,
+			"gh version",
+			assertTheEmptyString,
 			"", // func() string { return "" }(),
 			false,
 		},
 		{
 			`go fakeoption`,
-			"", // func() string { return "" }(),
-			assertStringPrefix(serr("go fakeoption"), "go fakeoption: unknown"),
+			assertTheEmptyString,
+			"",
+			assertStringHasPrefix,
+			"go fakeoption: unknown command",
 			true,
 		},
 	}
@@ -78,11 +107,11 @@ func TestShellout(t *testing.T) {
 				t.Errorf("Shellout() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if gotStdout != tt.wantStdout {
-				t.Errorf("Shellout() stdout = %q, want %q", gotStdout, tt.wantStdout)
+			if outGot := tt.assertStdout(tt.outArg, gotStdout); !outGot {
+				t.Errorf("Shellout() stdout string assertion = %v, want true (%q)", outGot, gotStdout)
 			}
-			if gotStderr != tt.wantStderr {
-				t.Errorf("Shellout() stderr = %q, want %q", gotStderr, tt.wantStderr)
+			if outErr := tt.assertStderr(tt.errArg, gotStderr); !outErr {
+				t.Errorf("Shellout() stderr string assertion = %v, want true (%q)", outErr, gotStderr)
 			}
 		})
 	}
