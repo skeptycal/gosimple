@@ -3,7 +3,7 @@ package goshell
 import (
 	"testing"
 
-	_ "github.com/skeptycal/gosimple/tests"
+	tests "github.com/skeptycal/gosimple/tests"
 )
 
 func sout(s string) (stout string) {
@@ -25,30 +25,6 @@ func errString(s string) (e string) {
 	return cerr(s).Error()
 }
 
-func TestAssertions(t *testing.T) {
-	tests := []struct {
-		name      string
-		assertion func(...string) bool
-		in        []string
-		want      bool
-	}{
-		{"is TES", tests.AssertTheEmptyString, []string{""}, true},
-		{"not TES", tests.AssertTheEmptyString, []string{"false"}, false},
-		{"has prefix", tests.AssertStringHasPrefix, []string{"pre", "prefix"}, true},
-		{"not has prefix", tests.AssertStringHasPrefix, []string{"pre", "false"}, false},
-		{"has suffix", tests.AssertStringHasSuffix, []string{"fix", "suffix"}, true},
-		{"not has suffix", tests.AssertStringHasSuffix, []string{"fixx", "false"}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := tt.assertion(tt.in...)
-			if got != tt.want {
-				t.Errorf("%v(%v) assertion test = %v, want %v", tt.name, tt.in, got, tt.want)
-			}
-		})
-	}
-}
-
 func TestShellout(t *testing.T) {
 	tests := []struct {
 		command      string
@@ -61,41 +37,41 @@ func TestShellout(t *testing.T) {
 		// TODO - this is a bunch of strange tests ...
 		{
 			`echo "hello, world"`,
-			assertStringHasPrefix,
+			tests.AssertStringHasPrefix,
 			"hello, world\n",
-			assertTheEmptyString,
+			tests.AssertTheEmptyString,
 			"",
 			false,
 		},
 		{
 			`git --version`,
-			assertStringHasPrefix,
+			tests.AssertStringHasPrefix,
 			"git version",
-			assertTheEmptyString,
+			tests.AssertTheEmptyString,
 			"",
 			false,
 		},
 		{
 			`go version`,
-			assertStringHasPrefix,
+			tests.AssertStringHasPrefix,
 			"go version",
-			assertTheEmptyString,
+			tests.AssertTheEmptyString,
 			"",
 			false,
 		},
 		{
 			`gh version`,
-			assertStringHasPrefix,
+			tests.AssertStringHasPrefix,
 			"gh version",
-			assertTheEmptyString,
+			tests.AssertTheEmptyString,
 			"", // func() string { return "" }(),
 			false,
 		},
 		{
 			`go fakeoption`,
-			assertTheEmptyString,
+			tests.AssertTheEmptyString,
 			"",
-			assertStringHasPrefix,
+			tests.AssertStringHasPrefix,
 			"go fakeoption: unknown command",
 			true,
 		},

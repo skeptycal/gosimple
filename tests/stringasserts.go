@@ -1,4 +1,4 @@
-package testing
+package tests
 
 import (
 	"strings"
@@ -39,15 +39,22 @@ func StringFields(args ...string) []string {
 // and normalized.
 //
 // Args2pairs will panic if the number of arguments
-// is not a multiple of 2.
+// is less than 2 or not a multiple of 2.
 func Args2pairs(args ...string) [][2]string {
+	if len(args) < 2 {
+		panic("args2pairs: must be at least 2 arguments")
+	}
 	if len(args)%2 != 0 {
 		panic("args2pairs: number of arguments must be multiple of 2")
 	}
-	args = StringFields(args...)
-	list := make([][2]string, 0, len(args)/2)
-	for i := 0; i < len(args); i = +2 {
-		list = append(list, [2]string{args[i], args[i+1]})
+
+	// length of args is a positive even integer number of arguments
+	fields := StringFields(args...)
+	listLen := len(fields) / 2
+
+	list := make([][2]string, 0, listLen)
+	for i := 0; i < len(fields); i = +2 {
+		list = append(list, [2]string{fields[i], fields[i+1]})
 	}
 	return list
 }
