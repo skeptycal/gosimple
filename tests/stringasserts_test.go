@@ -32,23 +32,20 @@ func TestArgs2Pairs(t *testing.T) {
 	tests := []struct {
 		name    string
 		in      []string
-		want    []string
+		want    [][2]string
 		wantErr bool
 	}{
 		{"nil slice", nil, nil, true},
-		{"empty slice", []string{}, []string{}, true},
-		{"below min input length", []string{"no"}, []string{"no"}, true},
-		{"TES", []string{"", ""}, []string{"", ""}, true},
-		{"below min input length", []string{"no"}, []string{"no"}, true},
-		// {"TES", []string{"", ""}, []string{"", ""}, false},
-		// {"TES", []string{"false", "false"}, []string{""}, true},
-		// {"TES", []string{"false"}, []string{""}, false},
-		// {"TES", []string{"false"}, []string{""}, false},
+		{"empty slice", []string{}, [][2]string{}, true},
+		{"TES", []string{"", ""}, [][2]string{{"", ""}}, true},
+		{"below min input length", []string{"no"}, [][2]string{{"no", ""}}, true},
+		{"two strings", []string{"one", "two"}, [][2]string{{"one", "two"}}, false},
+		{"four strings", []string{"one", "two", "three", "four"}, [][2]string{{"one", "two"}, {"three", "four"}}, false},
+		// {"two strings reversed", []string{"one", "two"}, [][2]string{{"two", "one"}}, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			// tests for panic conditions
 			/// the function will panic if either of these are true
 			if len(tt.in) < 2 || len(tt.in)%2 != 0 {
@@ -57,16 +54,15 @@ func TestArgs2Pairs(t *testing.T) {
 				}
 				return // no further tests if input slice is invalid
 			}
-			out := StringFields(tt.in...)
-			if len(out) != len(tt.want) {
-				if !tt.wantErr {
-					t.Errorf("%v(%v) output slice length = %d, want %d", testname, tt.name, len(out), len(tt.want))
-				}
-				return // no further tests if slice lengths are not equal
-			}
-			for i, got := range out {
-				if (got != tt.want[i]) != tt.wantErr {
-					t.Errorf("%v(%q) assertion test = %q, want %q", testname, tt.name, got, tt.want[i])
+			out := Args2Pairs(tt.in...)
+			for i := 0; i < len(out); i += 2 {
+				for i, got := range out {
+					if (got[i] != tt.want[i/2][0]) != tt.wantErr {
+						t.Errorf("%v(%q) assertion test = %q, want %q", testname, tt.name, out[i], tt.want[i])
+					}
+					if (got[i+1] != tt.want[i/2][1]) != tt.wantErr {
+						t.Errorf("%v(%q) assertion test = %q, want %q", testname, tt.name, out[i+1], tt.want[i])
+					}
 				}
 			}
 		})
@@ -74,6 +70,8 @@ func TestArgs2Pairs(t *testing.T) {
 }
 
 func TestStringFields(t *testing.T) {
+	testname := "TestStringFields"
+
 	tests := []struct {
 		name    string
 		in      []string
@@ -82,10 +80,10 @@ func TestStringFields(t *testing.T) {
 	}{
 		{"TES", []string{""}, []string{""}, true},
 		{"equal", []string{"true"}, []string{"true"}, false},
-		{"not equal", []string{"false"}, []string{"true"}, false},
+		{"not equal", []string{"false"}, []string{"true"}, true},
 		{"length not equal", []string{"1", "2", "3"}, []string{"false"}, true},
 		{"two strings", []string{"true", "true"}, []string{"true", "true"}, false},
-		// {"not equal", []string{"false"}, []string{""}, true},
+		{"three strings", []string{"1", "2", "3"}, []string{"1", "2", "3"}, false},
 	}
 
 	for _, tt := range tests {
@@ -98,11 +96,32 @@ func TestStringFields(t *testing.T) {
 				return // no further tests if slice lengths are not equal
 			}
 			for i, got := range out {
-				if got != tt.want[i] {
+				if got != tt.want[i] != tt.wantErr {
 					// if !tt.wantErr {
-					t.Errorf("TestStringFields(%v)[%v] = %q, want %q", tt.name, i, got, tt.want[i])
+					t.Errorf("%v(%v)[%v] = %q, want %q", testname, tt.name, i, got, tt.want[i])
 					// }
 				}
+			}
+		})
+	}
+}
+
+func TestAssertStringEqualFold(t *testing.T) {
+	testname := "AssertStringEqualFold"
+	tests := []struct {
+		name    string
+		in      []string
+		want    bool
+		wantErr bool
+	}{
+		{"TES", []string{"", "", ""}, false, false},
+		// {"", []string{""}, false, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := AssertStringEqualFold(tt.in...)
+			if got != tt.want != tt.wantErr {
+				t.Errorf("%v(%v) = %v, want %v", testname, tt.name, got, tt.want)
 			}
 		})
 	}
