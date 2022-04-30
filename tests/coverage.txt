@@ -1,0 +1,35 @@
+--------------------------- Apr 30 2022: 10:59 ---------------------------
+mode: atomic
+github.com/skeptycal/gosimple/tests/stringasserts.go:10.49,11.25 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:14.2,14.29 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:19.2,19.13 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:11.25,13.3 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:14.29,15.37 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:15.37,17.4 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:25.49,26.26 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:29.2,29.29 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:34.2,34.13 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:26.26,28.3 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:29.29,30.37 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:30.37,32.4 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:46.49,47.26 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:50.2,51.28 2 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:56.2,56.13 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:47.26,49.3 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:51.28,52.40 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:52.40,54.4 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:61.48,62.25 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:67.2,67.13 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:62.25,63.14 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:63.14,65.4 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:73.38,74.39 1 5
+github.com/skeptycal/gosimple/tests/stringasserts.go:77.2,77.13 1 4
+github.com/skeptycal/gosimple/tests/stringasserts.go:74.39,76.3 1 1
+github.com/skeptycal/gosimple/tests/stringasserts.go:82.44,84.2 1 8
+github.com/skeptycal/gosimple/tests/stringasserts.go:92.45,93.19 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:96.2,96.22 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:101.2,105.38 4 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:108.2,108.13 1 2
+github.com/skeptycal/gosimple/tests/stringasserts.go:93.19,94.52 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:96.22,97.65 1 0
+github.com/skeptycal/gosimple/tests/stringasserts.go:105.38,107.3 1 1
