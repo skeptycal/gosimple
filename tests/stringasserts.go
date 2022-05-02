@@ -8,7 +8,7 @@ import (
 // string arguments have the given prefix.
 // args[0] must contain the prefix being tested.
 func AssertStringHasPrefix(args ...string) bool {
-	if CheckPairs(args...) {
+	if !CheckPairs(args...) {
 		return false
 	}
 	for _, s := range args[1:] {
@@ -65,45 +65,4 @@ func AssertTheEmptyString(args ...string) bool {
 		}
 	}
 	return true
-}
-
-// CheckPairs returns true if the given args
-// slice has a length of a positive integer multiple
-// of two.
-func CheckPairs(args ...string) bool {
-	if len(args) < 2 || len(args)%2 != 0 {
-		return false
-	}
-	return true
-}
-
-// StringFields cleans and normalizes whitespace
-// in a slice of strings.
-func StringFields(args ...string) []string {
-	return strings.Fields(strings.Join(args, " "))
-}
-
-// Args2Pairs returns a slice of string pairs from
-// a standard slice of strings. Whitespace is trimmed
-// and normalized.
-//
-// Args2Pairs will panic if the number of arguments
-// is less than 2 or not a multiple of 2.
-func Args2Pairs(args ...string) [][2]string {
-	if len(args) < 2 {
-		panic("args2pairs: must be at least 2 arguments")
-	}
-	if len(args)%2 != 0 {
-		panic("args2pairs: number of arguments must be multiple of 2")
-	}
-
-	// length of args is a positive even integer number of arguments
-	fields := StringFields(args...)
-	listLen := len(fields) / 2
-
-	list := make([][2]string, 0, listLen)
-	for i := 0; i < len(fields); i = +2 {
-		list = append(list, [2]string{fields[i], fields[i+1]})
-	}
-	return list
 }

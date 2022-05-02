@@ -1,6 +1,8 @@
 package tests
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAssertions(t *testing.T) {
 	testname := "TestAssertions"
@@ -12,10 +14,12 @@ func TestAssertions(t *testing.T) {
 	}{
 		{"is TES", AssertTheEmptyString, []string{""}, true},
 		{"not TES", AssertTheEmptyString, []string{"false"}, false},
-		{"has prefix", AssertStringHasPrefix, []string{"pre", "prefix"}, false},
+		{"has prefix", AssertStringHasPrefix, []string{"pre", "prefix"}, true},
 		{"not has prefix", AssertStringHasPrefix, []string{"pre", "false"}, false},
 		{"has suffix", AssertStringHasSuffix, []string{"fix", "suffix"}, true},
 		{"not has suffix", AssertStringHasSuffix, []string{"fixx", "false"}, false},
+		{"CheckPairs", CheckPairs[string], []string{"fixx", "false"}, true},
+		{"not CheckPairs", CheckPairs[string], []string{"fixx", "false", "wrong"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -27,24 +31,36 @@ func TestAssertions(t *testing.T) {
 	}
 }
 
-func TestArgs2Pairs(t *testing.T) {
-	testname := "TestArgs2Pairs"
-	tests := []struct {
-		name    string
-		in      []string
-		want    [][2]string
-		wantErr bool
+func TestCheckPairs(t *testing.T) {
+	testname := "CheckPairs"
+	var pairTests = []struct {
+		name string
+		in   []string
+		want bool
 	}{
-		{"nil slice", nil, nil, true},
-		{"empty slice", []string{}, [][2]string{}, true},
-		{"TES", []string{"", ""}, [][2]string{{"", ""}}, true},
-		{"below min input length", []string{"no"}, [][2]string{{"no", ""}}, true},
-		{"two strings", []string{"one", "two"}, [][2]string{{"one", "two"}}, false},
-		// {"four strings", []string{"one", "two", "three", "four"}, [][2]string{{"one", "two"}, {"three", "four"}}, false},
-		// {"two strings reversed", []string{"one", "two"}, [][2]string{{"two", "one"}}, false},
+		{"nil slice", nil, false},
+		{"empty slice", []string{}, false},
+		{"TES", []string{""}, false},
+		{"2xTES", []string{"", ""}, true},
+		{"<2 args", []string{"no"}, false},
+		{"two strings", []string{"one", "two"}, true},
+		{"three strings", []string{"one", "two", "three"}, false},
+		{"four strings", []string{"one", "two", "three", "four"}, true},
+		{"two strings reversed", []string{"one", "two"}, true},
 	}
+	for _, tt := range pairTests {
+		t.Run(testname, func(t *testing.T) {
+			if got := CheckPairs(tt.in...); got != tt.want {
+				t.Errorf("%v(%v) correct input pairs = %v, want %v", testname, tt.name, got, tt.want)
+			}
 
-	for _, tt := range tests {
+		})
+	}
+}
+
+func TestArgs2Pairs(t *testing.T) {
+	testname := "Args2Pairs"
+	for _, tt := range pairTests {
 		t.Run(tt.name, func(t *testing.T) {
 			// tests for panic conditions
 			/// the function will panic if either of these are true
@@ -70,8 +86,7 @@ func TestArgs2Pairs(t *testing.T) {
 }
 
 func TestStringFields(t *testing.T) {
-	testname := "TestStringFields"
-
+	testname := "StringFields"
 	tests := []struct {
 		name    string
 		in      []string
@@ -83,22 +98,25 @@ func TestStringFields(t *testing.T) {
 		{"not equal", []string{"false"}, []string{"true"}, true},
 		{"length not equal", []string{"1", "2", "3"}, []string{"false"}, true},
 		{"two strings", []string{"true", "true"}, []string{"true", "true"}, false},
-		{"three strings", []string{"1", "2", "3"}, []string{"1", "2", "3"}, false},
+		{"three strings", []string{"1", "2", "3"}, []string{"1", "2", "3"}, true},
+		{"3 strings 4 fields", []string{"1 1", "2", "3"}, []string{"1", "1", "2", "3"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			out := StringFields(tt.in...)
-			if len(out) != len(tt.want) {
+			out := ToFields(tt.in...)
+			got := len(out)
+			want := len(tt.want)
+			if got < want {
 				if !tt.wantErr {
-					t.Errorf("TestStringFields(%v) slice length = %v, want %v", tt.name, len(out), len(tt.want))
+					t.Errorf("%v(%v) slice length = %v, want %v", testname, tt.name, got, want)
 				}
-				return // no further tests if slice lengths are not equal
+				return // no further tests
 			}
 			for i, got := range out {
-				if got != tt.want[i] != tt.wantErr {
-					// if !tt.wantErr {
-					t.Errorf("%v(%v)[%v] = %q, want %q", testname, tt.name, i, got, tt.want[i])
-					// }
+				if !Contains(got, tt.want) {
+					if !tt.wantErr {
+						t.Errorf("%v(%v)[%v] = %q, want %q", testname, tt.name, i, got, tt.want[i])
+					}
 				}
 			}
 		})
@@ -121,6 +139,57 @@ func TestAssertStringEqualFold(t *testing.T) {
 			got := AssertStringEqualFold(tt.in...)
 			if got != tt.want != tt.wantErr {
 				t.Errorf("%v(%v) = %v, want %v", testname, tt.name, got, tt.want)
+			}
+		})
+	}
+}
+
+var pairTests = []struct {
+	name    string
+	in      []string
+	want    [][2]string
+	wantErr bool
+}{
+	{"nil slice", nil, nil, true},
+	{"empty slice", []string{}, [][2]string{}, true},
+	{"TES", []string{"", ""}, [][2]string{{"", ""}}, true},
+	{"below min input length", []string{"no"}, [][2]string{{"no", ""}}, true},
+	{"two strings", []string{"one", "two"}, [][2]string{{"one", "two"}}, false},
+	// {"four strings", []string{"one", "two", "three", "four"}, [][2]string{{"one", "two"}, {"three", "four"}}, false},
+	// {"two strings reversed", []string{"one", "two"}, [][2]string{{"two", "one"}}, false},
+}
+
+func getT[T any](v T) T {
+	return T(v)
+}
+
+func TestLen(t *testing.T) {
+	testname := "Len"
+	i := 42
+	arr1 := [2]int{1, 2}
+	tests := []struct {
+		name  string
+		elems any
+		want  int
+	}{
+		{"nil", nil, 0},
+		{"empty", []any{}, 0},
+		{"1", []any{1}, 1},
+		{"2", []any{1, 2}, 2},
+		{"bool", true, 1},
+		{"array", arr1, 2},
+		{"map", map[int]bool{1: true, 2: false}, 2},
+		{"slice", []byte{32, 48, 65}, 3},
+		{"chan", make(chan int), 0},
+		{"string", "string", 6},
+		{"ptr int", &i, 2},
+		{"ptr array", &arr1, 5},
+		{"int", 42, 2},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Len(tt.elems); got != tt.want {
+				t.Errorf("%v(%v) (%v) = %v, want %v", testname, tt.name, tt.elems, got, tt.want)
 			}
 		})
 	}

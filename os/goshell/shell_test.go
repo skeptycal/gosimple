@@ -38,7 +38,7 @@ func TestShellout(t *testing.T) {
 		{`echo "hello, world"`, "hello, world\n", 0, "", 0, nil, false},
 		{`git --version`, "git version", 11, "", 11, nil, false},
 		{`go version`, "go version", 10, "", 0, nil, false},
-		{`gh version`, "gh version", 10 , "", 0, nil, false},
+		{`gh version`, "gh version", 10, "", 0, nil, false},
 		{`go fakeoption`, "", 0, "go fakeoption: unknown command", 0, nil, true},
 	}
 	for _, tt := range tests {
@@ -65,4 +65,4 @@ func TestShellout(t *testing.T) {
 			}
 		})
 	}
-}                                                  111111111111111111111111111111111111111111111
+}
