@@ -2,25 +2,28 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//////////// Smart Tests adapted from the standard library sync.Pool package.
 // Pool is no-op under race detector, so all these tests do not work.
 //go:build !race
 
-package bufferpool_test
+package bufferpool
 
 import (
 	"runtime"
 	"runtime/debug"
 	"sort"
-	. "sync"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 )
 
+type SyncPool = sync.Pool
+
 func TestPool(t *testing.T) {
 	// disable GC so we can control when it happens.
 	defer debug.SetGCPercent(debug.SetGCPercent(-1))
-	var p Pool
+	var p SyncPool
 	if p.Get() != nil {
 		t.Fatal("expected empty")
 	}
@@ -63,7 +66,7 @@ func TestPoolNew(t *testing.T) {
 	defer debug.SetGCPercent(debug.SetGCPercent(-1))
 
 	i := 0
-	p := Pool{
+	p := SyncPool{
 		New: func() any {
 			i++
 			return i
@@ -90,18 +93,18 @@ func TestPoolNew(t *testing.T) {
 	}
 }
 
-// Test that Pool does not hold pointers to previously cached resources.
+// Test that SyncPool does not hold pointers to previously cached resources.
 func TestPoolGC(t *testing.T) {
 	testPool(t, true)
 }
 
-// Test that Pool releases resources on GC.
+// Test that SyncPool releases resources on GC.
 func TestPoolRelease(t *testing.T) {
 	testPool(t, false)
 }
 
 func testPool(t *testing.T, drain bool) {
-	var p Pool
+	var p SyncPool
 	const N = 100
 loop:
 	for try := 0; try < 3; try++ {
@@ -139,7 +142,7 @@ func TestPoolStress(t *testing.T) {
 	if testing.Short() {
 		N /= 100
 	}
-	var p Pool
+	var p SyncPool
 	done := make(chan bool)
 	for i := 0; i < P; i++ {
 		go func() {
@@ -163,91 +166,8 @@ func TestPoolStress(t *testing.T) {
 	}
 }
 
-// func TestPoolDequeue(t *testing.T) {
-// 	testPoolDequeue(t, NewPoolDequeue(16))
-// }
-
-// func TestPoolChain(t *testing.T) {
-// 	testPoolDequeue(t, NewPoolChain())
-// }
-
-// func testPoolDequeue(t *testing.T, d PoolDequeue) {
-// 	const P = 10
-// 	var N int = 2e6
-// 	if testing.Short() {
-// 		N = 1e3
-// 	}
-// 	have := make([]int32, N)
-// 	var stop int32
-// 	var wg WaitGroup
-// 	record := func(val int) {
-// 		atomic.AddInt32(&have[val], 1)
-// 		if val == N-1 {
-// 			atomic.StoreInt32(&stop, 1)
-// 		}
-// 	}
-
-// 	// Start P-1 consumers.
-// 	for i := 1; i < P; i++ {
-// 		wg.Add(1)
-// 		go func() {
-// 			fail := 0
-// 			for atomic.LoadInt32(&stop) == 0 {
-// 				val, ok := d.PopTail()
-// 				if ok {
-// 					fail = 0
-// 					record(val.(int))
-// 				} else {
-// 					// Speed up the test by
-// 					// allowing the pusher to run.
-// 					if fail++; fail%100 == 0 {
-// 						runtime.Gosched()
-// 					}
-// 				}
-// 			}
-// 			wg.Done()
-// 		}()
-// 	}
-
-// 	// Start 1 producer.
-// 	nPopHead := 0
-// 	wg.Add(1)
-// 	go func() {
-// 		for j := 0; j < N; j++ {
-// 			for !d.PushHead(j) {
-// 				// Allow a popper to run.
-// 				runtime.Gosched()
-// 			}
-// 			if j%10 == 0 {
-// 				val, ok := d.PopHead()
-// 				if ok {
-// 					nPopHead++
-// 					record(val.(int))
-// 				}
-// 			}
-// 		}
-// 		wg.Done()
-// 	}()
-// 	wg.Wait()
-
-// 	// Check results.
-// 	for i, count := range have {
-// 		if count != 1 {
-// 			t.Errorf("expected have[%d] = 1, got %d", i, count)
-// 		}
-// 	}
-// 	// Check that at least some PopHeads succeeded. We skip this
-// 	// check in short mode because it's common enough that the
-// 	// queue will stay nearly empty all the time and a PopTail
-// 	// will happen during the window between every PushHead and
-// 	// PopHead.
-// 	if !testing.Short() && nPopHead == 0 {
-// 		t.Errorf("popHead never succeeded")
-// 	}
-// }
-
 func BenchmarkPool(b *testing.B) {
-	var p Pool
+	var p SyncPool
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			p.Put(1)
@@ -257,7 +177,7 @@ func BenchmarkPool(b *testing.B) {
 }
 
 func BenchmarkPoolOverflow(b *testing.B) {
-	var p Pool
+	var p SyncPool
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			for b := 0; b < 100; b++ {
@@ -273,7 +193,7 @@ func BenchmarkPoolOverflow(b *testing.B) {
 // Simulate object starvation in order to force Ps to steal objects
 // from other Ps.
 func BenchmarkPoolStarvation(b *testing.B) {
-	var p Pool
+	var p SyncPool
 	count := 100
 	// Reduce number of putted objects by 33 %. It creates objects starvation
 	// that force P-local storage to steal objects from other Ps.
@@ -299,7 +219,7 @@ func BenchmarkPoolSTW(b *testing.B) {
 	var mstats runtime.MemStats
 	var pauses []uint64
 
-	var p Pool
+	var p SyncPool
 	for i := 0; i < b.N; i++ {
 		// Put a large number of items into a pool.
 		const N = 100000
@@ -336,7 +256,7 @@ func BenchmarkPoolExpensiveNew(b *testing.B) {
 	defer func() { globalSink = nil }()
 
 	// Create a pool that's "expensive" to fill.
-	var p Pool
+	var p SyncPool
 	var nNew uint64
 	p.New = func() any {
 		atomic.AddUint64(&nNew, 1)
@@ -347,7 +267,7 @@ func BenchmarkPoolExpensiveNew(b *testing.B) {
 	runtime.ReadMemStats(&mstats1)
 	b.RunParallel(func(pb *testing.PB) {
 		// Simulate 100X the number of goroutines having items
-		// checked out from the Pool simultaneously.
+		// checked out from the SyncPool simultaneously.
 		items := make([]any, 100)
 		var sink []byte
 		for pb.Next() {

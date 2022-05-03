@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/skeptycal/gosimple/datatools/bufferpool"
 )
@@ -59,7 +60,9 @@ func Shell(commands ...string) (string, string, error) {
 	// return stdout.String(), stderr.String(), err
 }
 
-var buf = bufferpool.NewBufferPool(0)
+var buf = bufferpool.NewPool[*bytes.Buffer](nil)
+
+var syncPool = sync.Pool{}
 
 // ShellPool executes the named shell command and returns
 // stdout, stderr, and any error that occurred.
@@ -72,13 +75,13 @@ var buf = bufferpool.NewBufferPool(0)
 func ShellPool(args ...string) (string, string, error) {
 	var stdout *bytes.Buffer
 	var stderr *bytes.Buffer
-	defer buf.Swimmer(buf, stdout)()
-	defer bufferpool.Swimmer(stderr)(stderr)
+	defer bufferpool.Swimmer(syncPool, stdout)()
+	defer bufferpool.Swimmer(syncPool, stderr)()
 	//  = bufferPool.Get().(bytes.Buffer)
 	// defer bufferPool.Put(stdout)
 
 	// cmd := exec.Command("sh", "-c", `dscl -q . -read /Users/"$(whoami)" NFSHomeDirectory | sed 's/^[^ ]*: //'`)
-	return bufferShell(ctxShell, &stdout, &stderr, shell, argStub(args...)...)
+	return bufferShell(ctxShell, stdout, stderr, shell, argStub(args...)...)
 
 	cmd := exec.CommandContext(ctxShell, shell, append(argStubBlank, args...)...)
 	cmd.Stdout = stdout
