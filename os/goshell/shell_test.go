@@ -5,17 +5,17 @@ import (
 )
 
 func sout(s string) (stout string) {
-	stout, _, _ = Shellout(s)
+	stout, _, _ = Shell(s)
 	return
 }
 
 func serr(s string) (sterr string) {
-	_, sterr, _ = Shellout(s)
+	_, sterr, _ = Shell(s)
 	return
 }
 
 func cerr(s string) (err error) {
-	_, _, err = Shellout(s)
+	_, _, err = Shell(s)
 	return err
 }
 
@@ -43,7 +43,7 @@ func TestShellout(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.in, func(t *testing.T) {
-			gotStdout, gotStderr, gotErr := Shellout(tt.in)
+			gotStdout, gotStderr, gotErr := Shell(tt.in)
 			if (gotErr != nil) != tt.wantErr {
 				t.Errorf("%v() error = %v, wantErr %v", testname, gotErr, tt.wantErr)
 				return

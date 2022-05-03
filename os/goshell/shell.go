@@ -4,22 +4,22 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/skeptycal/gosimple/datatools/bufferpool"
 )
 
-const defaultShell = "bash"
+const (
+	defaultShell = "bash"
+	cOption      = "-c"
+)
 
-var shell = GetEnv("$SHELL", defaultShell)
-
-func GetEnv(envVarName string, defaultValue string) (retval string) {
-	retval = os.ExpandEnv(envVarName)
-	if retval == "" {
-		return defaultValue
-	}
-	return
-}
+var (
+	shell        string          = GetEnv("$SHELL", defaultShell)
+	argStubBlank []string        = []string{cOption}
+	ctxShell     context.Context = context.TODO()
+)
 
 // func getCmd()
 
@@ -30,44 +30,64 @@ func GetEnv(envVarName string, defaultValue string) (retval string) {
 // 	stderr = s.Stderr
 // 	return
 // }
-
-func Shellout(command string) (string, string, error) {
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	cmd := exec.Command(shell, "-c", command)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+func bufferShell(ctx context.Context, stdout, stderr *bytes.Buffer, name string, args ...string) (string, string, error) {
+	cmd := exec.CommandContext(ctxShell, name, argStub(args...)...) //append(argStubBlank, args...)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
 	err := cmd.Run()
 	return stdout.String(), stderr.String(), err
 }
 
-const cOption = "-c"
-
-var argStub = []string{cOption}
-
-var ctxShell = context.TODO()
-
 // ShBuffered executes the named shell command and returns
 // stdout, stderr, and any error that occurred.
 //
+// The buffers for the command outputs are standard
+// bytes.Buffers and may not be performant for multiple
+// repeated commands. See ShellPool.
+//
 // The default timeout is 10 seconds.
-func ShBuffered(args ...string) (string, string, error) {
+func Shell(commands ...string) (string, string, error) {
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	// cmd := exec.Command(shell, "-c", commands)
+	// cmd := exec.CommandContext(ctxShell, shell, append(argStubBlank, commands...)...)
+	return bufferShell(ctxShell, &stdout, &stderr, commands[0], commands[1:]...)
+
+	// cmd.Stdout = &stdout
+	// cmd.Stderr = &stderr
+	// err := cmd.Run()
+	// return stdout.String(), stderr.String(), err
+}
+
+var buf = bufferpool.NewBufferPool(0)
+
+// ShellPool executes the named shell command and returns
+// stdout, stderr, and any error that occurred.
+//
+// The buffers for the command outputs are sync.Pool
+// bytes.Buffers and are safe for concurrent use and
+// streamlined for high performance.
+//
+// The default timeout is 10 seconds.
+func ShellPool(args ...string) (string, string, error) {
 	var stdout *bytes.Buffer
 	var stderr *bytes.Buffer
-	defer Swimmer(stdout)(stdout)
-	defer Swimmer(stderr)(stderr)
+	defer buf.Swimmer(buf, stdout)()
+	defer bufferpool.Swimmer(stderr)(stderr)
 	//  = bufferPool.Get().(bytes.Buffer)
 	// defer bufferPool.Put(stdout)
 
 	// cmd := exec.Command("sh", "-c", `dscl -q . -read /Users/"$(whoami)" NFSHomeDirectory | sed 's/^[^ ]*: //'`)
-	cmd := exec.CommandContext(ctxShell, shell, append(argStub, args...)...)
+	return bufferShell(ctxShell, &stdout, &stderr, shell, argStub(args...)...)
+
+	cmd := exec.CommandContext(ctxShell, shell, append(argStubBlank, args...)...)
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
 
 	err := cmd.Run()
 	sout := strings.TrimSpace(stdout.String())
 	serr := strings.TrimSpace(stderr.String())
-	pid := cmd.Process.Pid
+	// pid := cmd.Process.Pid
 
 	/* data (cmd.ProcessState) methods:
 	String
@@ -91,10 +111,14 @@ func ShBuffered(args ...string) (string, string, error) {
 	// utime := data.UserTime()
 
 	if err != nil {
-		return sout, serr, fmt.Errorf("error executing shell command (pid: %d): %v", pid, err)
+		return sout, serr, fmt.Errorf("error executing shell command (pid: %d): %v", cmd.Process.Pid, err)
 	}
 	if serr != "" {
-		return sout, serr, fmt.Errorf("stderr reported error (pid: %d): %20v", pid, err)
+		return sout, serr, fmt.Errorf("stderr (pid: %d): %20v", cmd.Process.Pid, err)
 	}
 	return sout, "", nil
+}
+
+func argStub(args ...string) []string {
+	return append(argStubBlank, args...)
 }

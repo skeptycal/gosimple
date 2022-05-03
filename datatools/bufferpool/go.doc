@@ -1,0 +1,5 @@
+package bufferpool // import "github.com/skeptycal/gosimple/datatools/bufferpool"
+
+func Swimmer[T any](b T) (Put func(any))
+func NewPool(New func() interface{}) *pool
+type Pooler[T any] interface{ ... }

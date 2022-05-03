@@ -499,6 +499,7 @@
 │       ├── stringlists.go
 │       └── stringutil.go
 ├── profile1651170016096182000.out
+├── profile1651526732102151000.out
 ├── repo
 │   ├── defaults
 │   │   ├── .editorconfig
@@ -691,6 +692,12 @@
 │   └── version
 │       ├── sort.go
 │       └── version.go
+├── tests
+│   ├── coverage.txt
+│   ├── fields.go
+│   ├── stringasserts.go
+│   ├── stringasserts_test.go
+│   └── value.go
 ├── tree.md
 ├── types
 │   ├── .VERSION
@@ -2277,7 +2284,7 @@
             ├── gotube
             └── main.go
 
-415 directories, 1855 files
+416 directories, 1861 files
 ```
 
 [get_tree]: (http://mama.indstate.edu/users/ice/tree/)

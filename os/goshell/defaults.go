@@ -11,9 +11,14 @@ import (
 // Reference: https://github.com/creasty/defaults (MIT License)
 
 // Setter is an interface for setting default values
-type Setter interface {
-	SetDefaults()
-}
+type (
+	Setter interface {
+		SetDefaults()
+	}
+
+	GetSetter interface {
+	}
+)
 
 func callSetter(v interface{}) {
 	if ds, ok := v.(Setter); ok {
