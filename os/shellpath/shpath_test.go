@@ -18,7 +18,7 @@ var stringModifyFuncs = []struct {
 	name string
 	fn   func(string, string) string
 }{
-	{"DropDupes", DropDupes},
+	{"DropDupes", DropDupeSeps},
 }
 
 /* Benchmark results
@@ -172,7 +172,7 @@ func TestDropDupes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := DropDupes(tt.args.s, tt.args.sep); got != tt.want {
+			if got := DropDupeSeps(tt.args.s, tt.args.sep); got != tt.want {
 				t.Errorf("DropDupes() = %v, want %v", got, tt.want)
 			}
 		})

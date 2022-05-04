@@ -18,13 +18,13 @@ var Verbose bool = false
 
 type ShPath struct{ list []string }
 
-func NewPath() *ShPath {
+func NewPath() (*ShPath, error) {
 	p := &ShPath{}
 	err := p.load()
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return p
+	return p, nil
 }
 
 // Clean removes invalid directories,
@@ -42,7 +42,7 @@ func (p *ShPath) Clean() (n int) {
 	}
 
 	if n > 0 && Verbose {
-		fmt.Fprintf(os.Stderr, "directories checked (%v removed)\n", n)
+		fmt.Fprintf(os.Stdout, "directories checked (%v removed)\n", n)
 	}
 
 	return n
@@ -53,8 +53,8 @@ func (p *ShPath) load() error {
 	if err != nil {
 		return err
 	}
-	s = DropDupes(s, PATHSEP)
-	s = strings.Replace(s, nlWindows, NL, -1)
+	s = DropDupeSeps(s, PATHSEP)
+	s = strings.ReplaceAll(s, nlWindows, NL)
 	p.list = strings.Split(s, PATHSEP)
 	return nil
 }
@@ -68,6 +68,8 @@ func (p *ShPath) Out() string {
 
 // Add checks that the directory exists and
 // adds element s to the path at position n.
+// If the position is not valid, s will be
+// placed at the end of the list.
 func (p *ShPath) Add(s string, n int) error {
 	if s == "" {
 		return errors.New("path cannot be empty")
@@ -92,15 +94,13 @@ func (p *ShPath) Add(s string, n int) error {
 	return nil
 }
 
-func (p *ShPath) Len() int {
-	return len(p.list)
-}
+// Len returns the number of items in the list.
+func (p *ShPath) Len() int { return len(p.list) }
 
-// String returns the path in newline delimited format.
-func (p *ShPath) String() string {
-	return strings.Join(p.list, NL)
-}
+// String returns the path in newline delimited format. (pretty print)
+func (p *ShPath) String() string { return strings.Join(p.list, NL) }
 
+// DebugPrint prints a numbered list of items.
 func (p *ShPath) DebugPrint() {
 	fmt.Println("path.DebugPrint()")
 	for i, v := range p.list {

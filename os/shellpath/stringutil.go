@@ -18,8 +18,8 @@ import (
 // one is aliased to this function.
 var NormalizeNL = normalizeNewlinesString
 
-// DropDupes replaces consecutive duplicates of only specific 'sep' strings with a single 'sep'
-func DropDupes(s string, substr string) string {
+// DropDupeSeps replaces consecutive duplicates of only specific 'sep' strings with a single 'sep'
+func DropDupeSeps(s string, substr string) string {
 	return dropDupe(s, substr)
 }
 
