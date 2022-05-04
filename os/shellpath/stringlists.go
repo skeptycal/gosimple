@@ -28,9 +28,8 @@ func Insert(list []string, s string, pos int) []string {
 
 	temp := make([]string, 0, len(list)+1) // preallocating is faster on most benchmarks
 
-	copy(temp, list[:pos]) // copy is faster than append on most benchmarks
-	// temp = append(temp, s)
-	copy(temp, []string{s})
+	copy(temp, list[:pos])  // copy is faster than append on most benchmarks
+	copy(temp, []string{s}) // temp = append(temp, s)
 	copy(temp, list[pos+1:])
 
 	list = nil // maybe helps GC?
