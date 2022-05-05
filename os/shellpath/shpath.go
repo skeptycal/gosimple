@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/skeptycal/gosimple/datatools/list"
 )
 
 const (
@@ -31,14 +33,21 @@ func NewPath() (*ShPath, error) {
 // and returns the number removed, if any.
 // The order of the directories is maintained.
 func (p *ShPath) Clean() (n int) {
+	// temp := p.list
+	flagged := []int{}
 	for i, v := range p.list {
 		if v == "" || !IsDir(v) {
-			p.list = RemoveOrdered(p.list, i)
+			flagged = append(flagged, i)
 			n += 1
 			if Verbose {
 				fmt.Fprintf(os.Stderr, "the path (%v) is not a valid directory\n", v)
 			}
 		}
+	}
+
+	for _, i := range flagged {
+		p.list = list.Remove(p.list, i)
+
 	}
 
 	if n > 0 && Verbose {
@@ -85,11 +94,11 @@ func (p *ShPath) Add(s string, n int) error {
 	// if n is out of bounds, append
 	// s to end of list
 	if n < 0 || n >= len(p.list) {
-		p.list = Append(p.list, s)
+		p.list = list.Append(p.list, s)
 		return nil
 	}
 
-	p.list = Insert(p.list, s, n)
+	p.list = list.Insert(p.list, s, n)
 
 	return nil
 }

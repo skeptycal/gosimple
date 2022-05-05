@@ -1,6 +1,6 @@
 package main
 
-import "github.com/skeptycal/gosimple/os/goshell"
+import "github.com/skeptycal/gosimple/cli/goshell"
 
 func main() {
 	goshell.Example()
