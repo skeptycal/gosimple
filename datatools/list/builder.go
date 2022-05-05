@@ -16,7 +16,8 @@ type (
 	// orderedList[T Ordered, E ~[]T] struct{}
 )
 
-// A Builder is used to efficiently build a list using Write methods.
+// A Builder is used to efficiently build a list
+// of Ordered objects using Write methods.
 // It minimizes memory copying. The zero value is ready to use.
 // Do not copy a non-zero Builder.
 type Builder[T Ordered, E ~[]T] struct {
