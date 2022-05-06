@@ -6,10 +6,10 @@ import (
 
 // conversion function shortcut aliases
 var (
-	home   string = EnvGet("$HOME")
-	pwd    string = EnvGet("$PWD")
-	shell  string = EnvGet("$SHELL")
-	gopath string = EnvGet("$GOPATH")
+	HOME   string = EnvGet("$HOME")
+	PWD    string = EnvGet("$PWD")
+	SHELL  string = EnvGet("$SHELL")
+	GOPATH string = EnvGet("$GOPATH")
 )
 
 // Getenv returns the value of the string while it
