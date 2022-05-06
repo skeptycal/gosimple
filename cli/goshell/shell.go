@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	shell        string          = GetEnv("$SHELL", defaultShell)
+	shell        string          = Getenv("$SHELL", defaultShell)
 	argStubBlank []string        = []string{cOption}
 	ctxShell     context.Context = context.TODO()
 )
