@@ -80,6 +80,8 @@
 │   ├── cursor.go
 │   ├── encode.go
 │   ├── encode_test.go
+│   ├── envvars
+│   │   └── envvars.go
 │   ├── errorlogger
 │   │   ├── .VERSION
 │   │   ├── .editorconfig
@@ -109,6 +111,40 @@
 │   │   ├── test_info_test.go
 │   │   ├── text_formatter.go
 │   │   └── text_formatter_test.go
+│   ├── goshell
+│   │   ├── .editorconfig
+│   │   ├── .pre-commit-config.yaml
+│   │   ├── CODE_OF_CONDUCT.md
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── SECURITY.md
+│   │   ├── cmd
+│   │   │   └── example
+│   │   │       └── goshell
+│   │   │           └── main.go
+│   │   ├── contributing.md
+│   │   ├── coverage.txt
+│   │   ├── defaults.go
+│   │   ├── defaults_test.go
+│   │   ├── docs
+│   │   │   ├── _config.yml
+│   │   │   ├── docs.md
+│   │   │   ├── index.html
+│   │   │   └── template.md
+│   │   ├── env.go
+│   │   ├── example.go
+│   │   ├── go.test.sh
+│   │   ├── homedir.go
+│   │   ├── homedir_test.go
+│   │   ├── idea.md
+│   │   ├── internal
+│   │   │   └── fixture
+│   │   │       └── test.go
+│   │   ├── make_tree_md.sh
+│   │   ├── profile1651526871727910000.out
+│   │   ├── shell.go
+│   │   ├── shell_test.go
+│   │   └── tree.md
 │   ├── internal.go
 │   ├── internal_test.go
 │   ├── miniansi
@@ -292,6 +328,20 @@
 │   │   ├── atomic_test.go
 │   │   ├── endian_big.go
 │   │   └── endian_little.go
+│   ├── binary
+│   │   └── percentages.go
+│   ├── bufferpool
+│   │   ├── bufferpool.go
+│   │   ├── bufferpool_test.go
+│   │   ├── coverage.txt
+│   │   ├── example
+│   │   │   ├── main.go
+│   │   │   └── main_test.go
+│   │   ├── go.doc
+│   │   ├── pool.go
+│   │   ├── poolreset.go
+│   │   ├── profile1651586595841212000.out
+│   │   └── syncpool_test.go
 │   ├── cmd
 │   │   └── EmailDomains
 │   │       ├── emaildomains
@@ -309,6 +359,15 @@
 │   │   ├── numberformatting.go
 │   │   ├── numberformatting_test.go
 │   │   └── sample.txt
+│   ├── list
+│   │   ├── builder.go
+│   │   ├── builder_test.go
+│   │   ├── insert.go
+│   │   ├── intbuilder_test.go
+│   │   ├── internal.go
+│   │   ├── list.go
+│   │   ├── list_test.go
+│   │   └── remove.go
 │   ├── math
 │   │   └── polynomial
 │   │       ├── cmd
@@ -436,39 +495,6 @@
 │   │   ├── logging.go
 │   │   ├── profile.out
 │   │   └── types.go
-│   ├── goshell
-│   │   ├── .editorconfig
-│   │   ├── .pre-commit-config.yaml
-│   │   ├── CODE_OF_CONDUCT.md
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── SECURITY.md
-│   │   ├── bufferpool.go
-│   │   ├── cmd
-│   │   │   └── example
-│   │   │       └── goshell
-│   │   │           └── main.go
-│   │   ├── contributing.md
-│   │   ├── coverage.txt
-│   │   ├── defaults.go
-│   │   ├── defaults_test.go
-│   │   ├── docs
-│   │   │   ├── _config.yml
-│   │   │   ├── docs.md
-│   │   │   ├── index.html
-│   │   │   └── template.md
-│   │   ├── example.go
-│   │   ├── go.test.sh
-│   │   ├── homedir.go
-│   │   ├── homedir_test.go
-│   │   ├── idea.md
-│   │   ├── internal
-│   │   │   └── fixture
-│   │   │       └── test.go
-│   │   ├── make_tree_md.sh
-│   │   ├── shell.go
-│   │   ├── shell_test.go
-│   │   └── tree.md
 │   ├── ls
 │   │   ├── CODE_OF_CONDUCT.md
 │   │   ├── LICENSE
@@ -489,17 +515,17 @@
 │   │   └── util_test.go
 │   ├── redlogger
 │   │   └── redlogger.go
-│   └── shpath
+│   └── shellpath
 │       ├── cmd
 │       │   └── path.go
 │       ├── osutil.go
 │       ├── shpath.go
 │       ├── shpath2.go
 │       ├── shpath_test.go
-│       ├── stringlists.go
 │       └── stringutil.go
 ├── profile1651170016096182000.out
 ├── profile1651526732102151000.out
+├── profile1651860465558384000.out
 ├── repo
 │   ├── defaults
 │   │   ├── .editorconfig
@@ -548,6 +574,8 @@
 │   ├── fake_repo
 │   │   ├── LICENSE
 │   │   └── fakerepo.go
+│   ├── fakecloser
+│   │   └── fakecloser.go
 │   ├── ghrepo
 │   ├── gitcommits
 │   │   ├── .editorconfig
@@ -573,6 +601,12 @@
 │   │   ├── idea.md
 │   │   ├── make_tree_md.sh
 │   │   └── tree.md
+│   ├── gitignore
+│   │   ├── gi_fileparser
+│   │   │   ├── gilist.txt
+│   │   │   └── main.go
+│   │   ├── gitignore.go
+│   │   └── gitignore_gen.go
 │   ├── gitroot
 │   │   ├── find
 │   │   │   ├── find.go
@@ -697,6 +731,7 @@
 │   ├── fields.go
 │   ├── stringasserts.go
 │   ├── stringasserts_test.go
+│   ├── trun.go
 │   └── value.go
 ├── tree.md
 ├── types
@@ -2284,7 +2319,7 @@
             ├── gotube
             └── main.go
 
-416 directories, 1861 files
+424 directories, 1888 files
 ```
 
 [get_tree]: (http://mama.indstate.edu/users/ice/tree/)
