@@ -42,11 +42,13 @@ type (
 func fileOpenOrCreate(
 	filename string,
 	create bool,
-	extraBuffer float64) (*file, io.Closer, error) {
-	f := file{}
-	fi, err := os.Stat(filename)
+	extraBuffer float64) (out *file, closer io.Closer, err error) {
+	const defaultMinFileSize = 1 << 10
+	out = &file{}
+	out.fi, err = os.Stat(filename)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
+			// return on error (except for ErrNotExist)
 			return nil, nil, err
 		}
 		if !create {
@@ -54,6 +56,17 @@ func fileOpenOrCreate(
 			return nil, nil, err
 		}
 	}
+
+	out.filename, err = filepath.Abs(filename)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	out.f, err = os.OpenFile(out.filename, os.O_RDONLY|os.O_CREATE, gofile.NormalMode)
+	if err != nil {
+		return nil, nil, err
+	}
+	// out.isDirty = false // this is the 'useful' default
 
 	// extraBuffer should be positive
 	if extraBuffer < 0 {
@@ -73,46 +86,36 @@ func fileOpenOrCreate(
 		extraBuffer += 1
 	}
 
-	name, err := filepath.Abs(fi.Name())
-	if err != nil {
-		return nil, nil, err
-	}
-	f.filename = name
-
-	fh, err := os.OpenFile(name, os.O_RDONLY|os.O_CREATE, gofile.NormalMode)
-	if err != nil {
-		return nil, nil, err
-	}
-	f.isDirty = false
-
-	sizeFloat := float64(fi.Size())
+	sizeFloat := float64(out.fi.Size())
 	size := int(sizeFloat * extraBuffer)
-	buf := bytes.NewBuffer(make([]byte, 0, size))
+	if size < defaultMinFileSize {
+		size = defaultMinFileSize
+	}
+	out.buf = bytes.NewBuffer(make([]byte, 0, size))
 
-	f.f = fh
-	f.fi = fi
-	f.buf = buf
-
-	return &f, f.f, nil
+	return out, out.f, nil
 }
 
 // NewFile takes a pointer to a file struct and a filename.
 // It checks for existance of the file (or creates as necessary),
 // creates a new file structure in f, and returns an io.Closer
 // for use with defer in the calling code.
-func NewFile(filename string) (*file, io.Closer) {
+func NewFile(filename string) (*file, io.Closer, error) {
 	f, closer, err := fileOpenOrCreate(filename, true, defaultBufferSizeMultiplier)
 	if err != nil {
-		return nil, fakecloser.NewFromError(err)
+		return nil, fakecloser.NewFromError(err), err
 	}
 	fmt.Println(f)
-	return f, closer
+	return f, closer, nil
 }
 
 // LoadData loads all data from the source file into the
 // memfile in the *file struct.
 func (f *file) LoadData() error {
-	f, closer := NewFile(f.fi.Name())
+	f, closer, err := NewFile(f.fi.Name())
+	if err != nil {
+		return err
+	}
 	defer closer.Close()
 
 	n, err := io.Copy(f.buf, f.f)
@@ -126,19 +129,13 @@ func (f *file) LoadData() error {
 	return nil
 }
 
-func (f *file) String() string {
-	return f.buf.String()
-}
+func (f *file) String() string        { return f.buf.String() }
+func (f *file) Bytes() []byte         { return f.buf.Bytes() }
+func (f *file) FileInfo() os.FileInfo { return f.fi }
 
-func (f *file) Bytes() []byte {
-	return f.buf.Bytes()
-}
-
-func (f *file) FileInfo() os.FileInfo {
-	return f.fi
-}
-
-func getFiCli(filename string, container *string) os.FileInfo {
+// StatCli returns the os.FileInfo from filename.
+// In the Cli version, any error results in log.Fatal().
+func StatCli(filename string) os.FileInfo {
 	fiIn, err := os.Stat(inFile)
 	if err != nil {
 		log.Fatal(err)
@@ -146,21 +143,25 @@ func getFiCli(filename string, container *string) os.FileInfo {
 	return fiIn
 }
 
-// getDataCli gets the bytes from filename and puts a string
-// version in container.
-func getDataCli(filename string) (string, error) {
+// getDataCli gets the bytes from filename and returns
+// the string version.
+// In the Cli version, any error results in log.Fatal().
+func getDataCli(filename string) string {
 	data, err := os.ReadFile(inFile)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
 
-	return b2s(data), nil
+	return b2s(data)
 }
 
 func main() {
 	var f *file
 
-	f, closer := NewFile(inFile)
+	f, closer, err := NewFile(inFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer closer.Close()
 	// defer NewFile(inFile, f)
 
@@ -177,17 +178,7 @@ func main() {
 	}
 	defer w.Close()
 
-	// b, err := os.ReadFile("../gilist.txt")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// var data *string
-
-	data, err := getDataCli(inFile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	data := getDataCli(inFile)
 
 	_ = data
 
