@@ -7,11 +7,13 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/skeptycal/gosimple/os/basicfile"
 	"github.com/skeptycal/gosimple/os/gofile"
@@ -32,11 +34,17 @@ const (
 )
 
 var (
-	b2s         = convert.UnsafeBytesToString
-	s2b         = convert.UnsafeStringToBytes
+	b2s = convert.UnsafeBytesToString
+	s2b = convert.UnsafeStringToBytes
+)
+
+// CLI flags
+var (
 	debugFlag   bool
 	forceFlag   bool
 	verboseFlag bool
+	fieldsFlag  bool
+	linesFlag   bool
 	InFile      string
 	OutFile     string
 )
@@ -45,8 +53,12 @@ func init() {
 	flag.BoolVar(&debugFlag, "debug", false, "turn on debug mode")
 	flag.BoolVar(&forceFlag, "force", false, "force writing to file")
 	flag.BoolVar(&verboseFlag, "verbose", false, "turn on verbose mode")
+	flag.BoolVar(&fieldsFlag, "fields", false, "print file contents as fields")
+	flag.BoolVar(&linesFlag, "lines", false, "print file contents as lines")
+
 	flag.StringVar(&InFile, "In", defaultInFile, "name of input file")
 	flag.StringVar(&OutFile, "Out", defaultOutFile, "name of output file")
+
 	flag.Parse()
 }
 
@@ -158,8 +170,13 @@ func (f *file) Bytes() []byte         { return f.buf.Bytes() }
 func (f *file) Reader() io.Reader     { return f.f }
 func (f *file) Writer() io.Writer     { return f.f }
 func (f *file) Closer() io.Closer     { return f.f }
-func (f *file) FileInfo() os.FileInfo { return f.fi }
+func (f *file) FileInfo() fs.FileInfo { return f.fi }
 func (f *file) IsDirty() bool         { return f.isDirty }
+func (f *file) Name() string          { return f.FileInfo().Name() }
+func (f *file) Mode() fs.FileMode     { return f.FileInfo().Mode() }
+func (f *file) Size() int64           { return f.FileInfo().Size() }
+func (f *file) IsDir() bool           { return f.FileInfo().IsDir() }
+func (f *file) ModTime() time.Time    { return f.FileInfo().ModTime() }
 
 type details struct {
 	name  string
@@ -331,35 +348,42 @@ func main() {
 
 	in.ReadAll()
 	in.LoadData()
+	fmt.Println("processing file: ", in.Name())
 
 	// data := getDataCli(inFile)
-
 	// _ = data
 
 	if debugFlag {
 		in.printDebugDetails(nil)
 	}
-	// lines := in.Lines()
-	// if lines == nil {
-	// 	log.Fatal("error getting file lines")
-	// }
-	// for i, v := range lines {
-	// 	fmt.Println(i, ": ", v)
-	// }
 
-	fields := in.Fields("")
-	if fields == nil {
-		log.Fatal("error getting file lines")
+	if linesFlag {
+		lines := in.Lines()
+		if lines == nil {
+			log.Fatal("error getting file lines")
+		}
+		for i, v := range lines {
+			fmt.Println(i, ": ", v)
+		}
 	}
-	fmt.Println("fields: ", fields)
 
-	// for i, v := range fields {
-	// 	fmt.Println(i, ": ", v)
-	// }
+	if fieldsFlag {
+		fields := in.Fields("")
+		if fields == nil {
+			log.Fatal("error getting file lines")
+		}
+		fmt.Println("fields: ", fields)
+		// for i, v := range fields {
+		// 	fmt.Println(i, ": ", v)
+		// }
+	}
 
 	out, err := os.OpenFile("../gitignore_gen.go", os.O_RDWR|os.O_CREATE, gofile.NormalMode)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// write stuff to output file here ...
+
 	defer out.Close()
 }
