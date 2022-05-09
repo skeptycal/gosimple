@@ -4,7 +4,7 @@ import (
 	"github.com/skeptycal/gosimple/cli/goshell"
 )
 
-// conversion function shortcut aliases
+// common shell environment variables
 var (
 	HOME   string = EnvGet("$HOME")
 	PWD    string = EnvGet("$PWD")
