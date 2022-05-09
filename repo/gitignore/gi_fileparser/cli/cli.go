@@ -108,7 +108,7 @@ func Vprint(args ...any) (int, error) {
 			return Vprintf(v, args[1:])
 		}
 	}
-	Log.Info(args...)
+	// Log.Info(args...)
 	if Options.VerboseFlag {
 		return fmt.Fprint(Options.verboseWriter, args...)
 	}
@@ -120,7 +120,7 @@ func Vprint(args ...any) (int, error) {
 // The first argument is a format string for a Printf
 // version of the Vprint function.
 func Vprintf(format string, args ...any) (int, error) {
-	Log.Infof(format, args...)
+	// Log.Infof(format, args...)
 	if Options.VerboseFlag {
 		return fmt.Fprintf(Options.verboseWriter, format, args...)
 	}
@@ -133,12 +133,12 @@ func Vprintf(format string, args ...any) (int, error) {
 // at least one % symbol, it is used as a format
 // string for a Printf version of this function.
 func DbEcho(args ...any) (int, error) {
-	if v, ok := args[0].(string); ok {
+	if v, ok := args[0].(string); ok && len(args) > 1 {
 		if strings.Count(v, "%") > 0 {
 			return DbEchof(v, args[1:])
 		}
 	}
-	Log.Debug(args...)
+	// Log.Debug(args...)
 	if Options.DebugFlag {
 		return fmt.Fprint(Options.debugWriter, args...)
 	}
@@ -150,7 +150,7 @@ func DbEcho(args ...any) (int, error) {
 // The first argument is a format string for a Printf
 // version of the DbEcho function.
 func DbEchof(format string, args ...any) (int, error) {
-	Log.Debugf(format, args...)
+	// Log.Debugf(format, args...)
 	if Options.DebugFlag {
 		return fmt.Fprintf(Options.debugWriter, format, args...)
 	}
