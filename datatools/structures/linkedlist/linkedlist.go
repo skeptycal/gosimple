@@ -1,6 +1,20 @@
-package structures
+package linkedlist
 
 import "errors"
+
+// LinkedLister is a data structure allowing for quick insertion and deletion.
+// Access O(n)
+// Search O(n)
+//* Insert O(1) for known node location -or- O(n) search for node location
+//* Delete O(1) for known node location -or- O(n) search for node location
+type LinkedLister[E any] interface {
+	Head() node[E]
+	Tail() node[E]
+	InsertBefore(parent *node[E], new *node[E])
+	InsertAfter(parent *node[E], new *node[E])
+	Delete(n *node[E]) error
+	Len() int
+}
 
 // LinkedList is a data structure allowing for quick insertion and deletion.
 // Access O(n)
