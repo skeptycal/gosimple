@@ -1,6 +1,4 @@
-package structures
-
-/////////// Dynamic Access
+package dict
 
 // Dict is an implementation of a Dictionary.
 // A dictionary (also called maps or associative arrays) are a
