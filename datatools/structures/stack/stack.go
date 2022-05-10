@@ -1,5 +1,7 @@
 package stack
 
+import "errors"
+
 // Stack is a LIFO sequential access data structure.
 // Access O(n)
 // Search O(n)
@@ -8,7 +10,7 @@ package stack
 type (
 	Stack[E comparable, S ~[]*E] interface {
 		Push(value E)
-		Pop() E
+		Pop() (E, error)
 		Peek() E
 		Contains(value E) bool
 		Len() int
@@ -21,8 +23,11 @@ type (
 	}
 )
 
-func New[E comparable, S ~[]*E](size int) Stack[E, S] {
-	return &stack[E, S]{buf: make(S, size, size*2)}
+func New[E comparable, S ~[]*E](capacity int) Stack[E, S] {
+	if capacity < 10 {
+		capacity = 10
+	}
+	return &stack[E, S]{buf: make(S, 0, capacity)}
 }
 
 func (s *stack[E, S]) Peek() E  { return *s.buf[s.max()] }
@@ -45,14 +50,17 @@ const (
 	defaultStackShrinkMultiplier = 0.8
 )
 
-func (s *stack[E, S]) Pop() E {
+func (s *stack[E, S]) Pop() (E, error) {
+	if len(s.buf) < 1 {
+		return *new(E), errors.New("stack empty")
+	}
 	if s.shrinkCheck() {
 		s.shrink(0)
 	}
 	// TODO add shrink check
 	r := s.Peek()
 	s.buf = s.buf[:len(s.buf)-1]
-	return r
+	return r, nil
 }
 
 func (s *stack[E, S]) Contains(value E) bool {
