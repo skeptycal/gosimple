@@ -1,189 +1,47 @@
+// Package cli contains command line interface components that address common
+// use cases in cli development and design.
+//
+// It has very few (standard library only) dependencies and is a simple drop-in
+// addition to any cli toolkit.
 package cli
 
 import (
-	"flag"
 	"fmt"
-	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
-
-	"github.com/skeptycal/gosimple/cli/envvars"
-	"github.com/skeptycal/gosimple/cli/errorlogger"
-	"github.com/skeptycal/gosimple/types/convert"
 )
 
 const (
-	DefaultInFile   = "./gilist.txt"
-	DefaultOutFile  = "../gitignore_gen.go"
-	defaultLogLevel = errorlogger.ErrorLevel
-	Newline         = "\n"
+	defaultHeadByteLength    = 79
+	defaultTailByteLength    = 20
+	defaultHeadLineLength    = 5
+	defaultTailLineLength    = 5
+	defaultScreenWidthString = "80"
+	Newline                  = "\n"
 )
 
-// conversion utilities
+// fast conversion utilities
 var (
-	B2S = convert.UnsafeBytesToString
-	S2B = convert.UnsafeStringToBytes
+	B2S = unsafeBytesToString
+	S2B = unsafeStringToBytes
 )
-
-// config defaults
-var (
-	Log                  = errorlogger.New()
-	defaultVerboseWriter = os.Stdout
-	defaultDebugWriter   = os.Stderr
-	discard              = io.Discard
-	HOME                 = envvars.HOME
-	PWD                  = envvars.PWD
-)
-
-// CLI flags and options
-type cliOptions struct {
-	DebugFlag   bool
-	ForceFlag   bool
-	VerboseFlag bool
-	QuietFlag   bool
-	FieldsFlag  bool
-	LinesFlag   bool
-	InFile      string `default:"DefaultInFile"`
-	OutFile     string `default:"DefaultOutFile"`
-
-	verboseWriter io.Writer
-	debugWriter   io.Writer
-
-	logLevel errorlogger.Level `default:"1"`
-
-	additionalFlags []Option
-}
-
-type Option struct {
-	Name         string
-	DefaultValue any
-	Value        any
-	// typ          reflect.Type
-	// kind         reflect.Kind
-}
-
-var Options cliOptions = cliOptions{}
-
-func init() {
-	flag.BoolVar(&Options.DebugFlag, "debug", false, "turn on debug mode")
-	flag.BoolVar(&Options.ForceFlag, "force", false, "force writing to file")
-	flag.BoolVar(&Options.VerboseFlag, "verbose", false, "turn on verbose mode")
-	flag.BoolVar(&Options.QuietFlag, "quiet", false, "turn on quiet mode")
-
-	flag.StringVar(&Options.InFile, "In", DefaultInFile, "name of input file")
-	flag.StringVar(&Options.OutFile, "Out", DefaultOutFile, "name of output file")
-
-	flag.Parse()
-
-	Options.logLevel = defaultLogLevel
-
-	if Options.DebugFlag {
-		Options.logLevel = errorlogger.DebugLevel
-		Options.debugWriter = defaultDebugWriter
-	}
-
-	if Options.VerboseFlag {
-		Options.logLevel = errorlogger.InfoLevel
-		Options.verboseWriter = defaultVerboseWriter
-	}
-
-	// no output even if other options are set
-	if Options.QuietFlag {
-		Options.logLevel = errorlogger.FatalLevel
-		Options.verboseWriter = discard
-		Options.debugWriter = discard
-	}
-
-	Log.SetLevel(Options.logLevel)
-}
-
-// Vprint sends output based on VerboseFlag setting
-// and Log level >= 4.
-// If the first argument is a string and contains
-// at least one % symbol, it is used as a format
-// string for a Printf version of this function.
-func Vprint(args ...any) (int, error) {
-	if v, ok := args[0].(string); ok {
-		if strings.Count(v, "%") > 0 {
-			return Vprintf(v, args[1:])
-		}
-	}
-	// Log.Info(args...)
-	if Options.VerboseFlag {
-		return fmt.Fprint(Options.verboseWriter, args...)
-	}
-	return 0, nil
-}
-
-// Vprintln sends output based on VerboseFlag setting
-// and Log level >= 4.
-// A trailing newline is appended to the output.
-//
-// If the first argument is a string and contains
-// at least one % symbol, it is used as a format
-// string for a Printf version of this function.
-func Vprintln(args ...any) (int, error) {
-	args = append(args, Newline)
-	return Vprint(args...)
-}
-
-// Vprintf sends output based on VerboseFlag setting
-// and Log level >= 4.
-// The first argument is a format string for a Printf
-// version of the Vprint function.
-func Vprintf(format string, args ...any) (int, error) {
-	// Log.Infof(format, args...)
-	if Options.VerboseFlag {
-		return fmt.Fprintf(Options.verboseWriter, format, args...)
-	}
-	return 0, nil
-}
-
-// DbEcho sends output based on DebugFlag setting
-// and Log level >= 2.
-// If the first argument is a string and contains
-// at least one % symbol, it is used as a format
-// string for a Printf version of this function.
-func DbEcho(args ...any) (int, error) {
-	if v, ok := args[0].(string); ok && len(args) > 1 {
-		if strings.Count(v, "%") > 0 {
-			return DbEchof(v, args[1:])
-		}
-	}
-	// Log.Debug(args...)
-	if Options.DebugFlag {
-		return fmt.Fprint(Options.debugWriter, args...)
-	}
-	return 0, nil
-}
-
-// DbEchof sends output based on DebugFlag setting
-// and Log level >= 2.
-// The first argument is a format string for a Printf
-// version of the DbEcho function.
-func DbEchof(format string, args ...any) (int, error) {
-	// Log.Debugf(format, args...)
-	if Options.DebugFlag {
-		return fmt.Fprintf(Options.debugWriter, format, args...)
-	}
-	return 0, nil
-}
 
 // StatCli returns the os.FileInfo from filename.
 // In the Cli version, any error results in log.Fatal().
 func StatCli(filename string) os.FileInfo {
-	fiIn, err := os.Stat(filename)
+	fi, err := os.Stat(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return fiIn
+	return fi
 }
 
-// GetDataCli gets the bytes from filename and returns
+// GetDataCli gets the contents of filename and returns
 // the string version.
 // In the Cli version, any error results in log.Fatal().
-func GetDataCli(filename string) string {
+func ReadFileCli(filename string) string {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -192,20 +50,75 @@ func GetDataCli(filename string) string {
 	return B2S(data)
 }
 
-func NL() {
-	fmt.Print(Newline)
+// Atoi returns the integer representation of s. If any error
+// occurs, 0 is returned.
+func Atoi(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	return i
 }
 
-func Head(s string, n int) string {
+// Columns returns the current number of columns in the terminal.
+// If any error occurs, the default value is returned.
+func Columns() int { return Atoi(Getenv("$COLUMNS", defaultScreenWidthString)) }
+
+// Br prints a blank line to os.Stdout.
+func Br() { fmt.Print(Newline) }
+
+// Hr prints a screen-wide underline, or hard return.
+func Hr() { fmt.Print(strings.Repeat("_", Columns())) }
+
+// Cr prints a screen-wide character pattern.
+func Cr(c string) { fmt.Print(strings.Repeat(c, Columns()/len(c))) }
+
+// Head returns the first n elements of a sequence s.
+// If n is longer than s, s is returned unchanged.
+func HeadN[E any, S ~[]E](s S, n int) S {
 	if n > len(s) {
 		return s
 	}
 	return s[:n]
 }
 
-func Tail(s string, n int) string {
+// Head returns the first n elements of a sequence.
+// If n is longer than s, s is returned unchanged.
+// The default value of n is used. If another value
+// of n is needed, use HeadN(s S, n int).
+func Head[E any, S ~[]E](s S) S {
+	return HeadN(s, defaultHeadLineLength)
+}
+
+// Tail returns the last n elements of a sequence s.
+// If n is longer than s, s is returned unchanged.
+func TailN[E any, S ~[]E](s S, n int) S {
 	if n > len(s) {
 		return s
 	}
-	return s[n:]
+	return s[len(s)-n:]
+}
+
+// Tail returns the last n elements of a sequence.
+// If n is longer than s, s is returned unchanged.
+// The default value of n is used. If another value
+// of n is needed, use TailN(s S, n int).
+func Tail[E any, S ~[]E](s S) S {
+	return TailN(s, defaultTailLineLength)
+}
+
+// Getenv returns the value of the string while
+// replaces ${var} or $var in the string according
+// to the values of the current environment variables.
+// References to undefined variables are replaced by
+// defaultValue.
+//  d := Getenv("${HOME}/.config")
+//  fmt.Println(d)
+//  // /Users/skeptycal/.config
+func Getenv(envVarName string, defaultValue string) (retval string) {
+	retval = os.ExpandEnv(envVarName)
+	if retval == "" {
+		return defaultValue
+	}
+	return
 }

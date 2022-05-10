@@ -6,15 +6,17 @@ import (
 
 // common shell environment variables
 var (
-	HOME   string = EnvGet("$HOME")
-	PWD    string = EnvGet("$PWD")
-	SHELL  string = EnvGet("$SHELL")
-	GOPATH string = EnvGet("$GOPATH")
+	HOME   string = Getenv("$HOME")
+	PWD    string = Getenv("$PWD")
+	SHELL  string = Getenv("$SHELL")
+	GOPATH string = Getenv("$GOPATH")
 )
 
 // Getenv returns the value of the string while it
 // replaces ${var} or $var in the string according
 // to the values of the current environment variables.
-// References to undefined variables are replaced by defaultValue.
-func EnvGet(v string) string         { return goshell.Getenv(v, "") }
+// References to undefined variables are replaced by
+// a the empty string.
+func Getenv(v string) string { return goshell.Getenv(v, "") }
+
 func EnvSet(key, value string) error { return goshell.Setenv(key, value) }

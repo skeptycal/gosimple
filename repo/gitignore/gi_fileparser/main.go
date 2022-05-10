@@ -18,16 +18,32 @@ const (
 	newline                = cli.Newline
 )
 
+// FieldsFlag  bool
+// LinesFlag   bool
+
 var (
-	O    = cli.Options
+	flag = cli.Flag
+	O    = &cli.Options
 	V    = cli.Vprintln
-	NL   = cli.NL
+	NL   = cli.Br
 	Head = cli.Head
 	Tail = cli.Tail
 	// P   = fmt.Println
 	B2S = cli.B2S
 	S2B = cli.S2B
 )
+
+var (
+	packageName = ""
+)
+
+func init() {
+	flag.BoolVar(O.FieldsFlag, "fields", false, "print file contents as fields")
+	flag.BoolVar(O.LinesFlag, "lines", false, "print file contents as lines")
+	flag.StringVar(&packageName, "package", "main", "package name for generated files")
+
+	flag.Parse(os.Args[1:])
+}
 
 func main() {
 	s, w := getIo(O.InFile, O.OutFile)
