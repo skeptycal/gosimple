@@ -17,6 +17,7 @@ const (
 	DefaultInFile   = "./gilist.txt"
 	DefaultOutFile  = "../gitignore_gen.go"
 	defaultLogLevel = errorlogger.ErrorLevel
+	Newline         = "\n"
 )
 
 // conversion utilities
@@ -115,6 +116,18 @@ func Vprint(args ...any) (int, error) {
 	return 0, nil
 }
 
+// Vprintln sends output based on VerboseFlag setting
+// and Log level >= 4.
+// A trailing newline is appended to the output.
+//
+// If the first argument is a string and contains
+// at least one % symbol, it is used as a format
+// string for a Printf version of this function.
+func Vprintln(args ...any) (int, error) {
+	args = append(args, Newline)
+	return Vprint(args...)
+}
+
 // Vprintf sends output based on VerboseFlag setting
 // and Log level >= 4.
 // The first argument is a format string for a Printf
@@ -177,4 +190,22 @@ func GetDataCli(filename string) string {
 	}
 
 	return B2S(data)
+}
+
+func NL() {
+	fmt.Print(Newline)
+}
+
+func Head(s string, n int) string {
+	if n > len(s) {
+		return s
+	}
+	return s[:n]
+}
+
+func Tail(s string, n int) string {
+	if n > len(s) {
+		return s
+	}
+	return s[n:]
 }
