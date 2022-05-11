@@ -17,8 +17,9 @@ func DbEcho(args ...any) (int, error) {
 		}
 	}
 	// Log.Debug(args...)
-	if Options.DebugFlag {
-		return fmt.Fprint(Options.debugWriter, args...)
+
+	if *DebugFlag {
+		return fmt.Fprint(debugWriter, args...)
 	}
 	return 0, nil
 }
@@ -29,8 +30,8 @@ func DbEcho(args ...any) (int, error) {
 // version of the DbEcho function.
 func DbEchof(format string, args ...any) (int, error) {
 	// Log.Debugf(format, args...)
-	if Options.DebugFlag {
-		return fmt.Fprintf(Options.debugWriter, format, args...)
+	if *DebugFlag {
+		return fmt.Fprintf(debugWriter, format, args...)
 	}
 	return 0, nil
 }

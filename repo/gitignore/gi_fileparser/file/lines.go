@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/skeptycal/gosimple/repo/gitignore/gi_fileparser/cli"
 )
 
 func (f *GoFile) Lines() []string {
@@ -38,7 +40,7 @@ func (f *GoFile) Tail(n int) string {
 	}
 
 	if n < 1 {
-		n = defaultTailLineLength
+		n = cli.DefaultTailLineLength
 	}
 	fmt.Printf("in Tail(%d): %v\n", n, v)
 
@@ -59,7 +61,7 @@ func (f *GoFile) Head(n int) string {
 	}
 
 	if n < 1 {
-		n = defaultHeadLineLength
+		n = cli.DefaultHeadLineLength
 	}
 	if n > len(v) {
 		return strings.Join(v, newLine)
@@ -74,7 +76,7 @@ func (f *GoFile) Ends(n int) string {
 		return ""
 	}
 	if n < 1 {
-		n = defaultTailLineLength
+		n = cli.DefaultTailLineLength
 	}
 	if len(v) < n*2 {
 		return strings.Join(v, newLine)

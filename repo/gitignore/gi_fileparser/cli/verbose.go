@@ -19,8 +19,8 @@ func Vprint(args ...any) (int, error) {
 		}
 	}
 	// Log.Info(args...)
-	if Options.VerboseFlag {
-		return fmt.Fprint(Options.verboseWriter, args...)
+	if *VerboseFlag {
+		return fmt.Fprint(verboseWriter, args...)
 	}
 	return 0, nil
 }
@@ -43,8 +43,8 @@ func Vprintln(args ...any) (int, error) {
 // version of the Vprint function.
 func Vprintf(format string, args ...any) (int, error) {
 	// Log.Infof(format, args...)
-	if Options.VerboseFlag {
-		return fmt.Fprintf(Options.verboseWriter, format, args...)
+	if *VerboseFlag {
+		return fmt.Fprintf(verboseWriter, format, args...)
 	}
 	return 0, nil
 }

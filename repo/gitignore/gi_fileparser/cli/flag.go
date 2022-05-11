@@ -5,44 +5,79 @@ import (
 	"io"
 	"os"
 
-	"github.com/skeptycal/gosimple/cli/envvars"
 	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
 
-// config defaults
+// Flags is a flag.FlagSet that can be inherited or modified.
+var Flags = flag.NewFlagSet("cli", flag.ExitOnError)
+
+////////// Flags utilities
+
+func isSet(name string) bool        { return Flags.Lookup(name) != nil }
+func flagString(name string) string { return Flags.Lookup(name).Value.String() }
+
+func Flag(flag *flag.Flag) any {
+	if v, ok := flag.Value.(Getter); ok {
+		return v.Get()
+	}
+	return nil
+}
+
+////////// Flags defaults
 var (
 	DefaultDebugFlag     = false
 	DefaultInFile        = "./gilist.txt"
 	DefaultOutFile       = "../gitignore_gen.go"
-	DefaultLogLevel      = errorlogger.ErrorLevel
-	Log                  = errorlogger.New()
+	DefaultConfigFile    = ".gosimple.conf"
+	defaultLogLevel      = errorlogger.ErrorLevel
 	defaultVerboseWriter = os.Stdout
 	defaultDebugWriter   = os.Stderr
-	discard              = io.Discard
-	HOME                 = envvars.HOME
-	PWD                  = envvars.PWD
 )
 
-// CLI flags and options
-type cliOptions struct {
-	DebugFlag   bool `default:"DefaultDebugFlag"`
-	ForceFlag   bool
-	VerboseFlag bool
-	QuietFlag   bool
-	InFile      string `default:"DefaultInFile"`
-	OutFile     string `default:"DefaultOutFile"`
+////////// cli Flags
+var (
+	DebugFlag   = Flags.Bool("debug", false, "turn on debug mode")
+	ForceFlag   = Flags.Bool("force", false, "force writing to file")
+	VerboseFlag = Flags.Bool("verbose", false, "turn on verbose mode")
+	QuietFlag   = Flags.Bool("quiet", false, "turn on quiet mode")
+	InFile      = Flags.String("in", DefaultInFile, "name of input file")
+	OutFile     = Flags.String("out", DefaultOutFile, "name of output file")
+	ConfigFile  = Flags.String("config", DefaultConfigFile, "name of config file")
+	LogLevel    = &logLevelFlag{defaultLogLevel}
 
-	verboseWriter io.Writer `default:"defaultVerboseWriter"`
-	debugWriter   io.Writer `default:"defaultDebugWriter"`
+	debugWriter   io.Writer = discard
+	verboseWriter io.Writer = discard
+)
 
-	logLevel errorlogger.Level `default:"DefaultLogLevel"`
-
-	additionalFlags []Option
+type logLevelFlag struct {
+	level errorlogger.Level
 }
 
-var Options cliOptions = cliOptions{}
+func init() {
+	Flags.Var(LogLevel, "loglevel", "level of logging feedback")
+	Flags.Parse(os.Args[1:])
 
-var Flag = flag.NewFlagSet("cli", flag.ExitOnError)
+	if *VerboseFlag {
+		LogLevel.Set("Info")
+		verboseWriter = defaultVerboseWriter
+	}
+
+	// Debug level output ... overrides Verbose logging level.
+	if *DebugFlag {
+		LogLevel.Set("Debug")
+		debugWriter = defaultDebugWriter
+	}
+
+	// no output even if other options are set
+	// overrides Verbose and Debug logging level.
+	if flagString("QuietFlag") == "true" {
+		LogLevel.Set("Fatal")
+		debugWriter = discard
+		verboseWriter = discard
+	}
+}
+
+////////// from standard library flag package
 
 // Value is the interface to the dynamic value stored in a flag.
 // (The default value is represented as a string.)
@@ -54,45 +89,18 @@ var Flag = flag.NewFlagSet("cli", flag.ExitOnError)
 // Set is called once, in command line order, for each flag present.
 // The flag package may call the String method with a zero-valued receiver,
 // such as a nil pointer.
+//
+// Reference: standard library flag package
 type Value interface {
 	String() string
 	Set(string) error
 }
 
-type Option struct {
-	Flag  flag.Flag
-	Short string
+type Getter interface {
+	Value
+	Get() any
 }
 
-func init() {
-	Flag.BoolVar(&Options.DebugFlag, "debug", false, "turn on debug mode")
-	Flag.BoolVar(&Options.ForceFlag, "force", false, "force writing to file")
-	Flag.BoolVar(&Options.VerboseFlag, "verbose", false, "turn on verbose mode")
-	Flag.BoolVar(&Options.QuietFlag, "quiet", false, "turn on quiet mode")
-
-	Flag.StringVar(&Options.InFile, "In", DefaultInFile, "name of input file")
-	Flag.StringVar(&Options.OutFile, "Out", DefaultOutFile, "name of output file")
-
-	Flag.Parse(os.Args[1:])
-
-	Options.logLevel = DefaultLogLevel
-
-	if Options.DebugFlag {
-		Options.logLevel = errorlogger.DebugLevel
-		Options.debugWriter = defaultDebugWriter
-	}
-
-	if Options.VerboseFlag {
-		Options.logLevel = errorlogger.InfoLevel
-		Options.verboseWriter = defaultVerboseWriter
-	}
-
-	// no output even if other options are set
-	if Options.QuietFlag {
-		Options.logLevel = errorlogger.FatalLevel
-		Options.verboseWriter = discard
-		Options.debugWriter = discard
-	}
-
-	Log.SetLevel(Options.logLevel)
+type hasIsBoolFlag interface {
+	IsBoolFlag()
 }

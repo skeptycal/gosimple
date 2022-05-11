@@ -22,31 +22,34 @@ const (
 // LinesFlag   bool
 
 var (
-	flag = cli.Flag
-	O    = &cli.Options
-	V    = cli.Vprintln
-	NL   = cli.Br
-	Head = cli.Head
-	Tail = cli.Tail
+	Flags = cli.Flags
+	V     = cli.Vprintln
+	NL    = cli.Br
+	Flag  = cli.Flag
+
 	// P   = fmt.Println
 	B2S = cli.B2S
 	S2B = cli.S2B
 )
+
+func Head[E any](s []E) []E {
+	return cli.Head(s)
+}
 
 var (
 	packageName = ""
 )
 
 func init() {
-	flag.BoolVar(O.FieldsFlag, "fields", false, "print file contents as fields")
-	flag.BoolVar(O.LinesFlag, "lines", false, "print file contents as lines")
-	flag.StringVar(&packageName, "package", "main", "package name for generated files")
+	// flag.BoolVar(O.FieldsFlag, "fields", false, "print file contents as fields")
+	// flag.BoolVar(O.LinesFlag, "lines", false, "print file contents as lines")
+	Flags.StringVar(&packageName, "package", "main", "package name for generated files")
 
-	flag.Parse(os.Args[1:])
+	Flags.Parse(os.Args[1:])
 }
 
 func main() {
-	s, w := getIo(O.InFile, O.OutFile)
+	s, w := getIo(*cli.InFile, *cli.OutFile)
 	defer w.Close()
 
 	V("io.Writer: ", w, newline)
@@ -55,8 +58,9 @@ func main() {
 	s = Cleanup(s)
 
 	list := Fields(s, ",")
-	V("Head of cleaned list:", Head(strings.Join(list, ", "), 0))
+	V("Head of cleaned list:", Head(list))
 	s = strings.Join(list, ", ")
+	Head(S2B(s))
 	V("final cleaned, joined list: ", s)
 
 	NL()
@@ -66,7 +70,7 @@ func main() {
 
 	writeFile(w, out)
 
-	fi, err := os.Stat(O.OutFile)
+	fi, err := os.Stat(*cli.OutFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,11 +98,11 @@ func getIo(in, out string) (string, io.WriteCloser) {
 // the current data set. It will likely need to be
 // revised any time a new data set is processed.
 func Cleanup(s string) string {
-	V(Head(s, 0))
+	V(Head(S2B(s)))
 	s = AddTrailingSep(s, ",", false)
-	V(Head(s, 0))
+	V(Head(S2B(s)))
 	s = NormalizeWhitespace(s)
-	V(Head(s, 0))
+	V(Head(S2B(s)))
 	return s
 }
 
@@ -106,7 +110,7 @@ func Cleanup(s string) string {
 // As a precaution, the writer uses os.Stdout unless
 // the -force CLI option is enabled.
 func writeFile(w io.Writer, s string) (n int, err error) {
-	if !O.ForceFlag {
+	if !*cli.ForceFlag {
 		w = os.Stdout
 	}
 	return w.Write(S2B(s))
@@ -174,7 +178,7 @@ func fileFooter() string {
 }
 
 func getFileData(filename string) (string, error) {
-	fi, err := os.Stat(O.InFile)
+	fi, err := os.Stat(*cli.InFile)
 	if err != nil {
 		return "", err
 	}
@@ -202,30 +206,30 @@ func getWriter(filename string) (io.WriteCloser, error) {
 	return f, nil
 }
 
-func printFields(s string) {
-	if O.FieldsFlag {
-		fields := Fields(NormalizeWhitespace(s), ",")
-		if fields == nil {
-			log.Fatal("error getting file lines")
-		}
-		V("fields: ", fields)
-		for i, v := range fields {
-			V("%3d: %v\n", i, v)
-		}
-	}
-}
+// func printFields(s string) {
+// 	if O.FieldsFlag {
+// 		fields := Fields(NormalizeWhitespace(s), ",")
+// 		if fields == nil {
+// 			log.Fatal("error getting file lines")
+// 		}
+// 		V("fields: ", fields)
+// 		for i, v := range fields {
+// 			V("%3d: %v\n", i, v)
+// 		}
+// 	}
+// }
 
-func printLines(s string) {
-	if O.LinesFlag {
-		lines := Lines(s)
-		if lines == nil {
-			log.Fatal("error getting file lines")
-		}
-		for i, v := range lines {
-			fmt.Printf("%3d: %v\n", i, v)
-		}
-	}
-}
+// func printLines(s string) {
+// 	if O.LinesFlag {
+// 		lines := Lines(s)
+// 		if lines == nil {
+// 			log.Fatal("error getting file lines")
+// 		}
+// 		for i, v := range lines {
+// 			fmt.Printf("%3d: %v\n", i, v)
+// 		}
+// 	}
+// }
 
 // Lines returns s separated on occurrences of newline.
 func Lines(s string) []string {
