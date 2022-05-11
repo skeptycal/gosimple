@@ -13,8 +13,14 @@ var Flags = flag.NewFlagSet("cli", flag.ExitOnError)
 
 ////////// Flags utilities
 
-func isSet(name string) bool        { return Flags.Lookup(name) != nil }
-func flagString(name string) string { return Flags.Lookup(name).Value.String() }
+func isSet(name string) bool { return Flags.Lookup(name) != nil }
+
+// func flagString(name string) string {
+// 	return ""
+// 	// f := *Flags.Lookup(name)
+// 	// return f.Value.String()
+// 	// return Flags.Lookup(name).Value.String()
+// }
 
 func Flag(flag *flag.Flag) any {
 	if v, ok := flag.Value.(Getter); ok {
@@ -70,7 +76,7 @@ func init() {
 
 	// no output even if other options are set
 	// overrides Verbose and Debug logging level.
-	if flagString("QuietFlag") == "true" {
+	if *QuietFlag {
 		LogLevel.Set("Fatal")
 		debugWriter = discard
 		verboseWriter = discard

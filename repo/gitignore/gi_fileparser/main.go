@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 	"strings"
-
-	"github.com/skeptycal/gosimple/repo/gitignore/gi_fileparser/cli"
 )
 
 //go:generate goyacc -o gopher.go -p parser gopher.y
