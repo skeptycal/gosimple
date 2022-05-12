@@ -1,8 +1,6 @@
 package file
 
-import (
-	"github.com/skeptycal/gosimple/repo/gitignore/gi_fileparser/cli"
-)
+import "github.com/skeptycal/gosimple/repo/gitignore/cli"
 
 var (
 	Flags = cli.Flags

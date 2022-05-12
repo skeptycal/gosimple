@@ -1,6 +1,6 @@
 package file
 
-import "github.com/skeptycal/gosimple/repo/gitignore/gi_fileparser/cli"
+import "github.com/skeptycal/gosimple/repo/gitignore/cli"
 
 func (f *GoFile) HeadBytes(n int) []byte {
 	if n < 1 {

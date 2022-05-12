@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/skeptycal/gosimple/repo/gitignore/gi_fileparser/cli"
+	"github.com/skeptycal/gosimple/repo/gitignore/cli"
 )
 
 func (f *GoFile) Lines() []string {

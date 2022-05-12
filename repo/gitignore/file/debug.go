@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/skeptycal/gosimple/os/gofile"
-	"github.com/skeptycal/gosimple/repo/gitignore/gi_fileparser/cli"
+	"github.com/skeptycal/gosimple/repo/gitignore/cli"
 )
 
 type details struct {
