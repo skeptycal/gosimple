@@ -4,6 +4,7 @@ import "github.com/pkg/errors"
 
 var (
 	ErrNotImplemented = errors.New("not implemented")
+	ErrNoForceFlag    = errors.New("no -force flag")
 )
 
 func errNotImplemented(msg string) error {

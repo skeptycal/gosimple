@@ -6,14 +6,14 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/skeptycal/gosimple/repo/gitignore/cli"
 )
 
 //go:generate goyacc -o gopher.go -p parser gopher.y
 
 const (
-	NormalMode os.FileMode = 0644
-	DirMode    os.FileMode = 0755
-	newline                = cli.Newline
+	newline = cli.Newline
 )
 
 // FieldsFlag  bool
@@ -66,7 +66,7 @@ func main() {
 
 	V("wrapped contents ready for file output: ", out)
 
-	writeFile(w, out)
+	cli.WriteFile(w, out)
 
 	fi, err := os.Stat(*cli.OutFile)
 	if err != nil {
@@ -79,16 +79,16 @@ func main() {
 
 }
 
+func getWriter(filename string) (io.WriteCloser, error) {
+	return cli.FileWriter(filename)
+}
+
 func getIo(in, out string) (string, io.WriteCloser) {
 	s, err := getFileData(in)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	w, err := getWriter(out)
-	if err != nil {
-		log.Fatal(err)
-	}
 	return s, w
 }
 
@@ -102,16 +102,6 @@ func Cleanup(s string) string {
 	s = NormalizeWhitespace(s)
 	V(Head(S2B(s)))
 	return s
-}
-
-// writeFile writes the results to w.
-// As a precaution, the writer uses os.Stdout unless
-// the -force CLI option is enabled.
-func writeFile(w io.Writer, s string) (n int, err error) {
-	if !*cli.ForceFlag {
-		w = os.Stdout
-	}
-	return w.Write(S2B(s))
 }
 
 // wrapContents wraps repeated formatted fields with a
@@ -190,18 +180,6 @@ func getFileData(filename string) (string, error) {
 	V("file opened: ", inFileName)
 
 	return B2S(b), nil
-}
-
-func getWriter(filename string) (io.WriteCloser, error) {
-	fi, err := os.Stat(filename)
-	if err != nil {
-		return nil, err
-	}
-	f, err := os.OpenFile(fi.Name(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, NormalMode)
-	if err != nil {
-		return nil, err
-	}
-	return f, nil
 }
 
 // func printFields(s string) {
