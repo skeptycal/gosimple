@@ -125,7 +125,7 @@ func WithResetCloser(w any) (io.WriteCloser, error) {
 type (
 	chainCloser struct {
 		chain  []func() error
-		closer io.Closer
+		closer func() error
 	}
 	// fake implements io.WriteCloser, which includes
 	//	Close() error
@@ -165,16 +165,14 @@ type (
 
 func (c *chainCloser) Close() error {
 	var er1 error = nil
-	chain := append(c.chain, c.closer.(func() error))
-	for i, fn := range c.chain {
+	var chain = make([]func() error, 1, len(c.chain)+1)
+	chain[0] = c.closer
+	chain = append(chain, c.chain...)
+	for i, fn := range chain {
 		err := fn()
 		if err != nil {
 			er1 = errors.Wrapf(er1, "ChainCloser(%d) error in %q: %v", i, fn, err)
 		}
-	}
-	err := c.closer.Close()
-	if err != nil {
-		er1 = errors.Wrapf(er1, "ChainCloser(%d) error in %q: %v", -1, "Close()", err)
 	}
 	return er1
 }
