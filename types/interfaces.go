@@ -40,13 +40,13 @@ type (
 	//		// TODO set the value that matches the key
 	//  	return nil
 	//  }
-	GetSetter interface {
-		Get(key Any) (Any, error)
-		Set(key Any, value Any) error
+	GetSetter[K comparable, V any] interface {
+		Get(key K) (V, error)
+		Set(key K, value V) error
 	}
 
-	// Slicer returns the slice of keys and values that are
-	// asoociated with the underlying data structure.
+	// MapSlicer returns the slice of keys and values that are
+	// asoociated with the underlying map.
 	//
 	// Example methods:
 	// 	func (d *dict) Keys() []Any {
@@ -65,9 +65,24 @@ type (
 	//	 	}
 	//	 	return values
 	//	 }
-	Slicer interface {
-		Keys() []Any
-		Values() []Any
+	MapSlicer[E comparable, S ~[]E] interface {
+		Keys(sorted bool) S
+		Values(sorted bool) S
+		SortedKeys() S
+		ReverseKeys() S
+		ListSorter[E, S]
+	}
+
+	Lister[E comparable, S ~[]E] interface {
+		List() S
+		Sorted() S
+		Reverse() S
+	}
+
+	ListSorter[E comparable, S ~[]E] interface {
+		Sorter
+		Sorted() S
+		Reverse() S
 	}
 
 	// Printer implements common printing functions similar
@@ -164,7 +179,6 @@ type (
 		Width() (wid int, ok bool)
 		// Precision returns the value of the precision option and whether it has been set.
 		Precision() (prec int, ok bool)
-
 		// Flag reports whether the flag c, a character, has been set.
 		Flag(c int) bool
 	}
