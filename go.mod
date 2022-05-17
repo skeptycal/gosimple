@@ -33,6 +33,7 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.9 // indirect
+	github.com/montanaflynn/stats v0.6.6 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
