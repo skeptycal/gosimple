@@ -11,12 +11,12 @@ import (
 var Size = binary.Size
 
 type (
-	StringHeader struct {
+	stringHeader struct {
 		Data uintptr
 		Len  int
 	}
 
-	SliceHeader struct {
+	sliceHeader struct {
 		Data uintptr
 		Len  int
 		Cap  int
@@ -24,20 +24,20 @@ type (
 )
 
 func unsafeBytesToString(bytes []byte) string {
-	sliceHeader := (*SliceHeader)(unsafe.Pointer(&bytes))
+	header := (*sliceHeader)(unsafe.Pointer(&bytes))
 
-	return *(*string)(unsafe.Pointer(&StringHeader{
-		Data: sliceHeader.Data,
-		Len:  sliceHeader.Len,
+	return *(*string)(unsafe.Pointer(&stringHeader{
+		Data: header.Data,
+		Len:  header.Len,
 	}))
 }
 
 func unsafeStringToBytes(s string) []byte {
-	stringHeader := (*StringHeader)(unsafe.Pointer(&s))
-	return *(*[]byte)(unsafe.Pointer(&SliceHeader{
-		Data: stringHeader.Data,
-		Len:  stringHeader.Len,
-		Cap:  stringHeader.Len,
+	header := (*stringHeader)(unsafe.Pointer(&s))
+	return *(*[]byte)(unsafe.Pointer(&sliceHeader{
+		Data: header.Data,
+		Len:  header.Len,
+		Cap:  header.Len,
 	}))
 }
 
@@ -82,3 +82,8 @@ func intDataSize(data any) int {
 	}
 	return 0
 }
+
+///// The following functions are for benchmark comparisons:
+
+func builtinS2B(s string) []byte { return []byte(s) }
+func builtinB2S(b []byte) string { return string(b) }

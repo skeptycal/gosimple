@@ -15,16 +15,25 @@ type GoFile struct {
 	fi       os.FileInfo // cached file information
 	lines    []string    // cached lines
 	isDirty  bool        // flag for updated buffer requiring resetting cached items
+	create   bool        // flag for creating files that do not exist
+	truncate bool        // flag for truncating files instead of appending
 
 	// mu  sync.RWMutex
+
 	buf *bytes.Buffer // memfile
 	b   bufio.ReadWriter
 }
 
 func (f *GoFile) checkDirty() error {
 	if f.IsDirty() {
-		f.SaveData()
-		f.refresh()
+		err := f.SaveData()
+		if err != nil {
+			return err
+		}
+		err = f.refresh()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

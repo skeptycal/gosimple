@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/skeptycal/gosimple/repo/gitignore/cli"
+	"github.com/skeptycal/gosimple/repo/gitignore/file"
 )
 
 //go:generate goyacc -o gopher.go -p parser gopher.y
@@ -31,6 +32,8 @@ var (
 )
 
 func Head[E any](s []E) []E {
+	// TODO: an alias would not work with generic type.
+	// var Head = cli.Head
 	return cli.Head(s)
 }
 
@@ -47,7 +50,7 @@ func init() {
 }
 
 func main() {
-	s, w := getIo(*cli.InFile, *cli.OutFile)
+	s, w := getIoCLI(*cli.InFile, *cli.OutFile, true)
 	defer w.Close()
 
 	V("io.Writer: ", w, newline)
@@ -55,18 +58,18 @@ func main() {
 	/// Cleanup input
 	s = Cleanup(s)
 
-	list := Fields(s, ",")
+	list := file.Fields(s, ",")
 	V("Head of cleaned list:", Head(list))
 	s = strings.Join(list, ", ")
 	Head(S2B(s))
 	V("final cleaned, joined list: ", s)
 
 	NL()
-	out := wrapContents(w, "%q, ", fileHeader(), fileFooter(), list, false)
+	out := wrapContents("%q, ", fileHeader(), fileFooter(), list, false)
 
 	V("wrapped contents ready for file output: ", out)
 
-	cli.WriteFile(w, out)
+	cli.WriteString(w, out)
 
 	fi, err := os.Stat(*cli.OutFile)
 	if err != nil {
@@ -79,17 +82,38 @@ func main() {
 
 }
 
-func getWriter(filename string) (io.WriteCloser, error) {
-	return cli.FileWriter(filename)
+// getIo returns the string contents of the input file
+// and an io.WriteCloser to the output file.
+// The truncate parameter truncates the output file
+// upon opening if set to true. If false, the output file
+// is returned in append mode.
+// Any error is returned unchanged.
+func getIo(in, out string, truncate bool) (string, io.WriteCloser, error) {
+	s, err := file.GetFileData(in)
+	if err != nil {
+		return "", nil, err
+	}
+	_, wc, err := file.NewGoFile(out)
+	if err != nil {
+		return "", nil, err
+	}
+
+	// f, err := os.OpenFile(name string, flag int, perm os.FileMode)
+
+	return s, wc, nil
 }
 
-func getIo(in, out string) (string, io.WriteCloser) {
-	s, err := getFileData(in)
+// getIoCLI returns the string contents of the input file
+// and an io.WriteCloser to the output file.
+// In the CLI version, any error results in a
+// log.Fatal(err).
+func getIoCLI(in, out string, truncate bool) (string, io.WriteCloser) {
+	s, wc, err := getIo(in, out, truncate)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return s, w
+	return s, wc
 }
 
 // Cleanup is a data cleaning function specific to
@@ -97,9 +121,9 @@ func getIo(in, out string) (string, io.WriteCloser) {
 // revised any time a new data set is processed.
 func Cleanup(s string) string {
 	V(Head(S2B(s)))
-	s = AddTrailingSep(s, ",", false)
+	s = file.AddTrailingSep(s, ",", false)
 	V(Head(S2B(s)))
-	s = NormalizeWhitespace(s)
+	s = file.NormalizeWhitespace(s)
 	V(Head(S2B(s)))
 	return s
 }
@@ -107,7 +131,7 @@ func Cleanup(s string) string {
 // wrapContents wraps repeated formatted fields with a
 // file header and footer and returns the resulting
 // string.
-func wrapContents(w io.Writer, format, header, footer string, fields []string, addNewlines bool) string {
+func wrapContents(format, header, footer string, fields []string, addNewlines bool) string {
 	if format == "" {
 		format = "%q, " // quoted string items in a list
 	}
@@ -139,17 +163,6 @@ func wrapContents(w io.Writer, format, header, footer string, fields []string, a
 	return sb.String()
 }
 
-// AddTrailingSep adds a trailing separator sep to each
-// newline in s.
-// The actual newline character can be kept or discarded
-// based on the keepNewLines bool.
-func AddTrailingSep(s, sep string, keepNewLines bool) string {
-	if keepNewLines {
-		sep = sep + newline
-	}
-	return strings.ReplaceAll(s, "\n", sep)
-}
-
 func fileHeader() string {
 	return `package main
 
@@ -163,23 +176,6 @@ var giParams = []string{`
 func fileFooter() string {
 	return `}
 	`
-}
-
-func getFileData(filename string) (string, error) {
-	fi, err := os.Stat(*cli.InFile)
-	if err != nil {
-		return "", err
-	}
-	inFileName := fi.Name()
-	V("file stat ok: ", inFileName)
-
-	b, err := os.ReadFile(inFileName)
-	if err != nil {
-		return "", err
-	}
-	V("file opened: ", inFileName)
-
-	return B2S(b), nil
 }
 
 // func printFields(s string) {
@@ -206,20 +202,3 @@ func getFileData(filename string) (string, error) {
 // 		}
 // 	}
 // }
-
-// Lines returns s separated on occurrences of newline.
-func Lines(s string) []string {
-	return strings.Split(s, newline)
-}
-
-// Fields returns s separated on occurrences of sep.
-func Fields(s string, sep string) []string {
-	return strings.Split(s, ",")
-}
-
-// NormalizeWhitespace splits s on any whitespace
-// and returns each element as a single space
-// separated string.
-func NormalizeWhitespace(s string) string {
-	return strings.Join(strings.Fields(s), " ")
-}

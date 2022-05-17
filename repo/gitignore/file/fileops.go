@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -34,18 +33,18 @@ func (f *GoFile) ReadAll() error {
 
 func fileOpenOrCreate(
 	filename string,
-	create bool,
-	extraBuffer float64) (out *GoFile, closer io.Closer, err error) {
+	create,
+	truncate bool,
+	extraBuffer float64) (out *GoFile, closer io.WriteCloser, err error) {
 	const defaultMinFileSize = 1 << 10
-	out = &GoFile{}
+	// out = &GoFile{}
+
 	out.fi, err = os.Stat(filename)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			// return on error (except for ErrNotExist)
 			return nil, nil, err
 		}
 		if !create {
-			// if file does not exist, create it based on bool parameter 'create'
 			return nil, nil, err
 		}
 	}
@@ -55,7 +54,19 @@ func fileOpenOrCreate(
 		return nil, nil, err
 	}
 
-	out.f, err = os.OpenFile(out.filename, os.O_RDONLY|os.O_CREATE, gofile.NormalMode)
+	fileFlag := os.O_WRONLY
+
+	if create {
+		fileFlag |= os.O_CREATE
+	}
+
+	if truncate {
+		fileFlag |= os.O_TRUNC
+	} else {
+		fileFlag |= os.O_APPEND
+	}
+
+	out.f, err = os.OpenFile(out.filename, fileFlag, gofile.NormalMode)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -93,36 +104,73 @@ func fileOpenOrCreate(
 	return out, out.f, nil
 }
 
-// NewFile takes a pointer to a file struct and a filename.
-// It checks for existance of the file (or creates as necessary),
-// creates a new file structure in f, and returns an io.Closer
-// for use with defer in the calling code.
-func NewFile(filename string) (*GoFile, io.Closer, error) {
-	f, closer, err := fileOpenOrCreate(filename, true, defaultBufferSizeMultiplier)
+// NewGoFile returns a file object and an io.WriteCloser from a filename.
+//
+// It checks for existance of the file and creates it as necessary.
+// The returned file object is opened for writing only, and
+// truncates any existing file. For append mode operations,
+// use NewGoFileAppend().
+//
+// Callers should use the io.WriteCloser
+// for standard operations. The returned file object has
+// buffering and additional capabilities for advanced operations.
+func NewGoFile(filename string) (*GoFile, io.WriteCloser, error) { // (*GoFile, io.Closer, error) {
+	f, wc, err := fileOpenOrCreate(filename, true, true, defaultBufferSizeMultiplier)
 	if err != nil {
-		return nil, fakecloser.NewFromError(err), err
+		return nil, nil, err
 	}
-	fmt.Println(f)
-	return f, closer, nil
+
+	return f, wc, nil
+}
+
+// NewGoFileAppend returns a file object and an io.WriteCloser
+// from a filename.
+//
+// It checks for existance of the file and creates it as necessary.
+// The returned file object is opened for writing only, and
+// is in append mode. For truncate mode operations,
+// use NewGoFile().
+//
+// Callers should use the io.WriteCloser
+// for standard operations. The returned file object has
+// buffering and additional capabilities for advanced operations.
+func NewGoFileAppend(filename string) (*GoFile, io.WriteCloser, error) { // (*GoFile, io.Closer, error) {
+	f, wc, err := fileOpenOrCreate(filename, true, false, defaultBufferSizeMultiplier)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return f, wc, nil
+}
+
+// GetWriteCloser returns an io.WriteCloser from
+// the given filename if the file was opened successfully.
+func GetWriteCloser(filename string) (io.WriteCloser, error) {
+	_, wc, err := NewGoFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	return fakecloser.New(wc)
 }
 
 // LoadData loads all data from the source file into the
 // memfile in the *file struct.
 func (f *GoFile) LoadData() error {
-	fh, closer, err := NewFile(f.fi.Name())
+	gf, fh, err := NewGoFile(f.fi.Name())
 	if err != nil {
 		return err
 	}
-	defer closer.Close()
+	defer fh.Close()
 
-	n, err := io.Copy(fh.buf, fh.f)
+	n, err := io.Copy(gf.buf, gf.f)
 	if err != nil {
 		return err
 	}
-	if n != fh.fi.Size() {
+	if n != gf.fi.Size() {
 		return basicfile.ErrShortWrite
 	}
-	f = fh
+	f = gf
 	_ = f
 	return nil
 }

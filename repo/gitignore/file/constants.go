@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+
+	"github.com/skeptycal/gosimple/repo/gitignore/cli"
 )
 
 const (
@@ -23,9 +25,19 @@ const (
 const (
 	PathSep      = os.PathSeparator
 	ListSep      = os.PathListSeparator
+	NewLine      = "\n"
+	Tab          = "\t"
 	NL      byte = '\n'
 	TAB     byte = '\t'
 	NUL     byte = 0
+)
+
+var (
+	V = cli.Vprintln
+	// P   = fmt.Println
+
+	B2S = cli.B2S
+	S2B = cli.S2B
 )
 
 type TimeZone int

@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -15,6 +14,22 @@ const (
 	DirMode    os.FileMode = 0755
 )
 
+var (
+	// TODO ignoring this error may be foolish ...
+	stdOutCloser, _  = fakecloser.New(os.Stdout)
+	discardCloser, _ = fakecloser.New(io.Discard)
+)
+
+func NewWriteCloserCLI(w any) io.WriteCloser {
+	fk, err := fakecloser.New(w)
+	if err != nil {
+		err = log.Err(err)
+		log.Error(err)
+		return nil
+	}
+	return fk
+}
+
 // WriteFile writes the string to filename.
 // As a precaution, the writer uses os.Stdout unless
 // the -force (ForceFlag) CLI option is enabled.
@@ -23,7 +38,7 @@ func WriteFile(filename, s string) (n int, err error) {
 		return os.Stdout.Write(S2B(s))
 	}
 
-	w, err := WriteCloser(filename, true)
+	w, err := FileWriteCloser(filename, true)
 	if err != nil {
 		return 0, err
 	}
@@ -44,14 +59,14 @@ func WriteString(w io.Writer, s string) (n int, err error) {
 	return w.Write(S2B(s))
 }
 
-// FileWriter returns an io.WriteCloser from the given
+// FileWriter returns an io.FileWriteCloser from the given
 // filename. The file is truncated upon opening if truncate
 // is true. Otherwise, the file is opened in append mode.
 // If the file does not exist, a new file is created.
 //
 // As a precaution, the writer uses os.Stdout unless
 // the -force (ForceFlag) CLI option is enabled.
-func WriteCloser(filename string, truncate bool) (io.WriteCloser, error) {
+func FileWriteCloser(filename string, truncate bool) (io.WriteCloser, error) {
 	if !*ForceFlag {
 		return stdOutCloser, nil
 	}
