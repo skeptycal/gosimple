@@ -7,8 +7,8 @@ import (
 	"github.com/skeptycal/gosimple/types/constraints"
 )
 
-type RealSet[T Real] interface {
-	List() []T
+type RealSet[T Real, S ~[]T] interface {
+	List() S
 }
 
 type Realer[T Real] interface {
@@ -22,28 +22,18 @@ type real[T constraints.Real] struct {
 }
 
 // CastReal recasts a variable of any type in the
-// constraint Number to a specific instantiated
-// type of Number.
+// constraint Real to a specific instantiated
+// type of Real.
 // This may not have the effect you intend ...
-func (r real[N2]) CastReal() N2 {
-	return *(*N2)(unsafe.Pointer(&r))
-}
+func (r real[N2]) CastReal() N2 { return *(*N2)(unsafe.Pointer(&r)) }
 
-func (r real[T]) String() string {
-	return ToString(r.n)
-}
+func (r real[T]) String() string { return ToString(r.n) }
 
-// func (r real[int]) CastInt() int {
-// 	return r.CastReal()
-// }
+func (r real[int]) CastInt() int { return r.CastReal() }
 
-func (r real[uint]) CastUInt() uint {
-	return r.CastReal()
-}
+func (r real[uint]) CastUInt() uint { return r.CastReal() }
 
-func (r real[float64]) CastFloat64() float64 {
-	return r.CastReal()
-}
+func (r real[float64]) CastFloat64() float64 { return r.CastReal() }
 
 // func makeList[T constraints.Real](args ...T) []Numberer {
 // 	list := make([]Numberer, len(args))
@@ -55,17 +45,10 @@ func (r real[float64]) CastFloat64() float64 {
 // 	return list
 // }
 
-func makeSlice[T Real](args ...T) (list []T) {
-	return append(list, args...)
-}
+func makeSlice[T Real](args ...T) (list []T) { return append(list, args...) }
 
-// func toString[S Stringable](n S) string {
-// 	return string(n)
-// }
 func ToString[S Stringable](s S) string {
-
 	return fmt.Sprintf("%v", s)
-
 	/*
 
 		size := int(unsafe.Sizeof(s[0]))
@@ -88,21 +71,21 @@ func ToString[S Stringable](s S) string {
 }
 
 // CastReal recasts a variable of any type in the
-// constraint Number to a specific instantiated
-// type of Number.
+// constraint Real to a specific instantiated
+// type of Real.
 // This may not have the effect you intend ...
 func CastReal[N1, N2 Real](n N1) N2 {
 	return *(*N2)(unsafe.Pointer(&n))
 }
 
 // ToByte recasts a variable of any type in the
-// constraint Number to byte.
+// constraint Real to byte.
 // This may not have the effect you intend ...
 func ToByte[N Real](n N) byte {
 	return *(*byte)(unsafe.Pointer(&n))
 }
 
-// CastFloat64 recasts a Real number to int.
+// CastFloat64 recasts a Real number to float64.
 // This may not have the effect you intend ...
 func CastFloat64[T Real](n T) float64 {
 	// return *(*float64)(unsafe.Pointer(&n))
