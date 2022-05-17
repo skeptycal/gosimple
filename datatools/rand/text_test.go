@@ -1,7 +1,6 @@
 package rand
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -14,7 +13,6 @@ func init() {
 }
 
 func Test_randLength(t *testing.T) {
-
 	tests := []struct {
 		name string
 		min  int
@@ -47,34 +45,24 @@ func Test_randLength(t *testing.T) {
 }
 
 func TestRandByte(t *testing.T) {
-	const n = 10000
-	var sum int
-
-	m := make(map[byte]int)
+	const n = 100000
+	list := make([]float64, n)
 
 	for i := 0; i < n; i++ {
-		name := fmt.Sprintf("RandByte(%d)", i)
-
-		t.Run(name, func(t *testing.T) {
+		t.Run("RandByte", func(t *testing.T) {
 			got, err := RandByte()
 			if err != nil {
 				t.Errorf("RandByte() error = %v", err)
 				return
 			}
-			m[got]++
-			if got > 255 {
-				t.Errorf("RandByte() = %v", got)
-			}
+			list[i] = float64(got)
 		})
 	}
-	for k, v := range m {
-		sum += int(k) * v
-	}
-	avg := sum / n
 
-	m, s := stat.MeanStdDev(data, nil)
+	mean, sd := stat.MeanStdDev(list, nil)
+	ent := stat.Entropy(list)
 
-	if avg != n/2 {
-		t.Errorf("average of series (n=%v) is not within spec:  %v", n, avg)
+	if mean < 127 || mean > 128 {
+		t.Errorf("series (n=%v) is not within spec:  mean: %4.2f (sd: %3.2f) entropy: %f", n, mean, sd, ent)
 	}
 }
