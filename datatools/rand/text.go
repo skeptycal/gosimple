@@ -3,11 +3,28 @@ package rand
 import (
 	"crypto/rand"
 	"fmt"
-	mathrand "math/rand"
 )
 
 type text interface {
 	~string | ~[]byte
+}
+
+// randLength returns a random number between min and max.
+// If min == max, min is returned.
+// If min > max, they are reversed before processing.
+func randLength(min, max int) int {
+
+	switch v := max - min; {
+	case v == 0:
+		return min
+	case v < 0:
+		return randLength(max, min)
+	case v > 0:
+		// return 4
+		return cRandInt[int](v) + min
+	default:
+		panic("number is not zero, less than zero, or greater than zero") // impossible
+	}
 }
 
 // RandByte returns a random byte.
@@ -42,18 +59,32 @@ func Rnd() (int, error) {
 		return 0, fmt.Errorf("failed to generate random int: %v", err)
 	}
 	return int(b[0]), nil
-
 }
 
-// RandText returns a random string or slice of random bytes
-// n bytes long.
-func CreateRandomLengthText[T text](min, max int) (T, error) {
-	dif := max - min
-	if dif < 1 {
-		dif = 1
-	}
+// blank returns a new zero-value object of the same type as v.
+func blank[T any]() T { return *new(T) }
 
-	size := mathrand.Intn(dif) + min
+// RandText returns a random string or slice of random bytes
+// with a length between min and max.
+func CreateRandomLengthText[T text](min, max int) (retval T, err error) {
+
+	if max == min {
+		var b byte
+		b, err = RandByte()
+		if err != nil {
+			return // blank[T](), err
+		}
+		buf := []byte{b}
+		return T(buf), nil
+	}
+	if max < min {
+		return CreateRandomLengthText[T](max, min)
+	}
+	dif := max - min
+
+	size := cRandInt[int](dif) + min
+	// size := rand.Int()
+	// size := mathrand.Intn(dif) + min
 	return RandText[T](size)
 }
 
