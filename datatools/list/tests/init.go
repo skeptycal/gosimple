@@ -1,9 +1,14 @@
 package tests
 
-func NewTestTable[G, W any, E TestTableEntry[G, W], S ~[]E](name string) TestTable[G, W, E, S] {
-	return &testTable[G, W, E, S]{name, nil}
+func NewTestTable[G any, W comparable, S ~[]TestTableEntry[G, W]](name string) TestTable[G, W, S] {
+	return &testTable[G, W, S]{name, nil}
 }
-func NewTestTableEntry[E any]() TestTableEntry[E] {}
+func NewTestTableEntry[G any, W comparable]() TestTableEntry[G, W] { return &testTableEntry[G, W]{} }
 
-func NewBenchmarkTable[E any, S ~[]TestTableEntry[E]]() BenchmarkTable[E, S] {}
-func NewBenchmarkTableEntry[E any]() BenchmarkTableEntry[E]                  {}
+func NewBenchmarkTable[G any, W comparable, S ~[]BenchmarkTableEntry[G, W]]() BenchmarkTable[G, W, S] {
+	return &benchmarkTable[G, W, S]{}
+}
+
+func NewBenchmarkTableEntry[G any, W comparable]() BenchmarkTableEntry[G, W] {
+	return &benchmarkTableEntry[G, W]{}
+}

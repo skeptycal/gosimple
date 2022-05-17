@@ -5,40 +5,48 @@ import (
 	"testing"
 
 	"github.com/pkg/errors"
+	"github.com/skeptycal/gosimple/errorhandling"
 )
 
-var errNotImplemented = errors.New("not implemented")
+var errNotImplemented = errorhandling.ErrNotImplemented
 
 type (
-	TestTable[G, W any, E TestTableEntry[G, W], S ~[]E] interface {
-		Name() string
+	TestTable[G any, W comparable, S ~[]TestTableEntry[G, W]] interface {
+		TestRunner
 		Tests() S
-		Run(t *testing.T) error
 	}
 
-	testTable[G, W any, E TestTableEntry[G, W], S ~[]E] struct {
+	testTable[G any, W comparable, S ~[]TestTableEntry[G, W]] struct {
 		name  string
 		tests S
 	}
 )
 
-func (tbl *testTable[G, W, E, S]) Name() string { return tbl.name }
-func (tbl *testTable[G, W, E, S]) Tests() S     { return tbl.tests }
-func (tbl *testTable[G, W, E, S]) Run(t *testing.T) error {
-	var wrap error
+func (tbl *testTable[G, W, S]) Name() string { return tbl.name }
+func (tbl *testTable[G, W, S]) Tests() S     { return tbl.tests }
+func (tbl *testTable[G, W, S]) Run(t *testing.T) error {
+	var wrap error = nil
 	for i, tt := range tbl.tests {
-		t.Run(tbl.Name(), func(t *testing.T) {
-			err := tt.Run()
-			if err != nil {
-				wrap = errWrapper(err, fmt.Sprintf("test %d failed", i))
+		name := tbl.Name() + "(" + tt.Name() + ")"
+
+		t.Run(name, func(t *testing.T) {
+			if tt.Got() != tt.Want() != tt.WantErr() {
+				err := tErrorf(t, name, tt)
+				if err != nil {
+					wrap = errWrapper(err, fmt.Sprintf("test %d failed", i))
+				}
 			}
 		})
 
 	}
 
-	return errNotImplemented
+	return wrap
 }
 
 func errWrapper(err error, msg string) error {
 	return errors.Wrap(err, msg)
+}
+
+func tErrorf[G any, W comparable](t *testing.T, name string, tt TestTableEntry[G, W]) error {
+	return fmt.Errorf(fmtErrorf, name, tt.Got(), tt.Want(), tt.WantErr())
 }

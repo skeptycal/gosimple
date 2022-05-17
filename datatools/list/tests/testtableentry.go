@@ -1,45 +1,45 @@
 package tests
 
 import (
-	"fmt"
 	"testing"
 )
 
+const fmtErrorf = "%s: got %v, want %v (want error: %v): %v"
+
 type (
-	TestTableEntry[In any, Out comparable] interface {
-		In() []In
-		Want() Out
-		Got() Out
+	TestRunner interface {
 		Name() string
-		WantErr() bool
-		Run() error
+		Run(t *testing.T) error
 	}
 
-	testTableEntry[In any, Out comparable] struct {
+	TableEntryInfo[G any, W comparable] interface {
+		In() []G
+		Got() W
+		Want() W
+		WantErr() bool
+	}
+
+	TestTableEntry[G any, W comparable] interface {
+		TestRunner
+		TableEntryInfo[G, W]
+	}
+
+	testTableEntry[G any, W comparable] struct {
 		name    string
-		fn      func(in ...In) Out
-		in      []In
-		want    Out
+		fn      func(in ...G) W
+		in      []G
+		want    W
 		wantErr bool
 	}
 )
 
-func (entry *testTableEntry[In, Out]) Name() string  { return entry.name }
-func (entry *testTableEntry[In, Out]) WantErr() bool { return entry.wantErr }
-func (entry *testTableEntry[In, Out]) In() []In      { return entry.in }
-func (entry *testTableEntry[In, Out]) Want() Out     { return entry.want }
-func (entry *testTableEntry[In, Out]) Got() Out {
+func (entry *testTableEntry[G, W]) Name() string  { return entry.name }
+func (entry *testTableEntry[G, W]) In() []G       { return entry.in }
+func (entry *testTableEntry[G, W]) Want() W       { return entry.want }
+func (entry *testTableEntry[G, W]) Got() W        { return *new(W) }
+func (entry *testTableEntry[G, W]) WantErr() bool { return entry.wantErr }
 
-	return *new(Out)
-}
+func (entry *testTableEntry[G, W]) Run(t *testing.T) error {
 
-const fmtErrorf = "%s(%s): got %v, want %v (want error: %v"
-
-func (entry *testTableEntry[In, Out]) Run(t *testing.T) error {
-	if entry.Got() != entry.Want() != entry.WantErr() {
-		err := fmt.Errorf(fmtErrorf, entry.Name(), entry.In(), entry.Got(), entry.Want(), entry.WantErr())
-		t.Error(err.Error())
-		return err
-	}
 	return nil
 }
