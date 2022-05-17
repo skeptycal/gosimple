@@ -16,6 +16,7 @@
 │       └── go.yml
 ├── .gitignore
 ├── .vscode
+│   ├── launch.json
 │   └── settings.json
 ├── CODE_OF_CONDUCT.md
 ├── LICENSE
@@ -367,7 +368,15 @@
 │   │   ├── internal.go
 │   │   ├── list.go
 │   │   ├── list_test.go
-│   │   └── remove.go
+│   │   ├── remove.go
+│   │   ├── tests
+│   │   │   ├── benchmarktable.go
+│   │   │   ├── benkmarktableentry.go
+│   │   │   ├── init.go
+│   │   │   ├── testtable.go
+│   │   │   └── testtableentry.go
+│   │   ├── utilities.go
+│   │   └── utilities_test.go
 │   ├── math
 │   │   └── polynomial
 │   │       ├── cmd
@@ -384,7 +393,10 @@
 │   ├── primes10k
 │   │   └── primes10k.go
 │   ├── rand
-│   │   └── rand.go
+│   │   ├── ints.go
+│   │   ├── text.go
+│   │   ├── text_test.go
+│   │   └── xorshifts.go
 │   ├── sequence
 │   │   ├── sequence
 │   │   └── sequence_test.go
@@ -449,6 +461,8 @@
 │   ├── docs.md
 │   ├── index.html
 │   └── template.md
+├── errorhandling
+│   └── errors.go
 ├── go.mod
 ├── go.sum
 ├── go.test.sh
@@ -546,6 +560,8 @@
 │       ├── shpath_test.go
 │       └── stringutil.go
 ├── profile1652215597629343000.out
+├── profile1652538868214595000.out
+├── profile1652798994022739000.out
 ├── repo
 │   ├── defaults
 │   │   ├── .editorconfig
@@ -622,23 +638,36 @@
 │   │   ├── make_tree_md.sh
 │   │   └── tree.md
 │   ├── gitignore
+│   │   ├── cli
+│   │   │   ├── cli.go
+│   │   │   ├── clionly.go
+│   │   │   ├── debug.go
+│   │   │   ├── errors.go
+│   │   │   ├── flag.go
+│   │   │   ├── logflag.go
+│   │   │   ├── shell.go
+│   │   │   ├── shell_test.go
+│   │   │   ├── textdisplay.go
+│   │   │   ├── textprocessing.go
+│   │   │   ├── unsafe.go
+│   │   │   ├── unsafe_test.go
+│   │   │   ├── verbose.go
+│   │   │   └── writecloser.go
+│   │   ├── file
+│   │   │   ├── bytes.go
+│   │   │   ├── const.go
+│   │   │   ├── constants.go
+│   │   │   ├── debug.go
+│   │   │   ├── file.go
+│   │   │   ├── filebasic.go
+│   │   │   ├── fileops.go
+│   │   │   ├── imports.go
+│   │   │   ├── lines.go
+│   │   │   └── memfile.go
 │   │   ├── gi_fileparser
-│   │   │   ├── cli
-│   │   │   │   └── cli.go
-│   │   │   ├── file
-│   │   │   │   ├── bytes.go
-│   │   │   │   ├── const.go
-│   │   │   │   ├── constants.go
-│   │   │   │   ├── debug.go
-│   │   │   │   ├── file.go
-│   │   │   │   ├── filebasic.go
-│   │   │   │   ├── fileops.go
-│   │   │   │   ├── flags.go
-│   │   │   │   ├── imports.go
-│   │   │   │   ├── lines.go
-│   │   │   │   └── memfile.go
 │   │   │   ├── gilist.bak.txt
 │   │   │   ├── gilist.txt
+│   │   │   ├── gitignore_gen.go
 │   │   │   └── main.go
 │   │   ├── gitignore.go
 │   │   └── gitignore_gen.go
@@ -761,6 +790,14 @@
 │   └── version
 │       ├── sort.go
 │       └── version.go
+├── sort
+│   ├── cmd
+│   │   └── quicksort
+│   │       └── main.go
+│   ├── init.go
+│   ├── quicksort.go
+│   ├── quicksort_test.go
+│   └── radixsort.go
 ├── tests
 │   ├── coverage.txt
 │   ├── fields.go
@@ -860,7 +897,7 @@
             ├── gotube
             └── main.go
 
-193 directories, 660 files
+198 directories, 692 files
 ```
 
 [get_tree]: (http://mama.indstate.edu/users/ice/tree/)
