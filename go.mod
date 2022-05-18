@@ -6,7 +6,6 @@ require (
 	github.com/buger/goterm v1.0.4
 	github.com/fatih/color v1.13.0
 	github.com/fatih/structs v1.1.0
-	github.com/go-echarts/go-echarts v1.0.0
 	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/go-github/v34 v34.0.0
