@@ -5,6 +5,8 @@
 package list
 
 import (
+	"fmt"
+	"strings"
 	"unsafe"
 
 	"github.com/skeptycal/gosimple/types/constraints"
@@ -15,6 +17,12 @@ type (
 
 	// orderedList[T Ordered, E ~[]T] struct{}
 )
+
+func New[T Ordered, E ~[]T](list E) *Builder[T, E] {
+	b := &Builder[T, E]{}
+	b.Write(list)
+	return b
+}
 
 // A Builder is used to efficiently build a list
 // of Ordered objects using Write methods.
@@ -52,7 +60,21 @@ func (b *Builder[T, E]) copyCheck() {
 
 // String returns the accumulated string.
 func (b *Builder[T, E]) String() string {
+	sb := strings.Builder{}
+	defer sb.Reset()
+
+	sb.WriteString(fmt.Sprintf("[]%T{ ", b.buf[0]))
+	for _, s := range b.buf {
+		sb.WriteString(fmt.Sprintf("%v", s))
+		sb.WriteByte(' ')
+	}
+	sb.WriteString("}")
+	return sb.String()
+}
+
+func (b *Builder[T, E]) UnsafeString() string {
 	return *(*string)(unsafe.Pointer(&b.buf))
+
 }
 
 // Len returns the number of accumulated bytes; b.Len() == len(b.String()).
@@ -83,7 +105,7 @@ func (b *Builder[T, E]) grow(n int) {
 func (b *Builder[T, E]) Grow(n int) {
 	b.copyCheck()
 	if n < 0 {
-		panic("strings.Builder.Grow: negative count")
+		panic("Builder.Grow: negative count")
 	}
 	if cap(b.buf)-len(b.buf) < n {
 		b.grow(n)

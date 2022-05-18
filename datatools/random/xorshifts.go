@@ -1,4 +1,4 @@
-package rand
+package random
 
 // some random number generators based on xorshift, a subset of LFSR's
 // Reference: https://en.wikipedia.org/wiki/Xorshift
