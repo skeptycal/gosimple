@@ -7,7 +7,7 @@ import (
 )
 
 func New(name string) HandlerLister {
-	return &handlerList{}
+	return &handlerList{name: name}
 }
 
 type (
@@ -35,7 +35,7 @@ type (
 	}
 )
 
-var handlerList1 = binarysearchtree.New[int, *handler]()
+var sampleHandlers = New("sample")
 
 func (list *handlerList) Name() string { return list.name }
 

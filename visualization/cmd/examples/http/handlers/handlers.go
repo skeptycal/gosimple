@@ -3,25 +3,27 @@ package handlers
 import (
 	"fmt"
 	"math/rand"
-	"net/http"
+	nethttp "net/http"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/skeptycal/gosimple/http/simpleserver"
 )
 
 var (
-	bar *charts.Bar = generateBarChart()
+	bar      *charts.Bar = generateBarChart()
+	handlers             = simpleserver.New("test")
 )
 
-func Root(w http.ResponseWriter, req *http.Request) {
+func Root(w nethttp.ResponseWriter, req *nethttp.Request) {
 	fmt.Fprintf(w, "%v\n", req.URL)
 }
 
-func Headers(w http.ResponseWriter, req *http.Request) {
+func Headers(w nethttp.ResponseWriter, req *nethttp.Request) {
 	req.Header.Clone().Write(w)
 }
 
-func Graph(w http.ResponseWriter, req *http.Request) {
+func Graph(w nethttp.ResponseWriter, req *nethttp.Request) {
 	bar = generateBarChart()
 	_ = req
 	bar.Render(w)
