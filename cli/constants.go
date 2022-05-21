@@ -75,5 +75,5 @@ const (
 
 var (
 	ResetBytes   []byte = []byte(Reset)
-	InverseBytes []byte = []byte(BasicEncode(fmt.Sprint(ansi.Inverse)))
+	InverseBytes []byte = []byte(BasicEncode(string(ansi.Inverse)))
 )

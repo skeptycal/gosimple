@@ -10,6 +10,34 @@ var (
 )
 
 func BasicEncode(in string) string {
+	return basicEncode0(in)
+}
+
+func basicEncode0(in string) string {
+	return string(append(ansiPrefixByte, in[0], ansiSuffixByte))
+}
+
+func basicEncode1(in string) (s string) {
+	b := append(ansiPrefixByte, in[0], ansiSuffixByte)
+	return string(b)
+}
+
+func basicEncode2(in string) (s string) {
+	b := make([]byte, 6)
+	_ = b
+	b = append(ansiPrefixByte, in[0], ansiSuffixByte)
+	return string(b)
+}
+
+func basicEncode4(in ...byte) string {
+	return ""
+}
+
+func basicEncode5(in ...byte) string {
+	return ""
+}
+
+func BasicStringEncode(in string) string {
 	switch len(in) {
 	case 2:
 		return encode5(in)
@@ -42,6 +70,11 @@ func encode6(in string) string {
 	newBlank[4] = in[2]
 	return convert.UnsafeBytesToString(newBlank[:])
 }
+
+func b2sSafe(in []byte) string   { return string(in) }
+func s2bSafe(in string) []byte   { return []byte(in) }
+func b2sUnSafe(in []byte) string { return convert.UnsafeBytesToString(in) }
+func s2bUnSafe(in string) []byte { return convert.UnsafeStringToBytes(in) }
 
 //////// The following are alternative implementations that were benchmarked and eliminated
 

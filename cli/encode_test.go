@@ -2,28 +2,31 @@ package cli
 
 import (
 	"fmt"
+	"sync"
 	"testing"
+
+	"github.com/skeptycal/gosimple/datatools/random"
 )
 
 func TestBasicEncode(t *testing.T) {
 	tests := []struct {
 		name    string
-		input   string
+		input   byte
 		want    string
 		wantErr bool
 	}{
-		{"byte", "8", "\033[8m", false},
-		{"byte", "2", "\033[2m", false},
-		{"byte", "32", "\033[32m", false},
-		{"byte", "47", "\033[47m", false},
-		{"byte", "123", "\033[123m", false},
-		{"byte", "0", "\033[0m", false},
-		{"byte", "1111", "", false},
+		{"byte", '8', "\033[8m", false},
+		{"byte", '2', "\033[2m", false},
+		{"byte", '3', "\033[32m", false},
+		{"byte", '4', "\033[47m", false},
+		{"byte", 'A', "\033[123m", false},
+		{"byte", '0', "\033[0m", false},
+		{"byte", 'F', "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Run(tt.name, func(t *testing.T) {
-				got := BasicEncode(tt.input)
+				got := string(BasicEncode(string(tt.input)))
 				if got != tt.want {
 					t.Errorf("unexpected ANSI encoding: got %q, want %q", got, tt.want)
 				}
@@ -231,4 +234,153 @@ func BenchmarkEncode(b *testing.B) {
 			})
 		}
 	}
+}
+
+var globalReturnByte []byte
+
+func getStringArgs(b *testing.B, args []string, n, m int) []string {
+	const max = 8
+
+	args1, err := random.CreateTextSets[string](n, m)
+	if err != nil {
+		b.Fatalf("unable to create random text sets: %v", err)
+	}
+
+	return append(args, args1...)
+}
+
+type benchmarkRun[In, Out any] struct {
+	name string
+	// fn   func(b *testing.B)
+	fn func(in In) Out
+	in In
+}
+
+var globalReturnPool = sync.Pool{}
+
+func globalReturnPoolItem[T any]() (item T, deferFunc func(x any)) {
+	v := globalReturnPool.Get()
+	_ = v
+	v = new(T)
+	return v.(T), globalReturnPool.Put
+
+}
+
+func globalReturnVar[T any]() T { return *new(T) }
+
+type bm = benchmarkRun[string, []byte]
+
+func multiplexRuns[In, Out any](b *testing.B, count int, done chan bool, ch chan benchmarkRun[In, Out]) chan bool {
+	// retval, put := globalReturnPoolItem[Out]()
+	// defer put(retval)
+	global := globalReturnVar[Out]()
+	ret := make(chan bool)
+
+	// wg := &sync.WaitGroup{}
+	// wg.Add(routines)
+	// starter := make(chan struct{})
+	// for i := 0; i < routines; i++ {
+	for run := range ch {
+		go func(run benchmarkRun[In, Out]) {
+			// <-starter
+			// run := <-ch
+			// b.Run(run.name, run.fn)
+			b.Run(run.name, func(b *testing.B) {
+				for i := 0; i < b.N; i++ {
+					global = run.fn(run.in)
+				}
+			})
+			ret <- true
+
+			// wg.Done()
+		}(run)
+	}
+	for i := 0; i < count; i++ {
+		<-ret
+	}
+	// close(starter)
+	// wg.Wait()
+	_ = global
+	return ret
+}
+
+func BenchmarkS2B(b *testing.B) {
+
+	/* Benchmark Results
+
+	* Summary:
+	* - for the smallest strings (up to ~32 bytes ... and probably 64) the "unsafe" method is
+	*   4 times faster than the "safe" method
+	* - even at input sizes of ~1k (seems very common), the "unsafe" methods are 50 times faster.
+	* - for 32k strings, the "unsafe" method is 1000 times faster
+
+	* with input strings of sizes 1, 2, and 3 ... unsafe is ~4 times faster
+	/safe(1)-8         	52940104	        21.04 ns/op	       8 B/op	       1 allocs/op
+	/unsafe(1)-8       	247543324	         4.921 ns/op	       0 B/op	       0 allocs/op
+	/safe(2)-8         	56357983	        20.86 ns/op	       8 B/op	       1 allocs/op
+	/unsafe(2)-8       	244644535	         4.957 ns/op	       0 B/op	       0 allocs/op
+	/safe(3)-8         	56356548	        20.66 ns/op	       8 B/op	       1 allocs/op
+	/unsafe(3)-8       	247298966	         4.862 ns/op	       0 B/op	       0 allocs/op
+
+
+	* as input size increases, the performance drastically descreases and allocations drastically
+	* increase for the builtin
+	* the "unsafe" pointer swap shows no significant difference until input size rises above
+	* approx 32k
+	/safe(1)-8         	48336744	        22.05 ns/op	       8 B/op	       1 allocs/op
+	/safe(2)-8         	54351210	        27.00 ns/op	       8 B/op	       1 allocs/op
+	/safe(3)-8         	35771152	        33.91 ns/op	       8 B/op	       1 allocs/op
+	/safe(1)#01-8      	48848498	        21.40 ns/op	       8 B/op	       1 allocs/op
+	/safe(32)-8        	48796356	        25.98 ns/op	      32 B/op	       1 allocs/op
+	/safe(1024)-8      	 6481688	       190.4 ns/op	    1024 B/op	       1 allocs/op
+	/safe(32768)-8     	  320898	      4030 ns/op	   32768 B/op	       1 allocs/op
+	/safe(1048576)-8   	   12626	     95902 ns/op	 1048579 B/op	       1 allocs/op
+	/unsafe(1)-8       	236882468	         4.866 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(2)-8       	236849174	         8.029 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(3)-8       	219809071	         4.850 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1)#01-8    	249931875	         4.800 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(32)-8      	247573946	         4.849 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1024)-8    	249173250	         4.804 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(32768)-8   	246432672	         4.903 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1048576)-8 	238918872	         5.843 ns/op	       0 B/op	       0 allocs/op
+
+
+	* further testing of "unsafe" function reveals stable performance up to at least
+	* string sizes of 1,073,741,824 (~ 1GB strings)
+	/unsafe(1)-8         	241697076	         5.047 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(2)-8         	239245916	         5.080 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(3)-8         	247483934	         4.934 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1)#01-8      	238690602	         4.930 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(32)-8        	248208332	         4.838 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1024)-8      	249637830	         4.815 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(32768)-8     	247198629	         4.840 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1048576)-8   	249379192	         4.804 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(33554432)-8  	246904180	         4.842 ns/op	       0 B/op	       0 allocs/op
+	/unsafe(1073741824)-8   250061906	         4.801 ns/op	       0 B/op	       0 allocs/op
+
+	*/
+
+	custom := []string{"8", "32", "123"}
+	args := getStringArgs(b, custom, 2, 2)
+
+	benchmarks := []struct {
+		name string
+		fn   func(in string) []byte
+	}{
+		{"safe", s2bSafe},
+		{"unsafe", s2bUnSafe},
+	}
+
+	ch := make(chan bm)
+	done := make(chan bool)
+	alldone := multiplexRuns(b, len(benchmarks), done, ch)
+
+	for _, bb := range benchmarks {
+		for _, arg := range args {
+			name := fmt.Sprintf("%v(%d)", bb.name, len(arg))
+			ch <- bm{name, bb.fn, arg}
+		}
+	}
+	done <- true
+	<-alldone
 }
