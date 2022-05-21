@@ -79,13 +79,13 @@ func GenerateIntSlice(size int) []int {
 	return slice
 }
 
-func GenerateUIntSlice(size, count int) []uint {
-	slice := make([]uint, size)
+// func GenerateUIntSlice(size, count int) []uint {
+// 	slice := make([]uint, size)
 
-	for i := 0; i < size; i++ {
-		for j := 0; j < count; j++ {
-			slice[i] = uint(xorshift32())
-		}
-	}
-	return slice
-}
+// 	for i := 0; i < size; i++ {
+// 		for j := 0; j < count; j++ {
+// 			slice[i] = uint(xorshift32())
+// 		}
+// 	}
+// 	return slice
+// }
