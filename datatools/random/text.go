@@ -12,7 +12,7 @@ type text interface {
 // randLength returns a random number between min and max.
 // If min == max, min is returned.
 // If min > max, they are reversed before processing.
-func randLength(min, max int) int {
+func randLength[T Ints](min, max T) T {
 
 	switch v := max - min; {
 	case v == 0:
@@ -21,9 +21,9 @@ func randLength(min, max int) int {
 		return randLength(max, min)
 	case v > 0:
 		// return 4
-		return cRandInt[int](v) + min
+		return Int(v) + min
 	default:
-		panic("number is not zero, less than zero, or greater than zero") // impossible
+		panic("number is not zero, less than zero, or greater than zero") // impossible but funny message ...
 	}
 }
 
@@ -82,7 +82,7 @@ func CreateRandomLengthText[T text](min, max int) (retval T, err error) {
 	}
 	dif := max - min
 
-	size := cRandInt[int](dif) + min
+	size := Int(dif) + min
 	// size := rand.Int()
 	// size := mathrand.Intn(dif) + min
 	return RandText[T](size)
