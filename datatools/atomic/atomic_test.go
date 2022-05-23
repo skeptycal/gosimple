@@ -27,7 +27,6 @@ var incFuncs = []struct {
 }
 
 func TestConcurrentInc(t *testing.T) {
-
 	for _, tt := range incTests {
 		for _, ff := range incFuncs {
 			name := fmt.Sprintf("%v(%v):", ff.name, tt.name)

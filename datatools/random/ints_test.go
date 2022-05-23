@@ -11,9 +11,7 @@ import (
 	"github.com/skeptycal/gosimple/types/constraints"
 )
 
-func helperMax(x int64) *big.Int {
-	return big.NewInt(x)
-}
+func helperMax(x int64) *big.Int { return big.NewInt(x) }
 
 func Test_bigInt(t *testing.T) {
 	tests := []struct {
@@ -68,7 +66,7 @@ type testRunner Runner
 func (tc *testcase[T]) Run(t *testing.T) (fn string, err error) {
 	got := Int(tc.in)
 	fn = fnName(1)
-	ExampleFrames()
+	// ExampleFrames()
 	if ok := tc.assert(got, tc.want); !ok {
 		err = fmt.Errorf("Int(%v) (%q) = %v, want %v", tc.name, fn, got, tc.want)
 		t.Errorf(err.Error())
@@ -145,7 +143,7 @@ func fnName(n int) string {
 	return ""
 }
 
-func ExampleFrames() {
+func exampleExampleFrames() {
 	c := func() {
 		// Ask runtime.Callers for up to 10 PCs, including runtime.Callers itself.
 		pc := make([]uintptr, 10)

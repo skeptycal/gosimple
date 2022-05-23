@@ -82,7 +82,3 @@ type Value[T any] interface {
 	// CompareAndSwap(old, nil).
 	CompareAndSwap(old, new T) bool
 }
-
-// Disable/enable preemption, implemented in runtime.
-func runtime_procPin()
-func runtime_procUnpin()
