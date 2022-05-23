@@ -2,19 +2,55 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
 	"runtime"
+	"strings"
+	"time"
 )
 
-func main() {
-	max := 10
+const defaultMaxframes = 10
 
-	finalfunc := func(i int) { FrameInfo() }
-	t := functree(max, finalfunc, true)
-	// printFuncTree(t)
-	t[0].fn(6)
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func main() {
+	treeExample(20)
+	// originalExample() m2222
+}
+
+func treeExample(n int) {
+	if n < 0 {
+		n = defaultMaxframes
+	}
+	finalfunc := func(i int) {
+		fmt.Println(FrameInfo(n + 10))
+		fmt.Println(GetFuncName(4))
+	}
+	t := functree(n, finalfunc, true)
+	t[0].fn(0)
 }
 
 func originalExample() {
+	var (
+		max = 10
+		c   = func() {
+			fmt.Println("in c - calling frameinfo")
+			fmt.Println(FrameInfo(max))
+		}
+
+		b = func() {
+			fmt.Println("in b - calling c")
+			c()
+		}
+
+		a = func() {
+			fmt.Println("in a - calling b")
+			b()
+		}
+	)
+	_, _ = b, c
 	a()
 	// Output:
 	// - more:true | runtime.Callers
@@ -22,25 +58,7 @@ func originalExample() {
 	// - more:true | runtime_test.ExampleFrames.func2
 	// - more:true | runtime_test.ExampleFrames.func3
 	// - more:true | runtime_test.ExampleFrames
-	ExampleFrames(nil)
 }
-
-var (
-	b = func() {
-		fmt.Println("in b - calling c")
-		c()
-	}
-
-	a = func() {
-		fmt.Println("in a - calling b")
-		b()
-	}
-
-	c = func() {
-		fmt.Println("in c - calling frameinfo")
-		FrameInfo()
-	}
-)
 
 type testfunc struct {
 	name string
@@ -48,25 +66,44 @@ type testfunc struct {
 	fn   func(i int)
 }
 
+func makeTestFunc(name, msg string, fn func(i int)) testfunc {
+	return testfunc{
+		name: "func()",
+		msg:  "single, lonely function ... ",
+		fn:   fn,
+	}
+}
+
 func functree(n int, final func(i int), verbose bool) []testfunc {
 	if n < 1 {
 		return nil
 	}
+	if n == 1 {
+		return []testfunc{{
+			name: "func()",
+			msg:  "single, lonely function ... ",
+			fn:   final,
+		}}
+	}
 	if final == nil {
-		final = func(i int) {}
+		final = func(i int) { os.Exit(n) }
 	}
 	b := make([]testfunc, n)
-	for i := 0; i < n; i++ {
-		b[i].name = fmt.Sprintf("func%d()", i)
-		b[i].msg = fmt.Sprintf("%v - calling func%d())\n", b[i].name, i+1)
-		// each func calls the next in line
-		// b[i].fn = makefunc(b[i].name, i)
-		b[i].fn = func(i int) {
+	for j := 0; j < n; j++ {
+		r := rand.Intn(n)
+
+		t := testfunc{}
+
+		t.name = fmt.Sprintf("func%d()", j)
+		t.msg = fmt.Sprintf("%v - calling func%d() (random: %v)\n", t.name, j+1, r)
+
+		t.fn = func(i int) {
 			if verbose {
-				fmt.Print(b[i].msg)
+				fmt.Print(t.msg)
 			}
-			b[i].fn(i + 1)
+			t.fn(i + 1)
 		}
+		b[j] = t
 	}
 	// fmt.Println("len: ", len(b))
 	// fmt.Println("cap: ", cap(b))
@@ -89,26 +126,16 @@ func printFuncTree(list []testfunc) {
 	list[0].fn(0)
 }
 
-func FrameInfo() {
-	// Ask runtime.Callers for up to 10 PCs, including runtime.Callers itself.
-	pc := make([]uintptr, 10)
-	n := runtime.Callers(0, pc)
-	if n == 0 {
-		// No PCs available. This can happen if the first argument to
-		// runtime.Callers is large.
-		//
-		// Return now to avoid processing the zero Frame that would
-		// otherwise be returned by frames.Next below.
-		return
+// FrameInfo returns a string summary of the package
+// path-qualified functions name of this call frame.
+func FrameInfo(max int) string {
+	frames := getFrames(0, max)
+	if frames == nil {
+		return ""
 	}
 
-	fmt.Println(pc)
+	sb := &strings.Builder{}
 
-	pc = pc[:n] // pass only valid pcs to runtime.CallersFrames
-	frames := runtime.CallersFrames(pc)
-
-	// Loop to get frames.
-	// A fixed number of PCs can expand to an indefinite number of Frames.
 	for {
 		frame, more := frames.Next()
 
@@ -120,18 +147,58 @@ func FrameInfo() {
 		// if !strings.Contains(frame.File, "runtime/") {
 		// 	break
 		// }
-		fmt.Printf("- more:%v | %s\n", more, frame.Function)
+		fmt.Fprintf(sb, "- more:%v | %s\n", more, frame.Function)
 
 		// Check whether there are more frames to process after this one.
 		if !more {
 			break
 		}
 	}
+	return sb.String()
 }
 
-func ExampleFrames(fn func()) {
-	if fn != nil {
-		fn()
+// GetFuncName returns the package path-qualified function
+// name of a call frame, skipping 'skip' initial frames.
+//
+// If non-empty, this string uniquely identifies a single
+// function in the program. This may be the empty string
+// if not known.
+func GetFuncName(skip int) string {
+	return getFrame(skip).Function
+}
+
+func getFrames(skip, max int) *runtime.Frames {
+
+	if max < 0 || max > defaultMaxframes {
+		max = defaultMaxframes
 	}
 
+	if skip < 0 {
+		skip = 0
+	}
+
+	if skip >= max {
+		max = skip + 1
+	}
+
+	// Ask runtime.Callers for up to max PCs, including runtime.Callers itself.
+	callers := make([]uintptr, max+1)
+	n := runtime.Callers(skip, callers)
+	if n == 0 {
+		// No PCs available. This can happen if the first argument to
+		// runtime.Callers is large.
+		//
+		// Return now to avoid processing the zero Frame that would
+		// otherwise be returned by frames.Next below.
+		return nil
+	}
+
+	// pass only valid pcs to runtime.CallersFrames
+	return runtime.CallersFrames(callers[:n])
+}
+
+func getFrame(skip int) runtime.Frame {
+	frames := getFrames(skip, skip+1)
+	frame, _ := frames.Next()
+	return frame
 }
