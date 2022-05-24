@@ -7,11 +7,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pkg/errors"
-	"github.com/skeptycal/gosimple/types/constraints"
+	"github.com/skeptycal/gosimple/datatools/random/assert.go"
 )
 
-func helperMax(x int64) *big.Int { return big.NewInt(x) }
+var (
+	NewTest = assert.NewTestCase[int, int]
+)
 
 func Test_bigInt(t *testing.T) {
 	tests := []struct {
@@ -23,15 +24,15 @@ func Test_bigInt(t *testing.T) {
 		// TODO: Add test cases.
 		{"nil", nil, new(big.Int), false},
 		{"empty", &big.Int{}, new(big.Int), false},
-		{"0", helperMax(0), new(big.Int).SetInt64(0), false},
-		{"-1", helperMax(-1), new(big.Int).SetInt64(1), false},
-		{"1", helperMax(1), new(big.Int).SetInt64(1), false},
-		{"255", helperMax(255), new(big.Int).SetInt64(255), false},
-		{"1<<12", helperMax(1 << 12), new(big.Int).SetInt64(1 << 12), false},
-		{"1<<30", helperMax(1 << 30), new(big.Int).SetInt64(1 << 30), false},
-		{"1<<42", helperMax(1 << 42), new(big.Int).SetInt64(1 << 42), false},
-		{"1<<60", helperMax(1 << 60), new(big.Int).SetInt64(1 << 60), false},
-		{"1-1<<42", helperMax(1 - 1<<42), new(big.Int).SetInt64(1 << 42), false},
+		{"0", NewBigInt(0), new(big.Int).SetInt64(0), false},
+		{"-1", NewBigInt(-1), new(big.Int).SetInt64(1), false},
+		{"1", NewBigInt(1), new(big.Int).SetInt64(1), false},
+		{"255", NewBigInt(255), new(big.Int).SetInt64(255), false},
+		{"1<<12", NewBigInt(1 << 12), new(big.Int).SetInt64(1 << 12), false},
+		{"1<<30", NewBigInt(1 << 30), new(big.Int).SetInt64(1 << 30), false},
+		{"1<<42", NewBigInt(1 << 42), new(big.Int).SetInt64(1 << 42), false},
+		{"1<<60", NewBigInt(1 << 60), new(big.Int).SetInt64(1 << 60), false},
+		{"1-1<<42", NewBigInt(1 - 1<<42), new(big.Int).SetInt64(1 << 42), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,100 +48,18 @@ func Test_bigInt(t *testing.T) {
 	}
 }
 
-type Runner interface {
-	Run(t *testing.T) (string, error)
-}
-
-type testSet []Runner
-
-type testcase[T Ints] struct {
-	name string
-	in   T
-	want T
-	// wantErr bool
-	assert func(got, want T) bool
-}
-
-type testRunner Runner
-
-func (tc *testcase[T]) Run(t *testing.T) (fn string, err error) {
-	got := Int(tc.in)
-	fn = fnName(1)
-	// ExampleFrames()
-	if ok := tc.assert(got, tc.want); !ok {
-		err = fmt.Errorf("Int(%v) (%q) = %v, want %v", tc.name, fn, got, tc.want)
-		t.Errorf(err.Error())
-		return
-	}
-	return
-}
-
-func (ts *testSet) Run(t *testing.T) (fn string, wrap error) {
-	for _, tt := range *ts {
-		fn, err := tt.Run(t)
-		wrap = errors.Wrap(err, fn)
-	}
-	return
-}
-
-func helpTestInt[T Ints](tc []testcase[T]) Runner {
-	newts := make(testSet, len(tc))
-	for i, tt := range tc {
-		newts[i] = &tt
-	}
-	return &newts
-}
-
-func newRunner[T Ints](name string, in T, want T, assert func(got, want T) bool) Runner {
-	return &testcase[T]{name, in, want, assert}
-}
-func AssertLT[T constraints.Ordered](got, want T) bool { return got < want }
-func AssertGT[T constraints.Ordered](got, want T) bool { return got > want }
-func AssertNE[T constraints.Ordered](got, want T) bool { return got != want }
-func AssertEQ[T constraints.Ordered](got, want T) bool { return got == want }
-
 func TestInt(t *testing.T) {
-	ts := testSet{
-		newRunner("0", 0, 0, AssertLT[int]),
-		newRunner("42", 42, 42, AssertLT[int]),
-		newRunner("255", 255, 255, AssertLT[int]),
-		newRunner("T", 0, 0, AssertLT[int]),
-	}
 
-	ts.Run(t)
-}
+	testFunc := Int[int, int]
+	testAssertion := assert.Success[int]
 
-func trace() (file, name string, line int) {
-	pc := make([]uintptr, 10) // at least 1 entry needed
-	runtime.Callers(2, pc)
-	f := runtime.FuncForPC(pc[3])
-	file, line = f.FileLine(pc[1])
-	name = f.Name()
-	return
-	// fmt.Printf("%s:%d %s\n", file, line, f.Name())
-}
+	assert.NewTestSet("TestInt", []assert.Runner{
+		assert.NewTestCase("0", 0, 0, testFunc, testAssertion, false),
+		assert.NewTestCase("42", 42, 42, testFunc, testAssertion, false),
+		assert.NewTestCase("255", 255, 255, testFunc, testAssertion, false),
+		assert.NewTestCase("T", 0, 0, testFunc, testAssertion, false),
+	}).Run(t)
 
-func fnName(n int) string {
-	if n < 1 {
-		n = 1
-	}
-	pc := make([]uintptr, n+1) // at least 1 entry needed
-	// v := runtime.Callers(n, pc)
-	f := runtime.CallersFrames(pc)
-	counter := 0
-	for {
-		frame, ok := f.Next()
-		{
-			if counter == n {
-				return frame.Function
-			}
-			counter++
-		}
-		if !ok {
-			break
-		}
-	}
-	return ""
 }
 
 func exampleExampleFrames() {

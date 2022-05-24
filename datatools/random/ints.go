@@ -16,6 +16,8 @@ func init() {
 
 type Ints constraints.Integer
 
+func NewBigInt(x int64) *big.Int { return big.NewInt(x) }
+
 func randInt[T Ints](n int) T {
 	return T(mathrand.Intn(n))
 }
@@ -29,7 +31,7 @@ func randInt[T Ints](n int) T {
 // (This may lead to unexpected errors.
 // It is the caller's responsibility to check the intended functionality
 // for max <= 0 and provide a guard if necessary.)
-func Int[T Ints](max T) T {
+func Int[In, Out Ints](max In) Out {
 	if max == 0 {
 		return 0
 	}
@@ -43,7 +45,7 @@ func Int[T Ints](max T) T {
 		panic("error generating random number")
 	}
 
-	return T(b.Int64())
+	return Out(b.Int64())
 }
 
 // bigInt returns a uniform random Int in [0, max). An Int from the

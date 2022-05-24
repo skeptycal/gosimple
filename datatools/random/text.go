@@ -21,7 +21,7 @@ func randLength[T Ints](min, max T) T {
 		return randLength(max, min)
 	case v > 0:
 		// return 4
-		return Int(v) + min
+		return Int[T, T](v) + min
 	default:
 		panic("number is not zero, less than zero, or greater than zero") // impossible but funny message ...
 	}
@@ -82,7 +82,7 @@ func CreateRandomLengthText[T text](min, max int) (retval T, err error) {
 	}
 	dif := max - min
 
-	size := Int(dif) + min
+	size := Int[int, int](dif) + min
 	// size := rand.Int()
 	// size := mathrand.Intn(dif) + min
 	return RandText[T](size)
