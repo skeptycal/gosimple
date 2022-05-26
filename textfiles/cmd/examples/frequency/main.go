@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/skeptycal/gosimple/textfiles"
@@ -24,10 +25,28 @@ func init() {
 	}
 }
 
-func main() {
+func PWD() string {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	return pwd
+}
 
-	fileName := "the-king-james-bible.txt"
-	textfiles.Frequency(fileName)
+func main() {
+	// fmt.Println("PWD: ", PWD())
+
+	filename := "the-king-james-bible.txt"
+	filename = "textfiles/cmd/examples/data/romeo_and_juliet.txt"
+
+	fmt.Println("\nFrequency1:")
+	textfiles.Frequency(filename, 0)
+
+	fmt.Println("\nFrequency2:")
+	textfiles.Frequency2(filename)
+
+	fmt.Println("\nFrequency3:")
+	textfiles.Frequency3(filename)
 
 	/*
 		exampleFile := "../data/romeo_and_juliet.txt"

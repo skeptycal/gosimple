@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Frequency(fileName string) {
+func Frequency(fileName string, min int) {
 	bs, err := os.ReadFile(fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -23,7 +23,9 @@ func Frequency(fileName string) {
 
 	wordsCount := make(map[string]int)
 	for _, field := range fields {
-		wordsCount[field]++
+		if len(field) >= min {
+			wordsCount[field]++
+		}
 	}
 
 	keys := make([]string, 0, len(wordsCount))
@@ -35,9 +37,9 @@ func Frequency(fileName string) {
 		return wordsCount[keys[i]] > wordsCount[keys[j]]
 	})
 
-	for idx, key := range keys {
+	for i, key := range keys {
 		fmt.Printf("%s %d\n", key, wordsCount[key])
-		if idx == 10 {
+		if i == 30 {
 			break
 		}
 	}
