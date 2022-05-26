@@ -26,11 +26,11 @@ type SliceHeader struct {
 // }
 
 // Reference: https://go101.org/article/unsafe.html
-func UnsafeByteSlice2String(bs []byte) string {
+func unsafeByteSlice2String(bs []byte) string {
 	return *(*string)(unsafe.Pointer(&bs))
 }
 
-func UnsafeBytesToString2(bytes []byte) string {
+func unsafeBytesToString2(bytes []byte) string {
 	// sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&bytes))
 
 	return *(*string)(unsafe.Pointer(&bytes))
