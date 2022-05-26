@@ -16,15 +16,23 @@ func init() {
 
 type Ints constraints.Integer
 
+// NewBigInt returns a new big.Int pointer with a value
+// equal to the given int64 parameter.
 func NewBigInt(x int64) *big.Int { return big.NewInt(x) }
 
+// randInt returns a random integer of the type
+// specified by the constraint T.
+//
+// The value returned is NOT safe for concurrent and
+// cryptographically secure applications.
 func randInt[T Ints](n int) T {
 	return T(mathrand.Intn(n))
 }
 
-// Int64 returns a uniform random value in [0, max).
-// The value returned is safe for concurrent and cryptographically secure
-// applications.
+// Int returns a uniform random value in [0, max)
+// of the type specified by the constraint T.
+// The value returned is safe for concurrent and
+// cryptographically secure applications.
 //
 // For convenience, if max == 0 or max == nil, 0 is returned.
 // If max is < 0, the absolute value of max is used instead.
@@ -40,7 +48,7 @@ func Int[In, Out Ints](max In) Out {
 	// }
 
 	m := big.NewInt(int64(max))
-	b, err := bigInt(m)
+	b, err := BigInt(m)
 	if err != nil {
 		panic("error generating random number")
 	}
@@ -48,7 +56,7 @@ func Int[In, Out Ints](max In) Out {
 	return Out(b.Int64())
 }
 
-// bigInt returns a uniform random Int in [0, max). An Int from the
+// BigInt returns a uniform random Int in [0, max). An Int from the
 // big package represents a signed multi-precision integer. The Int
 // returned is safe for concurrent and cryptographically secure
 // applications.
@@ -65,7 +73,7 @@ func Int[In, Out Ints](max In) Out {
 // pointer. To "copy" an Int value, an existing (or newly allocated)
 // Int must be set to a new value using the Int.Set method;
 // shallow copies of Ints are not supported and may lead to errors.
-func bigInt(max *big.Int) (n *big.Int, err error) {
+func BigInt(max *big.Int) (n *big.Int, err error) {
 	if max == nil {
 		return new(big.Int), nil
 	}
@@ -74,7 +82,7 @@ func bigInt(max *big.Int) (n *big.Int, err error) {
 	case s == 0:
 		return new(big.Int), nil
 	case s < 0:
-		return bigInt(max.Abs(max))
+		return BigInt(max.Abs(max))
 	default:
 	}
 	n = new(big.Int)

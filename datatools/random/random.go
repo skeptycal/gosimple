@@ -19,7 +19,11 @@
 // It is used internally to create generic functions that may accept either string types or []byte
 // as input. The type is not exported because of several odd behaviors that prevent a 'perfect'
 // generic relationship between the underlying types.
-
+//
+// Integers
+//
+// There are generic functions for the generation of random integers of various flavors, as
+// well as sets and sequences of such integers.
 package random
 
 import (
@@ -27,25 +31,40 @@ import (
 	"io"
 )
 
-// Reader is an alias to a global, shared instance of a concurrency safe, cryptographically secure random number generator directly from the Go standard library crypto/rand package.
+// Reader is an alias to a global, shared instance of a concurrency safe,
+// cryptographically secure random number generator directly from the Go
+// standard library crypto/rand package.
 //
 // On Linux, FreeBSD, Dragonfly and Solaris, Reader uses getrandom(2) if available, /dev/urandom otherwise. On OpenBSD and macOS, Reader uses getentropy(2). On other Unix-like systems, Reader reads from /dev/urandom. On Windows systems, Reader uses the RtlGenRandom API. On Wasm, Reader uses the Web Crypto API.
 var reader = rand.Reader
 
-// func Reader() io.Reader { return rand.Reader }
+// RandomReader returns an alias to a global, shared instance of a
+// concurrency safe, cryptographically secure random number generator
+// directly from the Go standard library crypto/rand package.
+//
+// On Linux, FreeBSD, Dragonfly and Solaris, Reader uses getrandom(2) if
+// available, /dev/urandom otherwise. On OpenBSD and macOS, Reader uses
+// getentropy(2). On other Unix-like systems, Reader reads from /dev/urandom.
+// On Windows systems, Reader uses the RtlGenRandom API. On Wasm, Reader
+// uses the Web Crypto API.
+func RandomReader() io.Reader { return reader }
 
 // Read is a helper function that reads exactly len(b)
-// bytes from rand.Reader into b.
+// random bytes into b. It uses a concurrency safe,
+// cryptographically secure random number generator
+// directly from the Go standard library crypto/rand package.
 //
 // It returns the number of bytes copied and an error
 // if fewer bytes were read.
 // The error is EOF only if no bytes were read.
 // If an EOF happens after reading fewer than min bytes,
 // ReadAtLeast returns ErrUnexpectedEOF.
-// If len(b) is greater than the length of b, Read returns ErrShortBuffer.
+// If len(b) is greater than the length of b, Read
+// returns ErrShortBuffer.
 //
 // On return, n == len(b) if and only if err == nil.
-// If r returns an error having read at least len(buf) bytes, the error is dropped.
+// If r returns an error having read at least len(buf)
+// bytes, the error is dropped.
 // Reference: standard library io.Read
 func Read(b []byte) (n int, err error) {
 	min := len(b)

@@ -36,7 +36,7 @@ func Test_bigInt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotN, err := bigInt(tt.max)
+			gotN, err := BigInt(tt.max)
 			if err != nil != tt.wantErr {
 				t.Errorf("bigInt(%v) error = %v, wantErr %v", tt.name, err, tt.wantErr)
 				return
@@ -50,14 +50,16 @@ func Test_bigInt(t *testing.T) {
 
 func TestInt(t *testing.T) {
 
-	testFunc := Int[int, int]
-	testAssertion := assert.Success[int]
+	var testFn assert.TestFunc[int, int] = Int[int, int]
+	var testAssert assert.AssertFunc[int] = assert.Success[int]
+
+	// testAssert := assert.Success[int]
 
 	assert.NewTestSet("TestInt", []assert.Runner{
-		assert.NewTestCase("0", 0, 0, testFunc, testAssertion, false),
-		assert.NewTestCase("42", 42, 42, testFunc, testAssertion, false),
-		assert.NewTestCase("255", 255, 255, testFunc, testAssertion, false),
-		assert.NewTestCase("T", 0, 0, testFunc, testAssertion, false),
+		assert.NewTestCase("0", 0, 0, testFn, testAssert, false),
+		assert.NewTestCase("42", 42, 42, testFn, testAssert, false),
+		assert.NewTestCase("255", 255, 255, testFn, testAssert, false),
+		assert.NewTestCase("T", 0, 0, testFn, testAssert, false),
 	}).Run(t)
 
 }
