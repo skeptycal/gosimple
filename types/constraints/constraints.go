@@ -60,7 +60,7 @@ type (
 
 	// Ordered is a constraint that permits any
 	// ordered type: any type that supports the
-	// operators < <= >= >.
+	// operators < <= >= >, as well as == and !=.
 	// If future releases of Go add new ordered types,
 	// this constraint will be modified to include them.
 	Ordered interface {
