@@ -3,11 +3,31 @@ package compare
 import (
 	"sort"
 
-	"github.com/skeptycal/gosimple/types/constraints"
+	. "github.com/skeptycal/gosimple/types/constraints"
 )
 
-type Ordered constraints.Ordered
+type (
+	UserOrdered[T any] interface {
+		Less(a, b T) bool
+	}
 
+// Ordered is a constraint that permits any
+// ordered type: any type that supports the
+// operators < <= >= >.
+// If future releases of Go add new ordered types,
+// this constraint will be modified to include them.
+
+)
+
+func LessThan(a, b any) bool {
+	if v, ok := a.(UserOrdered); ok {
+
+	}
+}
+
+// Max returns the item that is greater as defined
+// by the constraint type T. T must be an Ordered
+// data type or
 func Max[T Ordered](a, b T) T {
 	if a > b {
 		return a
