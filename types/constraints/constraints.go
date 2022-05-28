@@ -11,7 +11,7 @@ type (
 	// Sortable defines a sortable constraint that allows
 	// user defined sortable types.
 	Sortable interface {
-		Ordered | UserOrdered[Sorter]
+		Ordered | UserSorter[Sorter]
 	}
 
 	// Number is a constraint that permits any real

@@ -20,19 +20,18 @@ package constraints
 // [3]: https://github.com/golang/go/issues/47632#issuecomment-897168431
 
 type (
-	Or interface {
+	Orderer[O any] interface {
+		Comparabler[O]
+		LT(other O) bool
+		GT(other O) bool
+		LE(other O) bool
+		GE(other O) bool
 	}
 
-	Orderer[T any] interface {
-		Less(other T) bool
-		Greater(y T) bool
-		LE(y T) bool
-		GE(y T) bool
-		Equal(y T) bool
-		NotEqual(y T) bool
+	Comparabler[O any] interface {
+		EQ(other O) bool
+		NE(other O) bool
 	}
-
-	// theInterface[T any] interface{ Less(other T) bool }
 
 	// Sorter is the interface for sorting from the standard library sort package.
 	Sorter interface {
@@ -41,42 +40,14 @@ type (
 		Swap(i, j int)
 	}
 
-	UserOrdered[T Sorter] interface{ *T }
+	UserSorter[T Sorter] interface{ *T }
+
+	userOrdered[T any] struct {
+		userComparable[T]
+		any
+	}
+
+	userComparable[T any] struct {
+		any
+	}
 )
-
-// Basic is a parameterized type that abstracts over
-// the entire class of Ordered types (the set of Go
-// built-in types which respond to < <= >= > == !=``````````````````````````````````````````````````````````2222222222222222222222222222222222222222222
-// operators) and exposes this behavior via a Less
-// method so that they fall under the Orderer constraint.
-type Basic[O Ordered] struct{ Val O }
-
-// Less implements Orderer[Basic[O]] for Basic[O]. Returns true if the value
-// of the caller is less than that of the parameter; otherwise returns
-// false.
-func (x Basic[O]) Less(y Basic[O]) bool { return x.Val < y.Val }
-
-// Greater implements Orderer[Basic[O]] for Basic[O]. Returns true if the value
-// of the caller is greater than that of the parameter; otherwise returns
-// false.
-func (x Basic[O]) Greater(y Basic[O]) bool { return x.Val > y.Val }
-
-// LE implements Orderer[Basic[O]] for Basic[O]. Returns true if the value
-// of the caller is less than or equal to that of the parameter;
-// otherwise returns false.
-func (x Basic[O]) LE(y Basic[O]) bool { return x.Val <= y.Val }
-
-// GE implements Orderer[Basic[O]] for Basic[O]. Returns true if the value
-// of the caller is greater than or equal to that of the parameter;
-// otherwise returns false.
-func (x Basic[O]) GE(y Basic[O]) bool { return x.Val >= y.Val }
-
-// Equal implements Orderer[Basic[O]] for Basic[O]. Returns true if the value
-// of the caller is equal to that of the parameter; otherwise returns
-// false.
-func (x Basic[O]) Equal(y Basic[O]) bool { return x.Val == y.Val }
-
-// NotEqual implements Orderer[Basic[O]] for Basic[O]. Returns true
-// if the value of the caller is not equal to that of the parameter;
-// otherwise returns false.
-func (x Basic[O]) NotEqual(y Basic[O]) bool { return x.Val != y.Val }
