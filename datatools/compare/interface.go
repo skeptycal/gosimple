@@ -1,8 +1,8 @@
 package compare
 
-import (
-	log "github.com/sirupsen/logrus"
-)
+import "github.com/skeptycal/gosimple/cli/errorlogger"
+
+var log = errorlogger.New()
 
 // InterfaceEqual protects against panics from doing equality tests on
 // two interfaces with non-comparable underlying types.

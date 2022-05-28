@@ -1,29 +1,14 @@
 package compare
 
 import (
-	"sort"
-
 	. "github.com/skeptycal/gosimple/types/constraints"
 )
 
-type (
-	UserOrdered[T any] interface {
-		Less(a, b T) bool
-	}
-
-// Ordered is a constraint that permits any
-// ordered type: any type that supports the
-// operators < <= >= >.
-// If future releases of Go add new ordered types,
-// this constraint will be modified to include them.
-
-)
-
-func LessThan(a, b any) bool {
-	if v, ok := a.(UserOrdered); ok {
-
-	}
-}
+// func LessThan[T Ordered](a, b T) bool {
+// 	if v, ok := a.(Basic[T]); ok {
+// 		return v.Less(b)
+// 	}
+// }
 
 // Max returns the item that is greater as defined
 // by the constraint type T. T must be an Ordered
@@ -40,36 +25,6 @@ func Min[T Ordered](a, b T) T {
 		return a
 	}
 	return b
-}
-
-type sortOrdered[T Ordered] struct {
-	list []T
-}
-
-func (l sortOrdered[T]) Len() int {
-	return len(l.list)
-}
-func (l sortOrdered[T]) Less(i, j int) bool {
-	return l.list[i] < l.list[j]
-}
-
-func (l sortOrdered[T]) Swap(i, j int) {
-	l.list[i], l.list[j] = l.list[j], l.list[i]
-}
-
-// Sort sorts the list if necessary.
-func (l sortOrdered[T]) Sort() {
-	if !sort.IsSorted(l) {
-		sort.Sort(l)
-	}
-}
-
-func (l sortOrdered[T]) First() T {
-	return l.list[0]
-}
-
-func (l sortOrdered[T]) Last() T {
-	return l.list[l.Len()-1]
 }
 
 // MinSet returns the minimum value in a set of values.
