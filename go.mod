@@ -3,6 +3,7 @@ module github.com/skeptycal/gosimple
 go 1.18
 
 require (
+	github.com/beevik/etree v1.1.0
 	github.com/buger/goterm v1.0.4
 	github.com/fatih/color v1.13.0
 	github.com/fatih/structs v1.1.0
