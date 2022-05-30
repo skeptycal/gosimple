@@ -15,6 +15,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/profile v1.6.0
+	github.com/segmentio/testdemo v0.0.0-20171221205446-fb3ddf76480b
 	github.com/shurcooL/githubv4 v0.0.0-20220115235240-a14260e6f8a2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/skeptycal/zsh v0.3.0
