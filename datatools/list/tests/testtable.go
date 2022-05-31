@@ -4,49 +4,64 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pkg/errors"
 	"github.com/skeptycal/gosimple/errorhandling"
 )
 
 var errNotImplemented = errorhandling.ErrNotImplemented
 
-type (
-	TestTable[G any, W comparable, S ~[]TestTableEntry[G, W]] interface {
-		TestRunner
-		Tests() S
-	}
+// MakeTestRunner returns an interface that can be Run()
+// to perform all tests on a single function.
+//
+// The function takes a name, func, and slice of data
+// adds them to a test table.
+// The entire set is returned as a TestRunner ready for
+// immediate use in testing.
+//
+// The function name and fn are used for the entire set.
+// Each of the items in testdata (In, Want, and WantErr)
+// are used as the input, output, and bool to indicate
+// if an error is desired in separate tests.
+//
+// The anonymous test table is not accessible for any other
+// functionality.
+//
+func MakeTestRunner[In any, W comparable](
+	name string,
+	fn func(In) W,
+	testdata []TestDataDetails[In, W],
+) TestRunner {
+	return NewTestTable[In, W](name).AddSet(name, fn, testdata)
+}
 
-	testTable[G any, W comparable, S ~[]TestTableEntry[G, W]] struct {
-		name  string
-		tests S
+func (tbl *TestTable[In, W]) AddSet(name string, fn func(In) W, entries []TestDataDetails[In, W]) TestRunner {
+	if len(entries) == 0 {
+		return nil
+	}
+	for _, entry := range entries {
+		tt := TestDataType[In, W]{name, fn, entry}
+		tbl.Add(tt)
+	}
+	return tbl
+}
+
+func (tbl *TestTable[In, W]) Add(entry TestDataType[In, W]) {
+	tbl.Tests = append(tbl.Tests, entry)
+}
+
+type (
+	TestTable[In any, W comparable] struct {
+		Name  string
+		Tests []TestDataType[In, W]
 	}
 )
 
-func (tbl *testTable[G, W, S]) Name() string { return tbl.name }
-func (tbl *testTable[G, W, S]) Tests() S     { return tbl.tests }
-func (tbl *testTable[G, W, S]) Run(t *testing.T) error {
-	var wrap error = nil
-	for i, tt := range tbl.tests {
-		name := tbl.Name() + "(" + tt.Name() + ")"
-
-		t.Run(name, func(t *testing.T) {
-			if tt.Got() != tt.Want() != tt.WantErr() {
-				err := tErrorf(t, name, tt)
-				if err != nil {
-					wrap = errWrapper(err, fmt.Sprintf("test %d failed", i))
-				}
+func (tbl *TestTable[In, W]) Run(t *testing.T, name string) (wrap error) {
+	for i, tt := range tbl.Tests {
+		if err := tt.Run(t); err != nil {
+			if !tt.WantErr {
+				wrap = Wrap(err, fmt.Sprintf("test %d failed", i))
 			}
-		})
-
+		}
 	}
-
 	return wrap
-}
-
-func errWrapper(err error, msg string) error {
-	return errors.Wrap(err, msg)
-}
-
-func tErrorf[G any, W comparable](t *testing.T, name string, tt TestTableEntry[G, W]) error {
-	return fmt.Errorf(fmtErrorf, name, tt.Got(), tt.Want(), tt.WantErr())
 }

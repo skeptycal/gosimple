@@ -1,6 +1,12 @@
 package compare
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/skeptycal/gosimple/types/constraints"
+)
+
+type Ordered constraints.Ordered
 
 type sortOrdered[T Ordered] struct {
 	list []T

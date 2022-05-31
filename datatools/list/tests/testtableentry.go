@@ -1,45 +1,77 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 )
 
-const fmtErrorf = "%s: got %v, want %v (want error: %v): %v"
+// func NewEntry[In any, W comparable](name string, fn func(in ...In) W, in []In, want W, wantErr bool) *TestTableEntry[In, W] {
+// 	return &TestTableEntry[In, W]{name, fn, in, want, wantErr}
+// }
 
 type (
 	TestRunner interface {
-		Name() string
-		Run(t *testing.T) error
+		Run(t *testing.T, name string) error
 	}
 
-	TableEntryInfo[G any, W comparable] interface {
-		In() []G
-		Got() W
-		Want() W
-		WantErr() bool
+	TestDataType[In any, W comparable] struct {
+		NameFunc string
+		Fn       func(In) W
+
+		TestDataDetails[In, W]
+		// Name    string
+		// In      In
+		// Want    W
+		// WantErr bool
 	}
 
-	TestTableEntry[G any, W comparable] interface {
-		TestRunner
-		TableEntryInfo[G, W]
-	}
-
-	testTableEntry[G any, W comparable] struct {
-		name    string
-		fn      func(in ...G) W
-		in      []G
-		want    W
-		wantErr bool
+	TestDataDetails[In any, W comparable] struct {
+		Name    string
+		In      In
+		Want    W
+		WantErr bool
 	}
 )
 
-func (entry *testTableEntry[G, W]) Name() string  { return entry.name }
-func (entry *testTableEntry[G, W]) In() []G       { return entry.in }
-func (entry *testTableEntry[G, W]) Want() W       { return entry.want }
-func (entry *testTableEntry[G, W]) Got() W        { return *new(W) }
-func (entry *testTableEntry[G, W]) WantErr() bool { return entry.wantErr }
+func (tt *TestDataType[In, W]) Got() W { return tt.Fn(tt.In) }
 
-func (entry *testTableEntry[G, W]) Run(t *testing.T) error {
-
-	return nil
+func (tt *TestDataType[In, W]) Run(t *testing.T) (err error) {
+	name := fmt.Sprintf("%s(%s): ", tt.NameFunc, tt.Name)
+	t.Run(name, func(t *testing.T) {
+		if tt.Got() != tt.Want {
+			if !tt.WantErr {
+				err = fmt.Errorf(fmtErrorfWithWantErr, name, tt.Got(), tt.Want, tt.WantErr, err)
+			}
+		}
+	})
+	return err
 }
+
+// TableEntryInfo[In any, W comparable] interface {
+// 	In() []In
+// 	Got() W
+// 	Want() W
+// 	WantErr() bool
+// }
+
+// TestTableEntryer[In any, W comparable] interface {
+// 	TestRunner
+// 	TableEntryInfo[In, W]
+// }
+
+// TestTableEntry describes a set of tests with
+// with the same name and function and set of
+// expected input and output values
+// TestTableEntry[In any, W comparable] struct {
+// 	FnName string
+// 	Fn     func(in ...In) W
+// 	Tests  []TestDataType[In, W]
+// }
+
+// testTableEntry[In any, W comparable] struct {
+// 	name    string
+// 	fn      func(in ...In) W
+// 	in      []In
+// 	want    W
+// 	wantErr bool
+// }

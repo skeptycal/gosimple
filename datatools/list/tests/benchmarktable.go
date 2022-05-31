@@ -5,6 +5,11 @@ import (
 )
 
 type (
+	BenchmarkRunner interface {
+		Name() string
+		Run() error
+	}
+
 	BenchmarkTable[G any, W comparable, S ~[]BenchmarkTableEntry[G, W]] interface {
 		BenchmarkRunner
 		Benchmarks() S
@@ -20,7 +25,7 @@ func (tbl *benchmarkTable[G, W, S]) Name() string  { return tbl.name }
 func (tbl *benchmarkTable[G, W, S]) Benchmarks() S { return tbl.tests }
 func (tbl *benchmarkTable[G, W, S]) Run(b *testing.B) error {
 	for _, bb := range tbl.tests {
-		name := tbl.Name() + "(" + bb.Name() + ")"
+		name := tbl.Name() + "(" + bb.Name + ")"
 		b.ResetTimer()
 		b.Run(name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
