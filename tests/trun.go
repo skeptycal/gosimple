@@ -35,7 +35,7 @@ func AssertGreaterThan[T Ordered](got, want T) bool {
 	return got > want
 }
 
-func AssertContains[T Ordered, E ~[]T](needle T, haystack E) bool {
+func AssertContains[T comparable, E ~[]T](needle T, haystack E) bool {
 	for _, v := range haystack {
 		if v == needle {
 			return true
@@ -44,7 +44,7 @@ func AssertContains[T Ordered, E ~[]T](needle T, haystack E) bool {
 	return false
 }
 
-func AssertNotContains[T Ordered, E ~[]T](needle T, haystack E) bool {
+func AssertNotContains[T comparable, E ~[]T](needle T, haystack E) bool {
 	for _, v := range haystack {
 		if v == needle {
 			return false

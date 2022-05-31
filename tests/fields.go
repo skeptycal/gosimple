@@ -39,14 +39,12 @@ func Join[T any, E ~[]T](elems E, sep string) string {
 		n += Len(elems[i])
 	}
 
-	var b strings.Builder
+	b := &strings.Builder{}
 	b.Grow(n)
-	b.WriteString(fmt.Sprintf("%v", elems[0]))
-	// b.WriteString(elems[0])
+	fmt.Fprintf(b, "%v", elems[0])
 	for _, v := range elems[1:] {
-		b.WriteString(sep)
-		b.WriteString(fmt.Sprintf("%v", v))
-		// b.WriteString(v)
+		fmt.Fprint(b, sep)
+		fmt.Fprintf(b, "%v", v)
 	}
 	return b.String()
 }
