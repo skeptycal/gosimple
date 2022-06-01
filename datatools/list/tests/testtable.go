@@ -9,6 +9,11 @@ import (
 
 var errNotImplemented = errorhandling.ErrNotImplemented
 
+type TestTable[In any, W comparable] struct {
+	Name  string
+	Tests []TestDataType[In, W]
+}
+
 // MakeTestRunner returns an interface that can be Run()
 // to perform all tests on a single function.
 //
@@ -48,13 +53,6 @@ func (tbl *TestTable[In, W]) Add(entry TestDataType[In, W]) {
 	tbl.Tests = append(tbl.Tests, entry)
 }
 
-type (
-	TestTable[In any, W comparable] struct {
-		Name  string
-		Tests []TestDataType[In, W]
-	}
-)
-
 func (tbl *TestTable[In, W]) Run(t *testing.T, name string) (wrap error) {
 	for i, tt := range tbl.Tests {
 		if err := tt.Run(t); err != nil {
@@ -64,4 +62,11 @@ func (tbl *TestTable[In, W]) Run(t *testing.T, name string) (wrap error) {
 		}
 	}
 	return wrap
+}
+
+func (tbl *TestTable[In, W]) Benchmark(b *testing.B, name string) {
+	for _, bb := range tbl.Tests {
+		bb.Run(new(testing.T))
+	}
+	b.ReportMetric(float64(b.N), "ns/op")
 }

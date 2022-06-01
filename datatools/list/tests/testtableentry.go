@@ -19,10 +19,6 @@ type (
 		Fn       func(In) W
 
 		TestDataDetails[In, W]
-		// Name    string
-		// In      In
-		// Want    W
-		// WantErr bool
 	}
 
 	TestDataDetails[In any, W comparable] struct {
@@ -38,6 +34,18 @@ func (tt *TestDataType[In, W]) Got() W { return tt.Fn(tt.In) }
 func (tt *TestDataType[In, W]) Run(t *testing.T) (err error) {
 	name := fmt.Sprintf("%s(%s): ", tt.NameFunc, tt.Name)
 	t.Run(name, func(t *testing.T) {
+		if tt.Got() != tt.Want {
+			if !tt.WantErr {
+				err = fmt.Errorf(fmtErrorfWithWantErr, name, tt.Got(), tt.Want, tt.WantErr, err)
+			}
+		}
+	})
+	return err
+}
+
+func (tt *TestDataType[In, W]) Benchmark(b *testing.B) (err error) {
+	name := fmt.Sprintf("%s(%s): ", tt.NameFunc, tt.Name)
+	b.Run(name, func(b *testing.B) {
 		if tt.Got() != tt.Want {
 			if !tt.WantErr {
 				err = fmt.Errorf(fmtErrorfWithWantErr, name, tt.Got(), tt.Want, tt.WantErr, err)
