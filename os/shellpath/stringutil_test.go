@@ -1,8 +1,11 @@
 package shpath
 
 import (
+	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/skeptycal/gosimple/datatools/list/tests"
 )
 
 var fakeString = ""
@@ -85,28 +88,35 @@ var stringModifyFuncs = []struct {
 */
 
 func BenchmarkNormalize(b *testing.B) {
-	args := []string{
-		"asdlfkn2;leja-9cv8yh	-2piouej4b-	2u9hnasdj;lasdjflkasnvj8q92nn2den\rasdfklw\r\nl;jkqw;cijhpoiqjwd\n\njl-9c8vn-	wd",
-		"\r asdfsa \r",
-		"\r\nasdfa\t\n\n\r\r",
-		strings.Repeat("Repeat", 1024),
-	}
-
-	for _, arg := range args {
+	for _, arg := range normalizeInput {
 		for _, bb := range stringFuncs {
-			b.Run(bb.name, func(b *testing.B) {
+			name := fmt.Sprintf("%s(%q):", bb.NameFunc, arg.Name)
+			b.Run(name, func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
-					fakeString = bb.fn(arg)
+					fakeString = bb.Fn(arg.In)
 				}
 			})
 		}
 	}
 }
 
-var stringFuncs = []struct {
-	name string
-	fn   func(string) string
-}{
+func BenchmarkNormalizeNew(b *testing.B) {
+	tests.MakeBenchmarkRunner("NormalizeNewlines", true, true, stringFuncs, normalizeInput)
+}
+
+// []string
+var normalizeInput = []tests.BenchmarkInput[string, string]{
+	{"mix", "asdlfkn2;leja-9cv8yh	-2piouej4b-	2u9hnasdj;lasdjflkasnvj8q92nn2den\rasdfklw\r\nl;jkqw;cijhpoiqjwd\n\njl-9c8vn-	wd"},
+	{"only \\r", "\r asdfsa \r"},
+	{"all", "\r\nasdfa\t\n\n\r\r"},
+	{"none", strings.Repeat("Repeat", 1024)},
+}
+
+// []struct {
+// 	name string
+// 	fn   func(string) string
+// }
+var stringFuncs = []tests.BenchmarkFunc[string, string]{
 	{"(cache loading ... ignore this one)", NormalizeNL},
 	{"normalize (unsafe conversion)", normalize},
 	{"normalizeBytesTester", normalizeBytesTester},
@@ -144,9 +154,9 @@ func TestNormalize(t *testing.T) {
 	}
 	for _, ff := range stringFuncs {
 		for _, tt := range tests {
-			name := ff.name + "(" + tt.name + ")"
+			name := ff.NameFunc + "(" + tt.name + ")"
 			t.Run(name, func(t *testing.T) {
-				if got := ff.fn(tt.args.s); got != tt.want {
+				if got := ff.Fn(tt.args.s); got != tt.want {
 					t.Errorf("%q = %q, want %q", name, got, tt.want)
 				}
 			})

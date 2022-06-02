@@ -14,8 +14,9 @@ import (
 // older Apple convention) sequences are replaced
 // with a single '\n'.
 //
-// Several methods are profiled and the most efficient
-// one is aliased to this function.
+// Several methods were profiled and the most efficient
+// one is aliased to this function. YMMV; change the
+// alias as you see fit =)
 var NormalizeNL = normalizeNewlinesString
 
 // DropDupeSeps replaces consecutive duplicates of only specific 'sep' strings with a single 'sep'
