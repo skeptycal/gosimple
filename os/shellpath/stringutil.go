@@ -19,8 +19,8 @@ import (
 var NormalizeNL = normalizeNewlinesString
 
 // DropDupeSeps replaces consecutive duplicates of only specific 'sep' strings with a single 'sep'
-func DropDupeSeps(s string, substr string) string {
-	return dropDupe(s, substr)
+func DropDupeSeps(s string, sep string) string {
+	return dropDupe(s, sep)
 }
 
 const (
@@ -123,8 +123,8 @@ func normalizeNLForLoop(s string) string {
 }
 
 func dropDupe(s, sub string) string {
-	if strings.Contains(s, sub) {
-		return strings.Replace(s, sub+sub, sub, -1)
+	for strings.Contains(s, sub+sub) {
+		return strings.ReplaceAll(s, sub+sub, sub)
 	}
 	return s
 }
@@ -162,9 +162,9 @@ func normalizeStringsBuilder(s string) string {
 // Reference: https://www.programming-books.io/essential/go/normalize-newlines-1d3abcf6f17c4186bb9617fa14074e48
 func normalizeNewlines(d []byte) []byte {
 	// replace CR LF \r\n (windows) with LF \n (unix)
-	d = bytes.Replace(d, []byte{13, 10}, []byte{10}, -1)
+	d = bytes.ReplaceAll(d, []byte{13, 10}, []byte{10})
 	// replace CF \r (mac) with LF \n (unix)
-	d = bytes.Replace(d, []byte{13}, []byte{10}, -1)
+	d = bytes.ReplaceAll(d, []byte{13}, []byte{10})
 	return d
 }
 
