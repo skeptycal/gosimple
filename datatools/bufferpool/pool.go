@@ -5,15 +5,13 @@ import (
 	"sync"
 )
 
-var pool = NewPool[int](func() interface{} { return *new(int) })
+var intPool = NewPool[int]()
 
 // NewPool creates a new sync.Pool implementation
-// with the given New function defining the type
+// with a generic New function defining the type
 // temporary object that will be used.
-func NewPool[T any](New func() any) Pool[T] {
-	if New == nil {
-		New = newPoolFunc[any]()
-	}
+func NewPool[T any]() Pool[T] {
+	New := newPoolFunc[any]()
 
 	p := Pool[T]{
 		defaultBufferSize: 0,
@@ -72,6 +70,8 @@ type (
 	// free list.
 	//
 	// A pool must not be copied after first use.
+	//
+	// Reference: standard library sync package (sync.Pool)
 	Pool[T any] struct {
 		getFn             func() T
 		putFn             func(v T)
@@ -87,7 +87,20 @@ type (
 // Get is the generic sync.Pool Get implementation
 // but uses a stored function to add additional
 // functionality as needed.
-func (b Pool[T]) Get() T        { return b.getFn() }
+func (b Pool[T]) Get() T {
+	return b.getFn()
+}
+
+func (b Pool[T]) GetReset() T {
+	t := b.Get()
+	&t = new(T)
+	return t
+}
+
+func (b Pool[T]) blank() T {
+	return *new(T)
+}
+
 func (b Pool[T]) getNoReset() T { return b.Pool.Get().(T) }
 
 // Put is a generic sync.Pool Put implementation
