@@ -1,4 +1,4 @@
-package basic
+package cli
 
 import (
 	"errors"

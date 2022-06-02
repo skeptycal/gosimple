@@ -1,9 +1,8 @@
 package envvars
 
 import (
+	"os"
 	"strconv"
-
-	"github.com/skeptycal/gosimple/cli/goshell"
 )
 
 // common shell environment variables
@@ -25,6 +24,6 @@ func atoi(s string) int {
 // to the values of the current environment variables.
 // References to undefined variables are replaced by
 // a the empty string.
-func Getenv(v string) string { return goshell.Getenv(v, "") }
+func Getenv(v string) string { return os.ExpandEnv(v) }
 
-func EnvSet(key, value string) error { return goshell.Setenv(key, value) }
+func EnvSet(key, value string) error { return os.Setenv(key, value) }

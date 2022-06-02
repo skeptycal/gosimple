@@ -5,24 +5,74 @@ package cli
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/skeptycal/gosimple/cli/ansi"
+	"github.com/skeptycal/gosimple/cli/envvars"
+	"github.com/skeptycal/gosimple/cli/errorlogger"
+	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
-const (
-	Reset          string = "\033[0m"  // ANSI reset code
-	ResetColor     string = "\033[32m" // Reset to default color
-	ResetLineConst string = "\r\033[K" // Return cursor to start of line and clean it
-	SetInverse     string = "\033[4m"  // ANSI inverse
-	NewLine        string = "\n"       // Newline character
-	Tab            string = "\t"       // Tab character
+var (
+	// Global errorlogger instance
+	Log = errorlogger.New()
 
+	// DEBUG flag to enable debug logging and features
+	DEBUG = true
+
+	// Column width of CLI terminal display
+	COLUMNS int = 80
+	ROWS    int = 24
+
+	// Terminal flag to enable CLI terminal display
+	IsTerminal = terminal.IsTerminal(int(os.Stdout.Fd()))
+)
+
+var (
+	defaultWriter      io.Writer = newAnsiStdout()
+	defaultErrorWriter io.Writer = newAnsiStderr()
+	// Output             CLI       = New()
+)
+
+// fast conversion utilities
+var (
+	B2S = unsafeBytesToString
+	S2B = unsafeStringToBytes
 )
 
 var (
 	DbColor     string = "\033[1;31m" // ANSI dbecho code
 	bAnsiPrefix []byte = []byte(ansiPrefix)
 	SetBold     string = BasicEncode(fmt.Sprint(ansi.Bold)) // ANSI bold
+)
+
+// environment variables
+var (
+	HOME    = envvars.HOME
+	PWD     = envvars.PWD
+	COLUMNS = envvars.COLUMNS
+)
+
+const (
+// defaultCLIforeground byte = 15
+// defaultCLIbackground byte = 0
+// defaultCLIeffect          = 0
+)
+
+const (
+	Reset                    string = "\033[0m"  // ANSI reset code
+	ResetColor               string = "\033[32m" // Reset to default color
+	ResetLineConst           string = "\r\033[K" // Return cursor to start of line and clean it
+	SetInverse               string = "\033[4m"  // ANSI inverse
+	NewLine                  string = "\n"       // Newline character
+	Tab                      string = "\t"       // Tab character
+	Space                           = " "        // Space character
+	DefaultScreenWidthString        = "80"
+	DefaultHeadByteLength           = 79
+	DefaultTailByteLength           = 20
+	DefaultHeadLineLength           = 5
+	DefaultTailLineLength           = 5
 )
 
 // List of possible colors

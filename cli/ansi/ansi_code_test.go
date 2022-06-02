@@ -49,10 +49,12 @@ func Test_newColorString(t *testing.T) {
 	}
 }
 
-// this is a noop function
-// the three arguments are present to match the test function signature
-// pass the expected return value to 'foreground'
-// background and effect are ignored
+// newColorControl is a noop function.
+//
+// Pass the expected return value to 'foreground'.
+//
+// The three arguments are present to match the test function signature.
+// Background and effect are ignored.
 func newColorControl(foreground, background, effect string) string {
 	return foreground
 }

@@ -3,7 +3,6 @@ package cli
 import (
 	"bytes"
 	"encoding/binary"
-	"log"
 	"math/rand"
 	"testing"
 	"unsafe"

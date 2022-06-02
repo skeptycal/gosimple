@@ -32,9 +32,12 @@ func ansiEncodeBasic(fg, bg, ef string) string {
 	return fmt.Sprintf(ansiEncodeBasicFMT, fg, bg, ef)
 }
 
-func NewColor(foreground, background, effect string) string {
-	return newColorConcat(foreground, background, effect)
-}
+// NewColor returns a new ansi color string function.
+//
+// Several methods were profiled and the most efficient
+// was aliased to NewColor. YMMV; change the alias as
+// needed for your environment.
+var NewColor = newColorConcat
 
 func newColorConcat(foreground, background, effect string) string {
 	//     "\x1b[        %d      ;	  38;5;       %d      ;       48;5;     %d         m"

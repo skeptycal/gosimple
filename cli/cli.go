@@ -13,21 +13,33 @@ import (
 	"fmt"
 	"io"
 	"os"
-)
+	"strconv"
 
-const (
-// defaultCLIforeground byte = 15
-// defaultCLIbackground byte = 0
-// defaultCLIeffect          = 0
+	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
 const defaultDevMode = true
 
-var (
-	defaultWriter      io.Writer = newAnsiStdout()
-	defaultErrorWriter io.Writer = newAnsiStderr()
-	// Output             CLI       = New()
-)
+func init() {
+	c, err := strconv.Atoi(os.ExpandEnv("$COLUMNS"))
+	if err != nil || c < 1 {
+		// TODO: causes seg fault in VsCode terminal window, e.g.
+		/* time="2022-06-01T12:39:29-05:00" level=error msg="GetWinsize: operation not supported on socket"
+		panic: runtime error: invalid memory address or nil pointer dereference
+		[signal SIGSEGV: segmentation violation code=0x2 addr=0x2 pc=0x104f87b44]
+		*/
+		winSize, err := terminal.GetWinsize()
+		if err != nil {
+			log.Error(err)
+		}
+
+		// COLUMNS = envvars.COLUMNS // TODO not working ... should be working ...
+		COLUMNS = int(winSize.Col)
+		ROWS = int(winSize.Row)
+	} else {
+		COLUMNS = int(c)
+	}
+}
 
 func checkColor() bool {
 	// TODO check if color is supported - bring this code over ...

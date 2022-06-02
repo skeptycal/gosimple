@@ -1,6 +1,10 @@
 package cli
 
-import "github.com/skeptycal/gosimple/cli/ansi"
+import (
+	"strings"
+
+	"github.com/skeptycal/gosimple/cli/ansi"
+)
 
 var globalReturn = ""
 
@@ -20,3 +24,19 @@ const (
 var (
 	ansiPrefixByte = []byte(ansiPrefix)
 )
+
+var (
+	log          = Log // alias for local logging
+	headerChar   = "*"
+	footerChar   = "-"
+	headerBorder = headerString()
+	footerBorder = footerString()
+)
+
+func headerString() string {
+	return strings.Repeat(headerChar, COLUMNS/len(headerChar))
+}
+
+func footerString() string {
+	return strings.Repeat(headerChar, COLUMNS/len(headerChar))
+}
