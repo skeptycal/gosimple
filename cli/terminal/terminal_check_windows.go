@@ -1,3 +1,4 @@
+//go:build !appengine && !js && windows
 // +build !appengine,!js,windows
 
 package terminal
@@ -14,6 +15,12 @@ import (
 )
 
 func checkIfTerminal(w io.Writer) bool {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered. Error:\n", r)
+		}
+	}()
+
 	switch v := w.(type) {
 	case *os.File:
 		handle := windows.Handle(v.Fd())

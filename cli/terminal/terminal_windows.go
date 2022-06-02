@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package terminal
@@ -12,6 +13,12 @@ import (
 )
 
 func getWinsize() (*winsize, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered. Error:\n", r)
+		}
+	}()
+
 	ws := new(winsize)
 	fd := os.Stdout.Fd()
 	var info windows.ConsoleScreenBufferInfo

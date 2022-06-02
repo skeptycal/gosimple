@@ -1,16 +1,24 @@
 package envvars
 
 import (
+	"strconv"
+
 	"github.com/skeptycal/gosimple/cli/goshell"
 )
 
 // common shell environment variables
 var (
-	HOME   string = Getenv("$HOME")
-	PWD    string = Getenv("$PWD")
-	SHELL  string = Getenv("$SHELL")
-	GOPATH string = Getenv("$GOPATH")
+	HOME    string = Getenv("$HOME")
+	PWD     string = Getenv("$PWD")
+	SHELL   string = Getenv("$SHELL")
+	GOPATH  string = Getenv("$GOPATH")
+	COLUMNS int    = atoi(Getenv("$COLUMNS"))
 )
+
+func atoi(s string) int {
+	i, _ := strconv.Atoi(s)
+	return i
+}
 
 // Getenv returns the value of the string while it
 // replaces ${var} or $var in the string according
