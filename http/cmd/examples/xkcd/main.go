@@ -9,14 +9,16 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/skeptycal/gosimple/repo/gitignore/cli"
 	"github.com/skeptycal/gosimple/types/convert"
 	"golang.org/x/net/html"
 )
 
 var (
 	ComicURL string = "http://xkcd.com/"
-	B2S             = convert.UnsafeBytesToString
-	S2B             = convert.UnsafeStringToBytes
+	B2S             = cli.B2S // UnsafeBytesToString
+	S2B             = cli.S2B // UnsafeStringToBytes
+	DEBUG           = &cli.DebugFlag
 )
 
 type Comic struct {
@@ -26,31 +28,43 @@ type Comic struct {
 	Image      string `json:"img"`
 }
 
+func (c *Comic) Reset() {
+	c = &Comic{}
+	_ = c
+}
+
 func main() {
 	for i := 1; i < 50; i++ {
 		result, err := GetComic(ComicURL + strconv.Itoa(i) + "/info.0.json")
 		if err != nil {
 			fmt.Printf("Error %v", err)
 		}
+		defer result.Reset()
+		cli.DbEcho("result: ", result)
 
 		extension := result.Image[len(result.Image)-4:]
+		cli.DbEcho("extension: ", extension)
+
 		img, err := os.Create("./xkcd/" + result.SafeTitle + extension)
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer img.Close()
+		cli.DbEcho("img.Name(): ", img.Name())
 
 		resp, err := http.Get(result.Image)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer resp.Body.Close()
+		cli.DbEcho("resp.Status: ", resp.Status)
 
 		_, err = io.Copy(img, resp.Body)
 		if err != nil {
 			log.Fatal(err)
 		}
+		cli.DbEcho("result.Image: ", result.Image)
 
-		defer img.Close()
 		fmt.Printf("URL : %s\n", result.Image)
 	}
 
@@ -112,11 +126,18 @@ func GetURLContent(url string) (io.ReadCloser, error) {
 }
 
 func GetComicURL(url string) (string, error) {
-	r, err := GetURLContent(url)
+	// r, err := GetURLContent(url)
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	// find tag for image url
+
+	c, err := GetComic(url)
 	if err != nil {
 		return "", err
 	}
-
+	return c.Image, nil
 }
 
 func GetComic(url string) (*Comic, error) {
