@@ -11,7 +11,7 @@ import (
 
 type (
 	TestRunner interface {
-		Run(t *testing.T, name string) error
+		Run(t *testing.T) error
 	}
 
 	TestDataType[In any, W comparable] struct {

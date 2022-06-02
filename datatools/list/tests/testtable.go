@@ -53,7 +53,7 @@ func (tbl *TestTable[In, W]) Add(entry TestDataType[In, W]) {
 	tbl.Tests = append(tbl.Tests, entry)
 }
 
-func (tbl *TestTable[In, W]) Run(t *testing.T, name string) (wrap error) {
+func (tbl *TestTable[In, W]) Run(t *testing.T) (wrap error) {
 	for i, tt := range tbl.Tests {
 		if err := tt.Run(t); err != nil {
 			if !tt.WantErr {
