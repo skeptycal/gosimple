@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/skeptycal/gosimple/repo/gitignore/cli"
+	"github.com/skeptycal/gosimple/cli"
 	"github.com/skeptycal/gosimple/types/convert"
 	"golang.org/x/net/html"
 )

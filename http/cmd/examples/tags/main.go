@@ -8,7 +8,8 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/skeptycal/gosimple/cli/basic"
+	"github.com/skeptycal/gosimple/cli"
+	"github.com/skeptycal/gosimple/cli/terminal"
 	"github.com/skeptycal/gosimple/types/convert"
 	"golang.org/x/net/html"
 )
@@ -19,9 +20,11 @@ const (
 )
 
 var (
-	log     = Log
+	log     = cli.Log
 	allFlag bool
 	tag     string
+	DbEcho  = cli.DbEcho
+	DEBUG   = cli.DEBUG
 )
 
 func init() {
@@ -36,8 +39,8 @@ func dbInfo() {
 	DbEcho("DEBUG: ", DEBUG)
 	DbEcho("tag: ", tag)
 	DbEcho("allFlag: ", allFlag)
-	DbEcho("isTerminal: ", IsTerminal)
-	DbEcho("column width: ", COLUMNS)
+	DbEcho("isTerminal: ", terminal.IsTerminal)
+	DbEcho("column width: ", terminal.GetWinSize().Col())
 	DbEcho("args before flag.Parse(): ", os.Args[1:])
 	DbEcho("args after flag.Parse(): ", flag.Args())
 }
@@ -58,7 +61,7 @@ func main() {
 		if err != nil {
 			log.Errorf("error reading html: %v", err)
 		}
-		Box(s)
+		cli.Box(s)
 		fmt.Println(s)
 	}
 
