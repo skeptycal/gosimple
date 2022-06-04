@@ -7,10 +7,9 @@ import (
 	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
-var GetWinSize = terminal.GetWinsize
+// var GetWinSize = terminal.GetWinsize
 
 func CheckIfTerminal(w io.Writer) bool {
-
 	// TODO not working ... see issues
 	return terminal.CheckIfTerminal(w)
 }
@@ -18,7 +17,7 @@ func CheckIfTerminal(w io.Writer) bool {
 // Columns returns the number of columns in the terminal,
 // similar to the COLUMNS environment variable on macOS
 // and Linux systems.
-func Columns() int {
+func Cols() int {
 	return goterm.Width()
 }
 
@@ -27,18 +26,22 @@ func Rows() int {
 	return goterm.Height()
 }
 
-// func XPixels() int {
-// 	ws, err := GetWinSize()
-// 	if err != nil {
-// 		return 0
-// 	}
-// 	return int(ws.Xpixel)
-// }
+func XPixels() int {
+	ws := terminal.GetWinSize()
 
-// func YPixels() int {
-// 	ws, err := GetWinSize()
-// 	if err != nil {
-// 		return 0
-// 	}
-// 	return int(ws.Ypixel)
-// }
+	if ws == nil {
+		return -1
+	}
+
+	return ws.Xpixel()
+}
+
+func YPixels() int {
+	ws := terminal.GetWinSize()
+
+	if ws == nil {
+		return -1
+	}
+
+	return ws.Ypixel()
+}

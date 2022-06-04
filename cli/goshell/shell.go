@@ -60,7 +60,7 @@ func Shell(commands ...string) (string, string, error) {
 	// return stdout.String(), stderr.String(), err
 }
 
-var buf = bufferpool.NewPool[*bytes.Buffer](nil)
+var buf = bufferpool.NewPool[*bytes.Buffer]()
 
 var syncPool = sync.Pool{}
 

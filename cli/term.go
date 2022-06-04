@@ -24,6 +24,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
 var Output *bufio.Writer = bufio.NewWriter(os.Stdout)
@@ -43,14 +45,6 @@ func getBgColor(code int) string {
 // Reset percent flag: num & 0xFF
 const shift = uint(^uint(0)>>63) << 4
 const PCT = 0x8000 << shift
-
-// used for Windows compatibility
-type winsize struct {
-	Row    uint16
-	Col    uint16
-	Xpixel uint16
-	Ypixel uint16
-}
 
 // Reference: /go/pkg/mod/golang.org/x/sys ... /unix/ztypes_darwin_amd64.go
 // type Winsize struct {
@@ -101,7 +95,7 @@ func applyTransform(str string, transform sf) (out string) {
 
 // Clear screen
 func Clear() {
-	_, _ = Output.WriteString("\033[2J")
+	Output.WriteString("\033[2J")
 }
 
 // MoveCursor - Move cursor to given position
@@ -183,22 +177,24 @@ func Background(str string, color int) string {
 
 // Width gets console width
 func Width() int {
-	ws, err := GetWinSize()
+	ws := terminal.GetWinSize()
 
-	if err != nil {
+	if ws == nil {
 		return -1
 	}
 
-	return int(ws.Col)
+	return ws.Col()
 }
 
 // Height gets console height
 func Height() int {
-	ws, err := GetWinSize()
-	if err != nil {
+	ws := terminal.GetWinSize()
+
+	if ws == nil {
 		return -1
 	}
-	return int(ws.Row)
+
+	return ws.Row()
 }
 
 // CurrentHeight gets current height. Line count in Screen buffer.

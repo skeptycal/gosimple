@@ -40,6 +40,7 @@ func BenchmarkCast(b *testing.B) {
 	for it := 0; it < b.N; it++ {
 		narr := *(*[]uint32)(unsafe.Pointer(&arr))
 		narr = narr[:n]
+		_ = narr
 	}
 }
 

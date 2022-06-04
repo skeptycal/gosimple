@@ -1,16 +1,14 @@
 package cli
 
 import (
-	"io"
-
 	"github.com/pkg/errors"
 	"github.com/skeptycal/gosimple/cli/errorlogger"
 )
 
 // errorlogger
 var (
+	// Global errorlogger instance
 	Log = errorlogger.New()
-	log = Log // sometimes my habit for lowercase is too strong ...
 	er  = Log.Err
 )
 

@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 
 	"github.com/skeptycal/gosimple/cli/terminal"
 )
@@ -21,23 +20,16 @@ import (
 const defaultDevMode = true
 
 func init() {
-	c, err := strconv.Atoi(os.ExpandEnv("$COLUMNS"))
-	if err != nil || c < 1 {
-		// TODO: causes seg fault in VsCode terminal window, e.g.
-		/* time="2022-06-01T12:39:29-05:00" level=error msg="GetWinsize: operation not supported on socket"
-		panic: runtime error: invalid memory address or nil pointer dereference
-		[signal SIGSEGV: segmentation violation code=0x2 addr=0x2 pc=0x104f87b44]
-		*/
-		winSize, err := terminal.GetWinsize()
-		if err != nil {
-			log.Error(err)
-		}
 
-		// COLUMNS = envvars.COLUMNS // TODO not working ... should be working ...
-		COLUMNS = int(winSize.Col)
-		ROWS = int(winSize.Row)
-	} else {
-		COLUMNS = int(c)
+	// TODO: causes seg fault in VsCode terminal window, e.g.
+	/* time="2022-06-01T12:39:29-05:00" level=error msg="GetWinsize: operation not supported on socket"
+	panic: runtime error: invalid memory address or nil pointer dereference
+	[signal SIGSEGV: segmentation violation code=0x2 addr=0x2 pc=0x104f87b44]
+	*/
+	winSize := terminal.GetWinSize()
+	if winSize != nil {
+		COLUMNS = winSize.Col()
+		ROWS = winSize.Row()
 	}
 }
 

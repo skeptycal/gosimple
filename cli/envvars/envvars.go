@@ -7,11 +7,10 @@ import (
 
 // common shell environment variables
 var (
-	HOME    string = Getenv("$HOME")
-	PWD     string = Getenv("$PWD")
-	SHELL   string = Getenv("$SHELL")
-	GOPATH  string = Getenv("$GOPATH")
-	COLUMNS int    = atoi(Getenv("$COLUMNS"))
+	HOME   string = Getenv("$HOME")
+	PWD    string = Getenv("$PWD")
+	SHELL  string = Getenv("$SHELL")
+	GOPATH string = Getenv("$GOPATH")
 )
 
 func atoi(s string) int {

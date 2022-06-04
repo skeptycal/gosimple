@@ -10,23 +10,32 @@ import (
 
 	"github.com/skeptycal/gosimple/cli/ansi"
 	"github.com/skeptycal/gosimple/cli/envvars"
-	"github.com/skeptycal/gosimple/cli/errorlogger"
 	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
 var (
-	// Global errorlogger instance
-	Log = errorlogger.New()
 
 	// DEBUG flag to enable debug logging and features
 	DEBUG = true
 
-	// Column width of CLI terminal display
-	COLUMNS int = 80
-	ROWS    int = 24
-
 	// Terminal flag to enable CLI terminal display
 	IsTerminal = terminal.IsTerminal(int(os.Stdout.Fd()))
+)
+
+// environment variables
+var (
+
+	// user home directory
+	HOME = envvars.HOME
+
+	// current working directory
+	PWD = envvars.PWD
+
+	// Initial column width of CLI terminal display
+	COLUMNS = 80
+
+	// Initial row height of CLI terminal display
+	ROWS = 24
 )
 
 var (
@@ -35,29 +44,10 @@ var (
 	// Output             CLI       = New()
 )
 
-// fast conversion utilities
-var (
-	B2S = unsafeBytesToString
-	S2B = unsafeStringToBytes
-)
-
 var (
 	DbColor     string = "\033[1;31m" // ANSI dbecho code
 	bAnsiPrefix []byte = []byte(ansiPrefix)
 	SetBold     string = BasicEncode(fmt.Sprint(ansi.Bold)) // ANSI bold
-)
-
-// environment variables
-var (
-	HOME    = envvars.HOME
-	PWD     = envvars.PWD
-	COLUMNS = envvars.COLUMNS
-)
-
-const (
-// defaultCLIforeground byte = 15
-// defaultCLIbackground byte = 0
-// defaultCLIeffect          = 0
 )
 
 const (
@@ -75,7 +65,7 @@ const (
 	DefaultTailLineLength           = 5
 )
 
-// List of possible colors
+// List of possible colors (3 bit ANSI)
 const (
 	BLACK = iota
 	RED

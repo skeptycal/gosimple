@@ -104,7 +104,10 @@ func FileWriteCloser(filename string, truncate bool) (io.WriteCloser, error) {
 func Getenv(envVarName string, defaultValue string) (retval string) {
 	retval = os.ExpandEnv(envVarName)
 	if retval == "" {
-		osErr(os.ErrInvalid, fmt.Errorf("Getenv(%q) error: %q (using default value: %q", envVarName, retval, defaultValue).Error())
+		retval, _ = os.LookupEnv(envVarName)
+	}
+	if retval == "" {
+		osErr(os.ErrInvalid, fmt.Errorf("Getenv(%s) error: %s (using default value: %s", envVarName, retval, defaultValue).Error())
 		return defaultValue
 	}
 	return

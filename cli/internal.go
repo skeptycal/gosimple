@@ -1,9 +1,8 @@
 package cli
 
 import (
-	"strings"
-
 	"github.com/skeptycal/gosimple/cli/ansi"
+	"github.com/skeptycal/gosimple/unsafe"
 )
 
 var globalReturn = ""
@@ -26,17 +25,18 @@ var (
 )
 
 var (
-	log          = Log // alias for local logging
+
+	// alias for local logging
+	// sometimes my habit for lowercase is too strong ...
+	log          = Log
 	headerChar   = "*"
 	footerChar   = "-"
 	headerBorder = headerString()
 	footerBorder = footerString()
 )
 
-func headerString() string {
-	return strings.Repeat(headerChar, COLUMNS/len(headerChar))
-}
-
-func footerString() string {
-	return strings.Repeat(headerChar, COLUMNS/len(headerChar))
-}
+// fast conversion utilities
+var (
+	B2S = unsafe.B2S
+	S2B = unsafe.S2B
+)
