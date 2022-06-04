@@ -8,8 +8,8 @@ import (
 	"github.com/skeptycal/gosimple/datatools/bufferpool"
 )
 
-var pool = bufferpool.NewPool[int](func() interface{} { return *new(int) })
-var bpool = bufferpool.NewPool[*bytes.Buffer](func() any { return new(bytes.Buffer) })
+var pool = bufferpool.NewPool[int]()
+var bpool = bufferpool.NewPool[*bytes.Buffer]()
 
 var sum1, sum2 int64
 

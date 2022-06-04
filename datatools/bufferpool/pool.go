@@ -93,7 +93,8 @@ func (b Pool[T]) Get() T {
 
 func (b Pool[T]) GetReset() T {
 	t := b.Get()
-	&t = new(T)
+	_ = t
+	t = *new(T)
 	return t
 }
 
