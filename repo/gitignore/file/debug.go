@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/skeptycal/gosimple/cli"
 	"github.com/skeptycal/gosimple/os/gofile"
-	"github.com/skeptycal/gosimple/repo/gitignore/cli"
 )
 
 type details struct {

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/skeptycal/gosimple/repo/gitignore/cli"
+	"github.com/skeptycal/gosimple/cli"
 )
 
 const (

@@ -7,14 +7,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/skeptycal/gosimple/repo/gitignore/cli"
+	"github.com/skeptycal/gosimple/cli"
 	"github.com/skeptycal/gosimple/repo/gitignore/file"
 )
 
 //go:generate goyacc -o gopher.go -p parser gopher.y
 
 const (
-	newline = cli.Newline
+	newline = cli.NewLine
 )
 
 // FieldsFlag  bool

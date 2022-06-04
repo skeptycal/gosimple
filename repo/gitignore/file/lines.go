@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/skeptycal/gosimple/repo/gitignore/cli"
+	"github.com/skeptycal/gosimple/cli"
 )
 
 func (f *GoFile) Lines() []string {
