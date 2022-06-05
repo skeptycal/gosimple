@@ -1,12 +1,15 @@
-package unsafe_test
+package reallyunsafe_test
 
 import (
 	"bytes"
 	"testing"
 	"unsafe"
 
-	us "github.com/skeptycal/gosimple/unsafe"
+	"github.com/skeptycal/gosimple/reallyunsafe"
+	"github.com/skeptycal/gosimple/testes"
 )
+
+var tAssertEqual = testes.AssertEqual
 
 type readOp int8
 
@@ -16,7 +19,7 @@ type SneakyBuffer struct {
 	LastRead readOp // last read operation, so that Unread* can work correctly.
 }
 
-func TestRecast2(t *testing.T) {
+func TestRecastSneaky(t *testing.T) {
 
 	buf := bytes.Buffer{}
 	b := []byte("This is a buffer entry.")
@@ -37,25 +40,15 @@ func TestRecast2(t *testing.T) {
 
 }
 
-func tAssertEqual[T comparable](t *testing.T, name string, got, want T) {
-	format := "%s not equal - got: %v, want %v"
-	if name == "" {
-		name = "value"
-	}
-	if got != want {
-		t.Errorf(format, name, got, want)
-	}
-}
-
-func TestRecast(t *testing.T) {
+func TestRecastPubPri(t *testing.T) {
 	pub := 13
 	pri := 42
 
 	// the Fake struct has one public and one private field
-	f := us.NewFake(pub, pri)
+	f := reallyunsafe.NewFake(pub, pri)
 
 	// Recast takes the private field and makes it public
-	s := us.Recast(*f)
+	s := reallyunsafe.Recast(*f)
 
 	if s.Public != pub {
 		t.Errorf("Public not correct: got %v, want %v", s.Public, pub)

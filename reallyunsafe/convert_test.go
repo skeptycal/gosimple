@@ -1,4 +1,4 @@
-package unsafe
+package reallyunsafe
 
 import (
 	"fmt"

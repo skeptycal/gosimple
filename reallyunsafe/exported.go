@@ -1,4 +1,4 @@
-package unsafe
+package reallyunsafe
 
 func S2B(s string) []byte { return unsafeStringToBytes(s) }
 func B2S(b []byte) string { return unsafeBytesToString(b) }
