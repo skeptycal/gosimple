@@ -1,8 +1,6 @@
 package cli
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type CLIControls interface {
 	CLS()
@@ -20,6 +18,33 @@ const (
 	defaultHrChar      string = "="        // repeat character for Hr()
 	defaultScreenWidth int    = 80         // default screen width if not specified
 )
+
+// Br creates a line break.
+func (t *Terminal) Br() {
+	fmt.Fprintln(t.w, "")
+}
+
+func (t *Terminal) screenWidth() int {
+	// todo - add support for variable width
+	return defaultScreenWidth
+}
+
+// UseColor manually sets the use of ANSI color output to true or false.
+func (t *Terminal) UseColor(b bool) {
+	if b == t.useColor {
+		return
+	}
+	if !b {
+		fmt.Fprint(t.w, Reset)
+	}
+	t.useColor = b
+}
+
+// DevMode manually sets the Dev mode to true (for debugging)
+// or false (for production). Default is false.
+func (t *Terminal) DevMode(b bool) {
+	t.devMode = b
+}
 
 // // CLS clears the screen.
 // func (t *Terminal) CLS() {
@@ -52,30 +77,3 @@ const (
 // func (t *Terminal) Hr() {
 // 	t.LineBreak(defaultHrChar)
 // }
-
-// Br creates a line break.
-func (t *Terminal) Br() {
-	fmt.Fprintln(t.w, "")
-}
-
-func (t *Terminal) screenWidth() int {
-	// todo - add support for variable width
-	return defaultScreenWidth
-}
-
-// UseColor manually sets the use of ANSI color output to true or false.
-func (t *Terminal) UseColor(b bool) {
-	if b == t.useColor {
-		return
-	}
-	if !b {
-		fmt.Fprint(t.w, Reset)
-	}
-	t.useColor = b
-}
-
-// DevMode manually sets the Dev mode to true (for debugging)
-// or false (for production). Default is false.
-func (t *Terminal) DevMode(b bool) {
-	t.devMode = b
-}

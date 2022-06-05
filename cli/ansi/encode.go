@@ -1,4 +1,4 @@
-package cli
+package ansi
 
 import "github.com/skeptycal/gosimple/types/convert"
 

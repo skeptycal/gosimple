@@ -10,18 +10,43 @@ import (
 	"strings"
 )
 
-type Any = interface{}
+// NewColor returns a new ansi color string function.
+//
+// Several methods were profiled and the most efficient
+// was aliased to NewColor. YMMV; change the alias as
+// needed for your environment.
+var NewColor = newColorConcat
 
 const (
+	fmtANSI            string = FmtANSI // format string for simple ANSI encoding ( "\x1b[%dm" )
+	fa                 string = "\x1b[%dm"
 	ansiEncodeBasicFMT string = "\x1b[%v;%v;%vm"
-	prefix             string = "\x1b["
+	ansiPrefix         string = "\033["
+	ansiSuffix         string = "m"
+	ansiSep            string = ";"
 	fg                 string = "38;5;"
 	bg                 string = "48;5;"
-	suffix             string = "m"
-	ansiSep            string = ";"
+	fg2                string = ansiSep + fg
+	bg2                string = ansiSep + bg
+	esc                byte   = '\x1b'
+	ansiPrefixByte1    byte   = esc
+	ansiPrefixByte2    byte   = '['
+	ansiSepByte        byte   = ';'
+	ansiSuffixByte     byte   = 'm'
 
-	fg2 = ansiSep + fg
-	bg2 = ansiSep + bg
+	Reset          string = "\033[0m"  // ANSI reset code
+	ResetColor     string = "\033[32m" // Reset to default color
+	ResetLineConst string = "\r\033[K" // Return cursor to start of line and clean it
+	SetBold        string = "\033[1m"  // ANSI bold
+	SetInverse     string = "\033[4m"  // ANSI inverse
+)
+
+var (
+	ansiPrefixByte []byte = []byte(ansiPrefix)
+	bAnsiPrefix    []byte = []byte(ansiPrefix)
+	ResetBytes     []byte = []byte(Reset)
+	BoldBytes      []byte = []byte(SetBold)
+	InverseBytes   []byte = []byte(SetInverse)
 )
 
 var (
@@ -32,21 +57,14 @@ func ansiEncodeBasic(fg, bg, ef string) string {
 	return fmt.Sprintf(ansiEncodeBasicFMT, fg, bg, ef)
 }
 
-// NewColor returns a new ansi color string function.
-//
-// Several methods were profiled and the most efficient
-// was aliased to NewColor. YMMV; change the alias as
-// needed for your environment.
-var NewColor = newColorConcat
-
 func newColorConcat(foreground, background, effect string) string {
 	//     "\x1b[        %d      ;	  38;5;       %d      ;       48;5;     %d         m"
-	return prefix + effect + ansiSep + fg + foreground + ansiSep + bg + background + suffix
+	return ansiPrefix + effect + ansiSep + fg + foreground + ansiSep + bg + background + ansiSuffix
 }
 
 func newColorConcat2(foreground, background, effect string) string {
 	//     "\x1b[     %d    ;38;5;     %d      ;48;5;     %d         m"
-	return prefix + effect + fg2 + foreground + bg2 + background + suffix
+	return ansiPrefix + effect + fg2 + foreground + bg2 + background + ansiSuffix
 }
 
 const ansitemplate = "\x1b[000;38;5;000;48;5;000m"
@@ -90,7 +108,7 @@ func NewColorMake(foreground, background, effect string) string {
 
 func newColorSB(foreground, background, effect string) string {
 	sb := strings.Builder{}
-	sb.WriteString(prefix)
+	sb.WriteString(ansiPrefix)
 	sb.WriteString(effect)
 	sb.WriteString(ansiSep)
 	sb.WriteString(fg)
@@ -98,13 +116,13 @@ func newColorSB(foreground, background, effect string) string {
 	sb.WriteString(ansiSep)
 	sb.WriteString(bg)
 	sb.WriteString(background)
-	sb.WriteString(suffix)
+	sb.WriteString(ansiSuffix)
 	return sb.String()
 }
 
 func newColorBB(foreground, background, effect string) string {
 	sb := bytes.Buffer{}
-	sb.WriteString(prefix)
+	sb.WriteString(ansiPrefix)
 	sb.WriteString(effect)
 	sb.WriteString(ansiSep)
 	sb.WriteString(fg)
@@ -112,13 +130,13 @@ func newColorBB(foreground, background, effect string) string {
 	sb.WriteString(ansiSep)
 	sb.WriteString(bg)
 	sb.WriteString(background)
-	sb.WriteString(suffix)
+	sb.WriteString(ansiSuffix)
 	return sb.String()
 }
 
 func newColorJoin(foreground, background, effect string) string {
 	return strings.Join(
-		[]string{prefix + effect, fg + foreground, bg + background + suffix},
+		[]string{ansiPrefix + effect, fg + foreground, bg + background + ansiSuffix},
 		ansiSep,
 	)
 }

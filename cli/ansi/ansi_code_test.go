@@ -101,8 +101,8 @@ func BenchmarkNewColor(b *testing.B) {
 		BenchmarkNewColor/NewColor(newColorBB)#01-8           	 2151378	       557.7 ns/op	     312 B/op	       9 allocs/op
 		BenchmarkNewColor/NewColor(newColorBB)#02-8           	 2203754	       548.1 ns/op	     312 B/op	       9 allocs/op
 	*/
-	var result Any
-	var r Any
+	var result any
+	var r any
 	var bFuncTests = []struct {
 		name string
 		fn   func(fg, bg, ef string) string

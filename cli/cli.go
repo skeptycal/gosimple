@@ -14,6 +14,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/skeptycal/gosimple/cli/ansi"
 	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
@@ -61,7 +62,7 @@ type CLI interface {
 	fmt.Stringer
 	Printer
 	CLIControls
-	SetColor(color AnsiColor)
+	SetColor(color ansi.AnsiColor)
 	Reset() (n int, err error)
 }
 

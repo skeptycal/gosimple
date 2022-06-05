@@ -1,4 +1,4 @@
-package cli
+package ansi
 
 // ANSI implements the interface for ANSI encoded values typically used
 // for control and output in CLI applications.

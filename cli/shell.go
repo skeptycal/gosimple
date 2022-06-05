@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/skeptycal/gosimple/reallyunsafe"
 	"github.com/skeptycal/gosimple/repo/fakecloser"
 )
 
@@ -20,6 +21,8 @@ var (
 	stdOutCloser, _  = fakecloser.New(os.Stdout)
 	discardCloser, _ = fakecloser.New(discard)
 	discard          = io.Discard
+	S2B              = reallyunsafe.S2B
+	B2S              = reallyunsafe.B2S
 )
 
 func NewWriteCloserCLI(w any) io.WriteCloser {
