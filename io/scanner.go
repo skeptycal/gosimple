@@ -11,7 +11,7 @@ import (
 )
 
 func scanFile(r io.Reader, n int) {
-	defer CloseIf(r)
+	defer CloseReaderIf(r)
 
 	// rd := bufio.NewReader(r)
 
@@ -26,7 +26,7 @@ func scanFile(r io.Reader, n int) {
 }
 
 func readFileLines(r io.Reader) (lines []string, err error) {
-	defer CloseIf(r)
+	defer CloseReaderIf(r)
 
 	rd := bufio.NewReader(r)
 

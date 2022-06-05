@@ -57,12 +57,12 @@ func ReadCloser(filename string) (io.ReadCloser, error) {
 	return f, nil
 }
 
-// CloseIf checks a reader to see if it also
+// CloseReaderIf checks a reader to see if it also
 // has a close method. If so, it calls r.Close().
 // Useful for places where any io.Reader can be used,
 // but a file (or other ReadCloser that requires
 // closing) may be substituted.
-func CloseIf(r io.Reader) error {
+func CloseReaderIf(r io.Reader) error {
 	// TODO: if a file (or other ReadCloser) was used,
 	// the Reader may also have a Close method ...
 	// probably should call that ...

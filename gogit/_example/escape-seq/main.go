@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	ansi "
 )
 
 func main() {

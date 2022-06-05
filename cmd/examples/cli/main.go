@@ -15,10 +15,10 @@ import (
 func main() {
 	var (
 		cmd          *exec.Cmd
-		background   context.Context = context.Background()
+		background   = context.Background()
 		app          string
 		args         []string
-		promptString string = gofile.PWD() + "\n➜ "
+		promptString = gofile.PWD() + "\n➜ "
 	)
 
 	for {
