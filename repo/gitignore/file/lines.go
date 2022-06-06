@@ -132,5 +132,5 @@ func GetFileData(filename string) (string, error) {
 	}
 	// V("file opened: ", inFileName)
 
-	return B2S(b), nil
+	return b2s(b), nil
 }

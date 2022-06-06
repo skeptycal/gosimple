@@ -10,14 +10,15 @@ import (
 	"strconv"
 
 	"github.com/skeptycal/gosimple/cli"
+	"github.com/skeptycal/gosimple/reallyunsafe"
 	"github.com/skeptycal/gosimple/types/convert"
 	"golang.org/x/net/html"
 )
 
 var (
 	ComicURL string = "http://xkcd.com/"
-	B2S             = cli.B2S // UnsafeBytesToString
-	S2B             = cli.S2B // UnsafeStringToBytes
+	b2s             = reallyunsafe.B2S // UnsafeBytesToString
+	s2b             = reallyunsafe.S2B // UnsafeStringToBytes
 	DEBUG           = &cli.DebugFlag
 )
 
