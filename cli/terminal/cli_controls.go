@@ -1,6 +1,10 @@
-package cli
+package terminal
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/skeptycal/gosimple/cli/ansi"
+)
 
 type CLIControls interface {
 	CLS()
@@ -13,6 +17,7 @@ type CLIControls interface {
 }
 
 const (
+	Reset                     = ansi.Reset
 	ansiCLS            string = "\033[2J"  // ANSI escape code - clear screen
 	ansiClearLine      string = "\r\033[K" // Carriage return and ANSI clear line code
 	defaultHrChar      string = "="        // repeat character for Hr()

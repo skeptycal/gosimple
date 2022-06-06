@@ -9,6 +9,7 @@ import (
 
 	"github.com/skeptycal/gosimple/cli"
 	"github.com/skeptycal/gosimple/cli/terminal"
+	"github.com/skeptycal/gosimple/reallyunsafe"
 )
 
 func main() {
@@ -42,7 +43,7 @@ func env(s string) {
 
 func execEnv(s string) string {
 	b, _ := exec.Command("echo", s).Output()
-	retval := cli.B2S(b)
+	retval := reallyunsafe.B2S(b)
 	fmt.Printf("%s: %s", s, retval)
 	return retval
 }

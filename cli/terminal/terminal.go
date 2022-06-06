@@ -64,7 +64,7 @@ type Terminal struct {
 // Reset sets the ANSI foreground, background, and effect to default.
 func (t *Terminal) Reset() (n int, err error) {
 	if t.useColor {
-		return fmt.Fprint(t.w, ansi.Reset)
+		return fmt.Fprint(t.w, Reset)
 	}
 	return 0, nil
 }

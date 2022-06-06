@@ -61,7 +61,7 @@ type CLI interface {
 	io.StringWriter
 	fmt.Stringer
 	Printer
-	CLIControls
+	terminal.CLIControls
 	SetColor(color ansi.AnsiColor)
 	Reset() (n int, err error)
 }

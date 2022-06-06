@@ -30,5 +30,5 @@ func ReadFileCli(filename string) string {
 		Log.Fatal(osErr(err, "ReadFileCli()"))
 	}
 
-	return B2S(data)
+	return b2s(data)
 }

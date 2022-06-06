@@ -21,8 +21,8 @@ var (
 	stdOutCloser, _  = fakecloser.New(os.Stdout)
 	discardCloser, _ = fakecloser.New(discard)
 	discard          = io.Discard
-	S2B              = reallyunsafe.S2B
-	B2S              = reallyunsafe.B2S
+	s2b              = reallyunsafe.S2B
+	b2s              = reallyunsafe.B2S
 )
 
 func NewWriteCloserCLI(w any) io.WriteCloser {
@@ -40,7 +40,7 @@ func NewWriteCloserCLI(w any) io.WriteCloser {
 // the -force (ForceFlag) CLI option is enabled.
 func WriteFile(filename, s string) (n int, err error) {
 	if !*ForceFlag {
-		return os.Stdout.Write(S2B(s))
+		return os.Stdout.Write(s2b(s))
 	}
 
 	w, err := FileWriteCloser(filename, true)
@@ -49,7 +49,7 @@ func WriteFile(filename, s string) (n int, err error) {
 	}
 	defer w.Close()
 
-	return w.Write(S2B(s))
+	return w.Write(s2b(s))
 }
 
 // WriteString writes the string to w. It implements the
@@ -59,9 +59,9 @@ func WriteFile(filename, s string) (n int, err error) {
 // the -force (ForceFlag) CLI option is enabled.
 func WriteString(w io.Writer, s string) (n int, err error) {
 	if !*ForceFlag {
-		return os.Stdout.Write(S2B(s))
+		return os.Stdout.Write(s2b(s))
 	}
-	return w.Write(S2B(s))
+	return w.Write(s2b(s))
 }
 
 // FileWriteCloser returns an io.FileWriteCloser from the given

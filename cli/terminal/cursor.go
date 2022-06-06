@@ -1,4 +1,4 @@
-package cli
+package terminal
 
 type CursorControls interface {
 	Up(n int)

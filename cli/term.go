@@ -25,6 +25,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/skeptycal/gosimple/cli/ansi"
 	"github.com/skeptycal/gosimple/cli/terminal"
 )
 
@@ -135,7 +136,7 @@ func MoveTo(str string, x int, y int) (out string) {
 // ResetLine returns carrier to start of line
 func ResetLine(str string) (out string) {
 	return applyTransform(str, func(idx int, line string) string {
-		return fmt.Sprintf("%s%s", ResetLineConst, line)
+		return fmt.Sprintf("%s%s", ansi.ResetLineConst, line)
 	})
 }
 
@@ -152,7 +153,7 @@ func Bold(str string) string {
 //
 func Color(str string, color int) string {
 	return applyTransform(str, func(idx int, line string) string {
-		return fmt.Sprintf("%s%s%s", getColor(color), line, Reset)
+		return fmt.Sprintf("%s%s%s", getColor(color), line, ansi.Reset)
 	})
 }
 
@@ -171,7 +172,7 @@ func HighlightRegion(str string, from, to, color int) string {
 //
 func Background(str string, color int) string {
 	return applyTransform(str, func(idx int, line string) string {
-		return fmt.Sprintf("%s%s%s", getBgColor(color), line, Reset)
+		return fmt.Sprintf("%s%s%s", getBgColor(color), line, ansi.Reset)
 	})
 }
 
