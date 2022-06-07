@@ -80,7 +80,7 @@ type (
 	}
 
 	// BufferPool is a sync.Pool implementation designed to
-	// work exclusively with bytes.Buffer objects.
+	// use with bytes.Buffer pointers.
 	BufferPool = Pool[*bytes.Buffer]
 )
 
@@ -136,7 +136,7 @@ func (b Pool[T]) Diver(fn func(buf T)) {
 	// add return value(s) if you need them
 	fn(buf)
 
-	// b.Reset()
+	// b.Reset() // reset pool item if needed.
 	b.Put(buf)
 }
 
