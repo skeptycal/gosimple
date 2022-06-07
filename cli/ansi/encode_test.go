@@ -6,31 +6,39 @@ import (
 	"testing"
 
 	"github.com/skeptycal/gosimple/datatools/random"
+	"github.com/skeptycal/gosimple/testes"
 )
 
-func TestBasicEncode(t *testing.T) {
-	tests := []struct {
-		name    string
-		input   byte
-		want    string
-		wantErr bool
-	}{
-		{"byte", '8', "\033[8m", false},
-		{"byte", '2', "\033[2m", false},
-		{"byte", '3', "\033[32m", false},
-		{"byte", '4', "\033[47m", false},
-		{"byte", 'A', "\033[123m", false},
-		{"byte", '0', "\033[0m", false},
-		{"byte", 'F', "", false},
+var ansiByteEncodeData = []struct {
+	name    string
+	input   string
+	want    string
+	wantErr bool
+}{
+	{"byte", "8", "\033[8m", false},
+	{"byte", "2", "\033[2m", false},
+	{"byte", "3", "\033[32m", false},
+	{"byte", "4", "\033[47m", false},
+	{"byte", "A", "\033[123m", false},
+	{"byte", "0", "\033[0m", false},
+	{"byte", "F", "", false},
+	{"byte", " ", "", false},
+}
+
+func TestEncode(t *testing.T) {
+	for _, tt := range ansiByteEncodeData {
+
+		testes.TRun(t, "encode", tt.name, BasicEncode(string(tt.input)), tt.want)
 	}
-	for _, tt := range tests {
+}
+
+func TestBasicEncode(t *testing.T) {
+	for _, tt := range ansiByteEncodeData {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Run(tt.name, func(t *testing.T) {
-				got := string(BasicEncode(string(tt.input)))
-				if got != tt.want {
-					t.Errorf("unexpected ANSI encoding: got %q, want %q", got, tt.want)
-				}
-			})
+			got := string(BasicEncode(string(tt.input)))
+			if got != tt.want {
+				t.Errorf("unexpected ANSI encoding: got %q, want %q", got, tt.want)
+			}
 		})
 	}
 }
@@ -203,22 +211,32 @@ func BenchmarkEncode(b *testing.B) {
 	// 	b.Fatal(err)
 	// }
 
-	args := []string{"8", "32", "123"}
+	args := []string{"8"} //, "32", "123"}
 
 	benchmarks := []struct {
 		name string
 		fn   func(b string) string
 	}{
-		// {"encode", fakeEncode},
+		// {"BasicEncode", BasicEncode},
+		{"unsafeBlankEncode", unsafeBlankEncode},
+		{"arrayEncode", arrayEncode},
+		{"arrayEncodeUnsafe", arrayEncodeUnsafe},
+		{"blankEncode", blankEncode},
+		{"poolArrayStringerEncode", poolArrayStringerEncode},
+		{"poolArraySetterEncode", poolArraySetterEncode},
+		{"poolArrayEncode", poolArrayEncode},
+		// {"BasicStringEncode", BasicStringEncode},
+		// {"unsafeappendencodeprealloc", unsafeappendencodeprealloc},
+		// {"appendencodeprealloc", appendencodeprealloc},
+		// {"appendencode2", appendencode2},
+		// {"appendencodeUnsafe", appendencodeUnsafe},
+		// {"appendencode", appendencode},
+		// {"sbencode", sbencode},
 		// {"basicEncode", basicEncode},
-		// {"simpleEncode", blankEncode},
 		// {"newAnsiColorString", newAnsiColorString},
+		// {"sprintencode", sprintencode},
 		// {"blankPtrEncode", blankPtrEncode},
 		// {"arrayPtrEncode", arrayPtrEncode},
-		// {"unsafeEncode", unsafeEncode},
-		// {"blankEncode", blankEncode},
-		{"arrayEncode", arrayEncode},
-		{"BasicEncode", BasicEncode},
 	}
 
 	for _, arg := range args {
@@ -234,6 +252,41 @@ func BenchmarkEncode(b *testing.B) {
 			})
 		}
 	}
+
+	/*
+		* Benchmark Ranking:
+
+		* 1st tier (in the running)
+		/blankEncode
+		/unsafeDoubleUnsafe
+		/unsafeEncodeBlank
+		/blankEncode
+		/arrayEncodeUnsafe
+		/arrayEncode
+
+		* 2nd tier (eliminated)
+		/appendencodeUnsafe
+		/unsafeappendencodeprealloc
+		/appendencodeprealloc
+		/appendencode2
+		/appendencode
+		/newAnsiColorString
+		/sprintencode
+
+		/blankEncode(1)-8                  	224625822	         5.349 ns/op	       0 B/op	       0 allocs/op
+		/unsafeDoubleUnsafe(1)-8           	225393910	         5.316 ns/op	       0 B/op	       0 allocs/op
+		/unsafeEncodeBlank(1)-8            	223966359	         5.406 ns/op	       0 B/op	       0 allocs/op
+		/blankEncode(1)#01-8               	225813758	         5.317 ns/op	       0 B/op	       0 allocs/op
+		/arrayEncodeUnsafe(1)-8            	85078976	        13.95 ns/op	       4 B/op	       1 allocs/op
+		/arrayEncode(1)-8                  	77641429	        14.81 ns/op	       4 B/op	       1 allocs/op
+		/appendencodeUnsafe(1)-8           	48962520	        24.37 ns/op	       8 B/op	       1 allocs/op
+		/unsafeappendencodeprealloc(1)-8   	32358132	        36.92 ns/op	      16 B/op	       2 allocs/op
+		/appendencodeprealloc(1)-8         	30206092	        39.44 ns/op	      16 B/op	       2 allocs/op
+		/appendencode2(1)-8                	30286395	        39.44 ns/op	      16 B/op	       2 allocs/op
+		/appendencode(1)-8                 	30393532	        39.42 ns/op	      16 B/op	       2 allocs/op
+		/newAnsiColorString(1)-8  	28850719	        41.46 ns/op	      16 B/op	       2 allocs/op
+		/sprintencode(1)-8        	14048450	        86.31 ns/op	       5 B/op	       1 allocs/op
+	*/
 }
 
 var globalReturnByte []byte
