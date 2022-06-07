@@ -10,7 +10,7 @@ type Ordered constraints.Ordered
 
 func TRun[T comparable](t *testing.T, name, arg string, got, want T) {
 	if !AssertEqual(got, want) && !AssertDeepEqual(got, want) {
-		t.Errorf("%v(%v) = %v, want %v", name, arg, got, want)
+		t.Errorf("%v(%v) = %v, want %v\n", name, arg, got, want)
 	}
 }
 

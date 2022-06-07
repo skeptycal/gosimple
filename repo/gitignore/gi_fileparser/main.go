@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/skeptycal/gosimple/cli"
+	"github.com/skeptycal/gosimple/reallyunsafe"
 	"github.com/skeptycal/gosimple/repo/gitignore/file"
 )
 
@@ -27,8 +28,8 @@ var (
 	Flag  = cli.Flag
 
 	// P   = fmt.Println
-	B2S = cli.B2S
-	S2B = cli.S2B
+	B2S = reallyunsafe.B2S
+	S2B = reallyunsafe.S2B
 )
 
 func Head[E any](s []E) []E {
